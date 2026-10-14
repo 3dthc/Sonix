@@ -29,7 +29,8 @@ parameter list changed again, so open a fresh Sonix rather than a project saved 
 | 2 | PRESET list | MPC's PRESET button / menu for the track | 128 presets by name; picking one changes the sound and the LCD |
 | 3 | Instant presets | Pick presets while playing pads | each one plays right away, no "Loading" pause (after the first few seconds) |
 | 4 | ◀ ▶ on the LCD | Tap the arrows | previous / next preset, across categories, wraps around |
-| 5 | Categories | Tap STRINGS, GUITAR, BASS ... | jumps to that category's first preset; that button lights |
+| 5 | Preset list | Tap STRINGS, then a name in the list; tap STRINGS again | the LCD lists the category's presets; a tap loads one (lit); the lit button again closes the list |
+| 5b | Scrolling | Touch the preset name on the LCD, turn the data wheel; turn Q-Link 16 | presets step one by one (two clicks each); the list follows into the next category |
 | 6 | PRESET list stays open | Open MPC's PRESET list and play pads | the list doesn't close while the waveform moves |
 | 7 | Waveform | Play, soft and hard | the LCD wave moves smoothly while notes sound, taller when louder, flat when silent |
 | 8 | FAV / LIST | ★ FAV on a few presets, then ★ LIST on, then ◀ ▶ | a star after the name; ◀ ▶ only visit the favourites |
