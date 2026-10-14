@@ -4,7 +4,7 @@
  "source": "vsco2ce",
  "license": "CC0-1.0",
  "credit": "VSCO 2 Community Edition by Versilian Studios (CC0)",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": true,
  "zones": [
   {
@@ -14,12 +14,12 @@
    "hikey": 35,
    "lovel": 1,
    "hivel": 80,
-   "frames": 179370,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_A#0_v1_1.wav",
-   "bytes": 140084,
-   "loop_start": 83121,
-   "loop_end": 179370,
-   "loop_score": 0.201
+   "bytes": 70864,
+   "loop_start": 44746,
+   "loop_end": 87040,
+   "loop_score": 0.955
   },
   {
    "file": "orch_brass_037_Cs2_v1.flac",
@@ -28,12 +28,12 @@
    "hikey": 38,
    "lovel": 1,
    "hivel": 80,
-   "frames": 278275,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_C#1_v1_1.wav",
-   "bytes": 216579,
-   "loop_start": 178991,
-   "loop_end": 278275,
-   "loop_score": 0.997
+   "bytes": 68531,
+   "loop_start": 39475,
+   "loop_end": 87040,
+   "loop_score": 0.993
   },
   {
    "file": "orch_brass_039_Ds2_v1.flac",
@@ -42,12 +42,12 @@
    "hikey": 40,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v1_1.wav",
-   "bytes": 228510,
-   "loop_start": 134881,
-   "loop_end": 299880,
-   "loop_score": 0.991
+   "bytes": 66877,
+   "loop_start": 53702,
+   "loop_end": 87040,
+   "loop_score": 0.958
   },
   {
    "file": "orch_brass_041_F2_v1.flac",
@@ -56,12 +56,12 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_F1_v1_1.wav",
-   "bytes": 229020,
-   "loop_start": 157952,
-   "loop_end": 299880,
-   "loop_score": 0.988
+   "bytes": 65320,
+   "loop_start": 50024,
+   "loop_end": 87040,
+   "loop_score": 0.994
   },
   {
    "file": "orch_brass_046_As2_v1.flac",
@@ -70,12 +70,12 @@
    "hikey": 48,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v1_1.wav",
-   "bytes": 224850,
-   "loop_start": 125802,
-   "loop_end": 299880,
-   "loop_score": 0.977
+   "bytes": 64930,
+   "loop_start": 53537,
+   "loop_end": 87040,
+   "loop_score": 0.979
   },
   {
    "file": "orch_brass_050_D3_v1.flac",
@@ -84,11 +84,11 @@
    "hikey": 51,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_D2_v1_1.wav",
-   "bytes": 220083,
-   "loop_start": 189923,
-   "loop_end": 299880,
+   "bytes": 62847,
+   "loop_start": 54346,
+   "loop_end": 87040,
    "loop_score": 0.981
   },
   {
@@ -98,12 +98,12 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/F Horn/sus/MOHorn_sus_F2_v1_1.wav",
-   "bytes": 217572,
-   "loop_start": 175170,
-   "loop_end": 299880,
-   "loop_score": 0.998
+   "bytes": 66314,
+   "loop_start": 55515,
+   "loop_end": 87040,
+   "loop_score": 0.995
   },
   {
    "file": "orch_brass_057_A3_v1.flac",
@@ -112,11 +112,11 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/F Horn/sus/MOHorn_sus_A2_v1_1.wav",
-   "bytes": 229505,
-   "loop_start": 183050,
-   "loop_end": 299880,
+   "bytes": 67840,
+   "loop_start": 49901,
+   "loop_end": 87040,
    "loop_score": 0.999
   },
   {
@@ -126,12 +126,12 @@
    "hikey": 63,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/F Horn/sus/MOHorn_sus_C3_v1_1.wav",
-   "bytes": 225745,
-   "loop_start": 121324,
-   "loop_end": 299880,
-   "loop_score": 0.994
+   "bytes": 66234,
+   "loop_start": 34742,
+   "loop_end": 87040,
+   "loop_score": 0.997
   },
   {
    "file": "orch_brass_067_G4_v1.flac",
@@ -140,12 +140,12 @@
    "hikey": 68,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_G3_v1_rr1.wav",
-   "bytes": 299935,
-   "loop_start": 177661,
-   "loop_end": 299880,
-   "loop_score": 0.994
+   "bytes": 102546,
+   "loop_start": 40278,
+   "loop_end": 87040,
+   "loop_score": 0.987
   },
   {
    "file": "orch_brass_070_As4_v1.flac",
@@ -154,12 +154,12 @@
    "hikey": 72,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_A#3_v1_rr1.wav",
-   "bytes": 371715,
-   "loop_start": 189640,
-   "loop_end": 299880,
-   "loop_score": 0.982
+   "bytes": 131095,
+   "loop_start": 32938,
+   "loop_end": 87040,
+   "loop_score": 0.958
   },
   {
    "file": "orch_brass_074_D5_v1.flac",
@@ -168,12 +168,12 @@
    "hikey": 75,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_D4_v1_rr1.wav",
-   "bytes": 375927,
-   "loop_start": 117101,
-   "loop_end": 299880,
-   "loop_score": 0.998
+   "bytes": 139076,
+   "loop_start": 39400,
+   "loop_end": 87040,
+   "loop_score": 0.995
   },
   {
    "file": "orch_brass_077_F5_v1.flac",
@@ -182,12 +182,12 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_F4_v1_rr1.wav",
-   "bytes": 451102,
-   "loop_start": 110322,
-   "loop_end": 299880,
-   "loop_score": 0.907
+   "bytes": 160456,
+   "loop_start": 56038,
+   "loop_end": 87040,
+   "loop_score": 0.976
   },
   {
    "file": "orch_brass_081_A5_v1.flac",
@@ -196,12 +196,12 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_A4_v1_rr1.wav",
-   "bytes": 455583,
-   "loop_start": 184487,
-   "loop_end": 299880,
-   "loop_score": 0.997
+   "bytes": 166917,
+   "loop_start": 50716,
+   "loop_end": 87040,
+   "loop_score": 0.996
   },
   {
    "file": "orch_brass_084_C6_v1.flac",
@@ -210,12 +210,12 @@
    "hikey": 96,
    "lovel": 1,
    "hivel": 80,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_C5_v1_rr1.wav",
-   "bytes": 495965,
-   "loop_start": 190432,
-   "loop_end": 299880,
-   "loop_score": 0.993
+   "bytes": 189153,
+   "loop_start": 39102,
+   "loop_end": 87040,
+   "loop_score": 0.986
   },
   {
    "file": "orch_brass_039_Ds2_v2.flac",
@@ -224,12 +224,12 @@
    "hikey": 40,
    "lovel": 81,
    "hivel": 127,
-   "frames": 186539,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v3_1.wav",
-   "bytes": 177037,
-   "loop_start": 114540,
-   "loop_end": 186539,
-   "loop_score": 0.374
+   "bytes": 92273,
+   "loop_start": 55770,
+   "loop_end": 87040,
+   "loop_score": 0.951
   },
   {
    "file": "orch_brass_041_F2_v2.flac",
@@ -238,12 +238,12 @@
    "hikey": 43,
    "lovel": 81,
    "hivel": 127,
-   "frames": 253767,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_F1_v3_1.wav",
-   "bytes": 252991,
-   "loop_start": 104706,
-   "loop_end": 253767,
-   "loop_score": 0.312
+   "bytes": 94909,
+   "loop_start": 51121,
+   "loop_end": 87040,
+   "loop_score": 0.993
   },
   {
    "file": "orch_brass_046_As2_v2.flac",
@@ -252,12 +252,12 @@
    "hikey": 48,
    "lovel": 81,
    "hivel": 127,
-   "frames": 197119,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v3_1.wav",
-   "bytes": 193249,
-   "loop_start": 96093,
-   "loop_end": 197119,
-   "loop_score": 0.992
+   "bytes": 94557,
+   "loop_start": 34051,
+   "loop_end": 87040,
+   "loop_score": 0.989
   },
   {
    "file": "orch_brass_050_D3_v2.flac",
@@ -266,12 +266,12 @@
    "hikey": 55,
    "lovel": 81,
    "hivel": 127,
-   "frames": 246671,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Tenor Trombone/sus/tenortbn_sus_D2_v3_1.wav",
-   "bytes": 247535,
-   "loop_start": 87188,
-   "loop_end": 246671,
-   "loop_score": 0.991
+   "bytes": 96231,
+   "loop_start": 44542,
+   "loop_end": 87040,
+   "loop_score": 0.996
   },
   {
    "file": "orch_brass_060_C4_v2.flac",
@@ -280,12 +280,12 @@
    "hikey": 63,
    "lovel": 81,
    "hivel": 127,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/F Horn/sus/MOHorn_sus_C3_v4_1.wav",
-   "bytes": 318753,
-   "loop_start": 174710,
-   "loop_end": 299880,
-   "loop_score": 0.999
+   "bytes": 110579,
+   "loop_start": 41631,
+   "loop_end": 87040,
+   "loop_score": 0.992
   },
   {
    "file": "orch_brass_067_G4_v2.flac",
@@ -294,12 +294,12 @@
    "hikey": 68,
    "lovel": 81,
    "hivel": 127,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_G3_v3_rr1.wav",
-   "bytes": 680813,
-   "loop_start": 141410,
-   "loop_end": 299880,
-   "loop_score": 0.98
+   "bytes": 221481,
+   "loop_start": 52330,
+   "loop_end": 87040,
+   "loop_score": 0.988
   },
   {
    "file": "orch_brass_070_As4_v2.flac",
@@ -308,12 +308,12 @@
    "hikey": 72,
    "lovel": 81,
    "hivel": 127,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_A#3_v3_rr1.wav",
-   "bytes": 603043,
-   "loop_start": 134644,
-   "loop_end": 299880,
-   "loop_score": 0.924
+   "bytes": 204632,
+   "loop_start": 40470,
+   "loop_end": 87040,
+   "loop_score": 0.994
   },
   {
    "file": "orch_brass_074_D5_v2.flac",
@@ -322,12 +322,12 @@
    "hikey": 75,
    "lovel": 81,
    "hivel": 127,
-   "frames": 290836,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_D4_v3_rr1.wav",
-   "bytes": 657632,
-   "loop_start": 129474,
-   "loop_end": 290836,
-   "loop_score": 0.992
+   "bytes": 238932,
+   "loop_start": 44347,
+   "loop_end": 87040,
+   "loop_score": 0.945
   },
   {
    "file": "orch_brass_077_F5_v2.flac",
@@ -336,12 +336,12 @@
    "hikey": 79,
    "lovel": 81,
    "hivel": 127,
-   "frames": 260298,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_F4_v3_rr1.wav",
-   "bytes": 532717,
-   "loop_start": 161949,
-   "loop_end": 260298,
-   "loop_score": 0.987
+   "bytes": 210711,
+   "loop_start": 49385,
+   "loop_end": 87040,
+   "loop_score": 0.981
   },
   {
    "file": "orch_brass_081_A5_v2.flac",
@@ -350,12 +350,12 @@
    "hikey": 82,
    "lovel": 81,
    "hivel": 127,
-   "frames": 299880,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_A4_v3_rr1.wav",
-   "bytes": 627571,
-   "loop_start": 133800,
-   "loop_end": 299880,
-   "loop_score": 0.959
+   "bytes": 218885,
+   "loop_start": 33625,
+   "loop_end": 87040,
+   "loop_score": 0.987
   },
   {
    "file": "orch_brass_084_C6_v2.flac",
@@ -364,13 +364,13 @@
    "hikey": 96,
    "lovel": 81,
    "hivel": 127,
-   "frames": 273440,
+   "frames": 87040,
    "orig": "raw/VSCO-2-CE/Brass/Trumpet/sus/Sum_SHTrumpet_sus_C5_v3_rr1.wav",
-   "bytes": 615847,
-   "loop_start": 119935,
-   "loop_end": 273440,
-   "loop_score": 0.993
+   "bytes": 231018,
+   "loop_start": 48612,
+   "loop_end": 87040,
+   "loop_score": 0.698
   }
  ],
- "total_bytes": 9289363
+ "total_bytes": 3303208
 }

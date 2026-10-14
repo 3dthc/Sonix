@@ -14,9 +14,9 @@
    "hikey": 31,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_F#0_rr1.wav",
-   "bytes": 263481
+   "bytes": 86754
   },
   {
    "file": "harpsichord_032_Gs1_v1.flac",
@@ -25,9 +25,9 @@
    "hikey": 33,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_G#0_rr1.wav",
-   "bytes": 279215
+   "bytes": 92215
   },
   {
    "file": "harpsichord_034_As1_v1.flac",
@@ -36,9 +36,9 @@
    "hikey": 35,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_A#0_rr1.wav",
-   "bytes": 293946
+   "bytes": 97762
   },
   {
    "file": "harpsichord_036_C2_v1.flac",
@@ -47,9 +47,9 @@
    "hikey": 37,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_C1_rr1.wav",
-   "bytes": 305499
+   "bytes": 103403
   },
   {
    "file": "harpsichord_038_D2_v1.flac",
@@ -58,9 +58,9 @@
    "hikey": 39,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_D1_rr1.wav",
-   "bytes": 303217
+   "bytes": 103287
   },
   {
    "file": "harpsichord_040_E2_v1.flac",
@@ -69,9 +69,9 @@
    "hikey": 41,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_E1_rr1.wav",
-   "bytes": 310780
+   "bytes": 108516
   },
   {
    "file": "harpsichord_042_Fs2_v1.flac",
@@ -80,9 +80,9 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_F#1_rr1.wav",
-   "bytes": 318555
+   "bytes": 111079
   },
   {
    "file": "harpsichord_044_Gs2_v1.flac",
@@ -91,9 +91,9 @@
    "hikey": 45,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_G#1_rr1.wav",
-   "bytes": 304050
+   "bytes": 105129
   },
   {
    "file": "harpsichord_046_As2_v1.flac",
@@ -102,9 +102,9 @@
    "hikey": 47,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_A#1_rr1.wav",
-   "bytes": 306020
+   "bytes": 110211
   },
   {
    "file": "harpsichord_048_C3_v1.flac",
@@ -113,9 +113,9 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_C2_rr1.wav",
-   "bytes": 267009
+   "bytes": 89797
   },
   {
    "file": "harpsichord_050_D3_v1.flac",
@@ -124,9 +124,9 @@
    "hikey": 51,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_D2_rr1.wav",
-   "bytes": 276216
+   "bytes": 95553
   },
   {
    "file": "harpsichord_052_E3_v1.flac",
@@ -135,9 +135,9 @@
    "hikey": 53,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_E2_rr1.wav",
-   "bytes": 275749
+   "bytes": 95518
   },
   {
    "file": "harpsichord_054_Fs3_v1.flac",
@@ -146,9 +146,9 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_F#2_rr1.wav",
-   "bytes": 281224
+   "bytes": 101574
   },
   {
    "file": "harpsichord_056_Gs3_v1.flac",
@@ -157,9 +157,9 @@
    "hikey": 57,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_G#2_rr1.wav",
-   "bytes": 283610
+   "bytes": 101242
   },
   {
    "file": "harpsichord_058_As3_v1.flac",
@@ -168,9 +168,9 @@
    "hikey": 59,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_A#2_rr1.wav",
-   "bytes": 277089
+   "bytes": 102817
   },
   {
    "file": "harpsichord_060_C4_v1.flac",
@@ -179,9 +179,9 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_C3_rr1.wav",
-   "bytes": 260081
+   "bytes": 93802
   },
   {
    "file": "harpsichord_062_D4_v1.flac",
@@ -190,9 +190,9 @@
    "hikey": 63,
    "lovel": 1,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_D3_rr1.wav",
-   "bytes": 253652
+   "bytes": 91145
   },
   {
    "file": "harpsichord_064_E4_v1.flac",
@@ -201,9 +201,9 @@
    "hikey": 65,
    "lovel": 1,
    "hivel": 127,
-   "frames": 214530,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_E3_rr1.wav",
-   "bytes": 222793
+   "bytes": 90874
   },
   {
    "file": "harpsichord_066_Fs4_v1.flac",
@@ -212,9 +212,9 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 127,
-   "frames": 242376,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_F#3_rr1.wav",
-   "bytes": 231347
+   "bytes": 93703
   },
   {
    "file": "harpsichord_068_Gs4_v1.flac",
@@ -223,9 +223,9 @@
    "hikey": 69,
    "lovel": 1,
    "hivel": 127,
-   "frames": 213144,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_G#3_rr1.wav",
-   "bytes": 224115
+   "bytes": 92559
   },
   {
    "file": "harpsichord_070_As4_v1.flac",
@@ -234,9 +234,9 @@
    "hikey": 71,
    "lovel": 1,
    "hivel": 127,
-   "frames": 207809,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_A#3_rr1.wav",
-   "bytes": 204336
+   "bytes": 85754
   },
   {
    "file": "harpsichord_072_C5_v1.flac",
@@ -245,9 +245,9 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 127,
-   "frames": 205603,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_C4_rr1.wav",
-   "bytes": 200244
+   "bytes": 83636
   },
   {
    "file": "harpsichord_074_D5_v1.flac",
@@ -256,9 +256,9 @@
    "hikey": 75,
    "lovel": 1,
    "hivel": 127,
-   "frames": 215315,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_D4_rr1.wav",
-   "bytes": 207494
+   "bytes": 84092
   },
   {
    "file": "harpsichord_076_E5_v1.flac",
@@ -267,9 +267,9 @@
    "hikey": 77,
    "lovel": 1,
    "hivel": 127,
-   "frames": 212639,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_E4_rr1.wav",
-   "bytes": 203664
+   "bytes": 84896
   },
   {
    "file": "harpsichord_078_Fs5_v1.flac",
@@ -278,9 +278,9 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 127,
-   "frames": 216958,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_F#4_rr1.wav",
-   "bytes": 198900
+   "bytes": 78885
   },
   {
    "file": "harpsichord_080_Gs5_v1.flac",
@@ -289,9 +289,9 @@
    "hikey": 81,
    "lovel": 1,
    "hivel": 127,
-   "frames": 226697,
+   "frames": 141120,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_G#4_rr1.wav",
-   "bytes": 209922
+   "bytes": 79997
   },
   {
    "file": "harpsichord_082_As5_v1.flac",
@@ -300,9 +300,9 @@
    "hikey": 83,
    "lovel": 1,
    "hivel": 127,
-   "frames": 154856,
+   "frames": 124082,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_A#4_rr1.wav",
-   "bytes": 159482
+   "bytes": 73218
   },
   {
    "file": "harpsichord_084_C6_v1.flac",
@@ -311,10 +311,10 @@
    "hikey": 96,
    "lovel": 1,
    "hivel": 127,
-   "frames": 177797,
+   "frames": 127990,
    "orig": "raw/VCSL/Chordophones/Zithers/Harpsichord, Flemish/Sustains/Low/HarpsiRH_Low_Far_C5_rr1.wav",
-   "bytes": 169047
+   "bytes": 70112
   }
  ],
- "total_bytes": 7090737
+ "total_bytes": 2607530
 }

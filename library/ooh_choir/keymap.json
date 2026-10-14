@@ -4,7 +4,7 @@
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": true,
  "zones": [
   {
@@ -14,12 +14,12 @@
    "hikey": 46,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 188970,
-   "loop_start": 124562,
-   "loop_end": 277830,
-   "loop_score": 0.856
+   "bytes": 84547,
+   "loop_start": 41360,
+   "loop_end": 109440,
+   "loop_score": 0.732
   },
   {
    "file": "ooh_choir_048_C3_v1.flac",
@@ -28,12 +28,12 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 187328,
-   "loop_start": 171644,
-   "loop_end": 277830,
-   "loop_score": 0.864
+   "bytes": 84352,
+   "loop_start": 62879,
+   "loop_end": 109440,
+   "loop_score": 0.94
   },
   {
    "file": "ooh_choir_051_Ds3_v1.flac",
@@ -42,12 +42,12 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 190235,
-   "loop_start": 137981,
-   "loop_end": 277830,
-   "loop_score": 0.869
+   "bytes": 87510,
+   "loop_start": 50612,
+   "loop_end": 109440,
+   "loop_score": 0.868
   },
   {
    "file": "ooh_choir_054_Fs3_v1.flac",
@@ -56,12 +56,12 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 189586,
-   "loop_start": 154104,
-   "loop_end": 277830,
-   "loop_score": 0.924
+   "bytes": 85016,
+   "loop_start": 62933,
+   "loop_end": 109440,
+   "loop_score": 0.933
   },
   {
    "file": "ooh_choir_057_A3_v1.flac",
@@ -70,12 +70,12 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 188398,
-   "loop_start": 182768,
-   "loop_end": 277830,
-   "loop_score": 0.951
+   "bytes": 86599,
+   "loop_start": 57095,
+   "loop_end": 109440,
+   "loop_score": 0.977
   },
   {
    "file": "ooh_choir_060_C4_v1.flac",
@@ -84,12 +84,12 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 189553,
-   "loop_start": 108309,
-   "loop_end": 277830,
-   "loop_score": 0.985
+   "bytes": 92965,
+   "loop_start": 52396,
+   "loop_end": 109440,
+   "loop_score": 0.923
   },
   {
    "file": "ooh_choir_063_Ds4_v1.flac",
@@ -98,12 +98,12 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 198317,
-   "loop_start": 128212,
-   "loop_end": 277830,
-   "loop_score": 0.996
+   "bytes": 116938,
+   "loop_start": 39560,
+   "loop_end": 109440,
+   "loop_score": 0.892
   },
   {
    "file": "ooh_choir_066_Fs4_v1.flac",
@@ -112,12 +112,12 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 193755,
-   "loop_start": 149933,
-   "loop_end": 277830,
-   "loop_score": 0.994
+   "bytes": 101106,
+   "loop_start": 61409,
+   "loop_end": 109440,
+   "loop_score": 0.953
   },
   {
    "file": "ooh_choir_069_A4_v1.flac",
@@ -126,12 +126,12 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 192372,
-   "loop_start": 127255,
-   "loop_end": 277830,
-   "loop_score": 0.953
+   "bytes": 90860,
+   "loop_start": 40805,
+   "loop_end": 109440,
+   "loop_score": 0.947
   },
   {
    "file": "ooh_choir_072_C5_v1.flac",
@@ -140,12 +140,12 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 190635,
-   "loop_start": 182742,
-   "loop_end": 277830,
-   "loop_score": 0.965
+   "bytes": 84943,
+   "loop_start": 41264,
+   "loop_end": 109440,
+   "loop_score": 0.86
   },
   {
    "file": "ooh_choir_075_Ds5_v1.flac",
@@ -154,12 +154,12 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 191042,
-   "loop_start": 112605,
-   "loop_end": 277830,
-   "loop_score": 0.872
+   "bytes": 83287,
+   "loop_start": 63324,
+   "loop_end": 109440,
+   "loop_score": 0.883
   },
   {
    "file": "ooh_choir_078_Fs5_v1.flac",
@@ -168,12 +168,12 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 191083,
-   "loop_start": 125676,
-   "loop_end": 277830,
-   "loop_score": 0.886
+   "bytes": 82908,
+   "loop_start": 40440,
+   "loop_end": 109440,
+   "loop_score": 0.96
   },
   {
    "file": "ooh_choir_081_A5_v1.flac",
@@ -182,13 +182,13 @@
    "hikey": 93,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 109440,
    "orig": "rendered",
-   "bytes": 182571,
-   "loop_start": 137446,
-   "loop_end": 277830,
-   "loop_score": 0.941
+   "bytes": 82696,
+   "loop_start": 44510,
+   "loop_end": 109440,
+   "loop_score": 0.855
   }
  ],
- "total_bytes": 2473845
+ "total_bytes": 1163727
 }

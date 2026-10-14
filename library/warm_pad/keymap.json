@@ -4,7 +4,7 @@
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": true,
  "zones": [
   {
@@ -14,12 +14,12 @@
    "hikey": 37,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 290401,
-   "loop_start": 110624,
-   "loop_end": 277830,
-   "loop_score": 0.76
+   "bytes": 122082,
+   "loop_start": 31244,
+   "loop_end": 92160,
+   "loop_score": 0.685
   },
   {
    "file": "warm_pad_039_Ds2_v1.flac",
@@ -28,12 +28,12 @@
    "hikey": 40,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 302049,
-   "loop_start": 179179,
-   "loop_end": 277830,
-   "loop_score": 0.822
+   "bytes": 127086,
+   "loop_start": 40721,
+   "loop_end": 92160,
+   "loop_score": 0.828
   },
   {
    "file": "warm_pad_042_Fs2_v1.flac",
@@ -42,12 +42,12 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 317467,
-   "loop_start": 184215,
-   "loop_end": 277830,
-   "loop_score": 0.845
+   "bytes": 132920,
+   "loop_start": 58205,
+   "loop_end": 92160,
+   "loop_score": 0.687
   },
   {
    "file": "warm_pad_045_A2_v1.flac",
@@ -56,12 +56,12 @@
    "hikey": 46,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 334068,
-   "loop_start": 173601,
-   "loop_end": 277830,
-   "loop_score": 0.85
+   "bytes": 138631,
+   "loop_start": 55071,
+   "loop_end": 92160,
+   "loop_score": 0.774
   },
   {
    "file": "warm_pad_048_C3_v1.flac",
@@ -70,12 +70,12 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 349112,
-   "loop_start": 168809,
-   "loop_end": 277830,
-   "loop_score": 0.906
+   "bytes": 145076,
+   "loop_start": 37099,
+   "loop_end": 92160,
+   "loop_score": 0.788
   },
   {
    "file": "warm_pad_051_Ds3_v1.flac",
@@ -84,12 +84,12 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 366511,
-   "loop_start": 155404,
-   "loop_end": 277830,
-   "loop_score": 0.901
+   "bytes": 152925,
+   "loop_start": 34445,
+   "loop_end": 92160,
+   "loop_score": 0.688
   },
   {
    "file": "warm_pad_054_Fs3_v1.flac",
@@ -98,12 +98,12 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 386737,
-   "loop_start": 131116,
-   "loop_end": 277830,
-   "loop_score": 0.854
+   "bytes": 161489,
+   "loop_start": 48898,
+   "loop_end": 92160,
+   "loop_score": 0.917
   },
   {
    "file": "warm_pad_057_A3_v1.flac",
@@ -112,12 +112,12 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 403726,
-   "loop_start": 158077,
-   "loop_end": 277830,
-   "loop_score": 0.849
+   "bytes": 170970,
+   "loop_start": 38021,
+   "loop_end": 92160,
+   "loop_score": 0.707
   },
   {
    "file": "warm_pad_060_C4_v1.flac",
@@ -126,12 +126,12 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 422614,
-   "loop_start": 167358,
-   "loop_end": 277830,
-   "loop_score": 0.831
+   "bytes": 180075,
+   "loop_start": 30787,
+   "loop_end": 92160,
+   "loop_score": 0.798
   },
   {
    "file": "warm_pad_063_Ds4_v1.flac",
@@ -140,12 +140,12 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 447865,
-   "loop_start": 165871,
-   "loop_end": 277830,
-   "loop_score": 0.899
+   "bytes": 188528,
+   "loop_start": 44406,
+   "loop_end": 92160,
+   "loop_score": 0.81
   },
   {
    "file": "warm_pad_066_Fs4_v1.flac",
@@ -154,12 +154,12 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 473578,
-   "loop_start": 115763,
-   "loop_end": 277830,
-   "loop_score": 0.89
+   "bytes": 198647,
+   "loop_start": 52941,
+   "loop_end": 92160,
+   "loop_score": 0.805
   },
   {
    "file": "warm_pad_069_A4_v1.flac",
@@ -168,12 +168,12 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 500212,
-   "loop_start": 118363,
-   "loop_end": 277830,
-   "loop_score": 0.772
+   "bytes": 208016,
+   "loop_start": 47537,
+   "loop_end": 92160,
+   "loop_score": 0.808
   },
   {
    "file": "warm_pad_072_C5_v1.flac",
@@ -182,12 +182,12 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 534504,
-   "loop_start": 116269,
-   "loop_end": 277830,
-   "loop_score": 0.691
+   "bytes": 219456,
+   "loop_start": 40473,
+   "loop_end": 92160,
+   "loop_score": 0.69
   },
   {
    "file": "warm_pad_075_Ds5_v1.flac",
@@ -196,12 +196,12 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 564950,
-   "loop_start": 133726,
-   "loop_end": 277830,
-   "loop_score": 0.779
+   "bytes": 228656,
+   "loop_start": 45715,
+   "loop_end": 92160,
+   "loop_score": 0.666
   },
   {
    "file": "warm_pad_078_Fs5_v1.flac",
@@ -210,12 +210,12 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 598753,
-   "loop_start": 115179,
-   "loop_end": 277830,
-   "loop_score": 0.686
+   "bytes": 239522,
+   "loop_start": 49191,
+   "loop_end": 92160,
+   "loop_score": 0.708
   },
   {
    "file": "warm_pad_081_A5_v1.flac",
@@ -224,12 +224,12 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 624861,
-   "loop_start": 184287,
-   "loop_end": 277830,
-   "loop_score": 0.584
+   "bytes": 249442,
+   "loop_start": 57598,
+   "loop_end": 92160,
+   "loop_score": 0.677
   },
   {
    "file": "warm_pad_084_C6_v1.flac",
@@ -238,12 +238,12 @@
    "hikey": 85,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 662139,
-   "loop_start": 155895,
-   "loop_end": 277830,
-   "loop_score": 0.747
+   "bytes": 259377,
+   "loop_start": 49932,
+   "loop_end": 92160,
+   "loop_score": 0.648
   },
   {
    "file": "warm_pad_087_Ds6_v1.flac",
@@ -252,13 +252,13 @@
    "hikey": 99,
    "lovel": 1,
    "hivel": 127,
-   "frames": 277830,
+   "frames": 92160,
    "orig": "rendered",
-   "bytes": 690666,
-   "loop_start": 133375,
-   "loop_end": 277830,
-   "loop_score": 0.77
+   "bytes": 270238,
+   "loop_start": 55844,
+   "loop_end": 92160,
+   "loop_score": 0.714
   }
  ],
- "total_bytes": 8270213
+ "total_bytes": 3393136
 }

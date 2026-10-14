@@ -14,9 +14,9 @@
    "hikey": 44,
    "lovel": 1,
    "hivel": 42,
-   "frames": 105171,
+   "frames": 104159,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F1_soft_01.wav",
-   "bytes": 40283
+   "bytes": 21137
   },
   {
    "file": "marimba_048_C3_v1.flac",
@@ -27,7 +27,7 @@
    "hivel": 42,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C2_soft_01.wav",
-   "bytes": 72179
+   "bytes": 37758
   },
   {
    "file": "marimba_055_G3_v1.flac",
@@ -38,7 +38,7 @@
    "hivel": 42,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_G2_soft_01.wav",
-   "bytes": 66406
+   "bytes": 35431
   },
   {
    "file": "marimba_059_B3_v1.flac",
@@ -47,9 +47,9 @@
    "hikey": 62,
    "lovel": 1,
    "hivel": 42,
-   "frames": 163515,
+   "frames": 159770,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_B2_soft_01.wav",
-   "bytes": 60353
+   "bytes": 31894
   },
   {
    "file": "marimba_065_F4_v1.flac",
@@ -58,9 +58,9 @@
    "hikey": 68,
    "lovel": 1,
    "hivel": 42,
-   "frames": 160785,
+   "frames": 145817,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F3_soft_01.wav",
-   "bytes": 66052
+   "bytes": 34767
   },
   {
    "file": "marimba_072_C5_v1.flac",
@@ -69,9 +69,9 @@
    "hikey": 75,
    "lovel": 1,
    "hivel": 42,
-   "frames": 148556,
+   "frames": 90398,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C4_soft_01.wav",
-   "bytes": 40787
+   "bytes": 20040
   },
   {
    "file": "marimba_079_G5_v1.flac",
@@ -80,9 +80,9 @@
    "hikey": 81,
    "lovel": 1,
    "hivel": 42,
-   "frames": 63076,
+   "frames": 52939,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_G4_soft_01.wav",
-   "bytes": 26892
+   "bytes": 14180
   },
   {
    "file": "marimba_083_B5_v1.flac",
@@ -91,9 +91,9 @@
    "hikey": 86,
    "lovel": 1,
    "hivel": 42,
-   "frames": 52306,
+   "frames": 44871,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_B4_soft_01.wav",
-   "bytes": 21064
+   "bytes": 10290
   },
   {
    "file": "marimba_089_F6_v1.flac",
@@ -102,9 +102,9 @@
    "hikey": 92,
    "lovel": 1,
    "hivel": 42,
-   "frames": 44818,
+   "frames": 43861,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F5_soft_01.wav",
-   "bytes": 12256
+   "bytes": 7452
   },
   {
    "file": "marimba_096_C7_v1.flac",
@@ -113,9 +113,9 @@
    "hikey": 108,
    "lovel": 1,
    "hivel": 42,
-   "frames": 44616,
+   "frames": 44472,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C6_soft_01.wav",
-   "bytes": 14738
+   "bytes": 8308
   },
   {
    "file": "marimba_041_F2_v2.flac",
@@ -124,9 +124,9 @@
    "hikey": 44,
    "lovel": 43,
    "hivel": 85,
-   "frames": 164386,
+   "frames": 161622,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F1_med_01.wav",
-   "bytes": 71508
+   "bytes": 36939
   },
   {
    "file": "marimba_048_C3_v2.flac",
@@ -137,7 +137,7 @@
    "hivel": 85,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C2_med_01.wav",
-   "bytes": 81964
+   "bytes": 42426
   },
   {
    "file": "marimba_055_G3_v2.flac",
@@ -148,7 +148,7 @@
    "hivel": 85,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_G2_med_01.wav",
-   "bytes": 80424
+   "bytes": 42529
   },
   {
    "file": "marimba_059_B3_v2.flac",
@@ -157,9 +157,9 @@
    "hikey": 62,
    "lovel": 43,
    "hivel": 85,
-   "frames": 176400,
+   "frames": 175616,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_B2_med_01.wav",
-   "bytes": 78255
+   "bytes": 41835
   },
   {
    "file": "marimba_065_F4_v2.flac",
@@ -168,9 +168,9 @@
    "hikey": 68,
    "lovel": 43,
    "hivel": 85,
-   "frames": 165094,
+   "frames": 148297,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F3_med_01.wav",
-   "bytes": 73917
+   "bytes": 37971
   },
   {
    "file": "marimba_072_C5_v2.flac",
@@ -179,9 +179,9 @@
    "hikey": 75,
    "lovel": 43,
    "hivel": 85,
-   "frames": 105309,
+   "frames": 100388,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C4_med_01.wav",
-   "bytes": 50518
+   "bytes": 25885
   },
   {
    "file": "marimba_079_G5_v2.flac",
@@ -190,9 +190,9 @@
    "hikey": 81,
    "lovel": 43,
    "hivel": 85,
-   "frames": 64121,
+   "frames": 53786,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_G4_med_01.wav",
-   "bytes": 31468
+   "bytes": 16005
   },
   {
    "file": "marimba_083_B5_v2.flac",
@@ -201,9 +201,9 @@
    "hikey": 86,
    "lovel": 43,
    "hivel": 85,
-   "frames": 58516,
+   "frames": 49159,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_B4_med_01.wav",
-   "bytes": 30110
+   "bytes": 14161
   },
   {
    "file": "marimba_089_F6_v2.flac",
@@ -212,9 +212,9 @@
    "hikey": 92,
    "lovel": 43,
    "hivel": 85,
-   "frames": 59549,
+   "frames": 57697,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F5_med_01.wav",
-   "bytes": 24477
+   "bytes": 14154
   },
   {
    "file": "marimba_096_C7_v2.flac",
@@ -223,9 +223,9 @@
    "hikey": 108,
    "lovel": 43,
    "hivel": 85,
-   "frames": 59354,
+   "frames": 57224,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C6_med_01.wav",
-   "bytes": 23631
+   "bytes": 13542
   },
   {
    "file": "marimba_041_F2_v3.flac",
@@ -234,9 +234,9 @@
    "hikey": 44,
    "lovel": 86,
    "hivel": 127,
-   "frames": 159429,
+   "frames": 158427,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F1_loud_01.wav",
-   "bytes": 78623
+   "bytes": 41014
   },
   {
    "file": "marimba_048_C3_v3.flac",
@@ -247,7 +247,7 @@
    "hivel": 127,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C2_loud_01.wav",
-   "bytes": 92932
+   "bytes": 49248
   },
   {
    "file": "marimba_055_G3_v3.flac",
@@ -258,7 +258,7 @@
    "hivel": 127,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_G2_loud_01.wav",
-   "bytes": 90903
+   "bytes": 47551
   },
   {
    "file": "marimba_059_B3_v3.flac",
@@ -269,7 +269,7 @@
    "hivel": 127,
    "frames": 176400,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_B2_loud_01.wav",
-   "bytes": 88940
+   "bytes": 47251
   },
   {
    "file": "marimba_065_F4_v3.flac",
@@ -278,9 +278,9 @@
    "hikey": 68,
    "lovel": 86,
    "hivel": 127,
-   "frames": 170446,
+   "frames": 141023,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F3_loud_01.wav",
-   "bytes": 90294
+   "bytes": 43626
   },
   {
    "file": "marimba_072_C5_v3.flac",
@@ -289,9 +289,9 @@
    "hikey": 75,
    "lovel": 86,
    "hivel": 127,
-   "frames": 108323,
+   "frames": 89621,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C4_loud_01.wav",
-   "bytes": 63406
+   "bytes": 29279
   },
   {
    "file": "marimba_079_G5_v3.flac",
@@ -300,9 +300,9 @@
    "hikey": 81,
    "lovel": 86,
    "hivel": 127,
-   "frames": 63518,
+   "frames": 52056,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_G4_loud_01.wav",
-   "bytes": 39200
+   "bytes": 19423
   },
   {
    "file": "marimba_083_B5_v3.flac",
@@ -311,9 +311,9 @@
    "hikey": 86,
    "lovel": 86,
    "hivel": 127,
-   "frames": 56784,
+   "frames": 48814,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_B4_loud_01.wav",
-   "bytes": 39190
+   "bytes": 18936
   },
   {
    "file": "marimba_089_F6_v3.flac",
@@ -322,9 +322,9 @@
    "hikey": 92,
    "lovel": 86,
    "hivel": 127,
-   "frames": 57582,
+   "frames": 55937,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_F5_loud_01.wav",
-   "bytes": 33600
+   "bytes": 18536
   },
   {
    "file": "marimba_096_C7_v3.flac",
@@ -333,10 +333,10 @@
    "hikey": 108,
    "lovel": 86,
    "hivel": 127,
-   "frames": 54692,
+   "frames": 51504,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Marimba/Marimba_hit_Outrigger_C6_loud_01.wav",
-   "bytes": 31057
+   "bytes": 16151
   }
  ],
- "total_bytes": 1615427
+ "total_bytes": 837719
 }

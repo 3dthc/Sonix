@@ -4,7 +4,7 @@
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": false,
  "zones": [
   {
@@ -14,9 +14,9 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 177597
+   "bytes": 37343
   },
   {
    "file": "fm_bells_051_Ds3_v1.flac",
@@ -25,9 +25,9 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 186062
+   "bytes": 39478
   },
   {
    "file": "fm_bells_054_Fs3_v1.flac",
@@ -36,9 +36,9 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 193394
+   "bytes": 41961
   },
   {
    "file": "fm_bells_057_A3_v1.flac",
@@ -47,9 +47,9 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 200970
+   "bytes": 46895
   },
   {
    "file": "fm_bells_060_C4_v1.flac",
@@ -58,9 +58,9 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 216223
+   "bytes": 49685
   },
   {
    "file": "fm_bells_063_Ds4_v1.flac",
@@ -69,9 +69,9 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 227029
+   "bytes": 56537
   },
   {
    "file": "fm_bells_066_Fs4_v1.flac",
@@ -80,9 +80,9 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 245756
+   "bytes": 60654
   },
   {
    "file": "fm_bells_069_A4_v1.flac",
@@ -91,9 +91,9 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 266365
+   "bytes": 72289
   },
   {
    "file": "fm_bells_072_C5_v1.flac",
@@ -102,9 +102,9 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 292787
+   "bytes": 75728
   },
   {
    "file": "fm_bells_075_Ds5_v1.flac",
@@ -113,9 +113,9 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 317204
+   "bytes": 84390
   },
   {
    "file": "fm_bells_078_Fs5_v1.flac",
@@ -124,9 +124,9 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 336613
+   "bytes": 90319
   },
   {
    "file": "fm_bells_081_A5_v1.flac",
@@ -135,9 +135,9 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 367443
+   "bytes": 97526
   },
   {
    "file": "fm_bells_084_C6_v1.flac",
@@ -146,9 +146,9 @@
    "hikey": 85,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 395641
+   "bytes": 101185
   },
   {
    "file": "fm_bells_087_Ds6_v1.flac",
@@ -157,9 +157,9 @@
    "hikey": 88,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 431549
+   "bytes": 106662
   },
   {
    "file": "fm_bells_090_Fs6_v1.flac",
@@ -168,9 +168,9 @@
    "hikey": 91,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 447095
+   "bytes": 116688
   },
   {
    "file": "fm_bells_093_A6_v1.flac",
@@ -179,9 +179,9 @@
    "hikey": 94,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 463957
+   "bytes": 116943
   },
   {
    "file": "fm_bells_096_C7_v1.flac",
@@ -190,9 +190,9 @@
    "hikey": 108,
    "lovel": 1,
    "hivel": 80,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 465560
+   "bytes": 99491
   },
   {
    "file": "fm_bells_048_C3_v2.flac",
@@ -201,9 +201,9 @@
    "hikey": 49,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 189041
+   "bytes": 41461
   },
   {
    "file": "fm_bells_051_Ds3_v2.flac",
@@ -212,9 +212,9 @@
    "hikey": 52,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 201624
+   "bytes": 45553
   },
   {
    "file": "fm_bells_054_Fs3_v2.flac",
@@ -223,9 +223,9 @@
    "hikey": 55,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 212405
+   "bytes": 48645
   },
   {
    "file": "fm_bells_057_A3_v2.flac",
@@ -234,9 +234,9 @@
    "hikey": 58,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 223501
+   "bytes": 53896
   },
   {
    "file": "fm_bells_060_C4_v2.flac",
@@ -245,9 +245,9 @@
    "hikey": 61,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 240948
+   "bytes": 59117
   },
   {
    "file": "fm_bells_063_Ds4_v2.flac",
@@ -256,9 +256,9 @@
    "hikey": 64,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 255643
+   "bytes": 65211
   },
   {
    "file": "fm_bells_066_Fs4_v2.flac",
@@ -267,9 +267,9 @@
    "hikey": 67,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 277281
+   "bytes": 71765
   },
   {
    "file": "fm_bells_069_A4_v2.flac",
@@ -278,9 +278,9 @@
    "hikey": 70,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 302663
+   "bytes": 83605
   },
   {
    "file": "fm_bells_072_C5_v2.flac",
@@ -289,9 +289,9 @@
    "hikey": 73,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 332646
+   "bytes": 88311
   },
   {
    "file": "fm_bells_075_Ds5_v2.flac",
@@ -300,9 +300,9 @@
    "hikey": 76,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 361017
+   "bytes": 97393
   },
   {
    "file": "fm_bells_078_Fs5_v2.flac",
@@ -311,9 +311,9 @@
    "hikey": 79,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 381696
+   "bytes": 102674
   },
   {
    "file": "fm_bells_081_A5_v2.flac",
@@ -322,9 +322,9 @@
    "hikey": 82,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 418782
+   "bytes": 111919
   },
   {
    "file": "fm_bells_084_C6_v2.flac",
@@ -333,9 +333,9 @@
    "hikey": 85,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 446801
+   "bytes": 115133
   },
   {
    "file": "fm_bells_087_Ds6_v2.flac",
@@ -344,9 +344,9 @@
    "hikey": 88,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 484393
+   "bytes": 119315
   },
   {
    "file": "fm_bells_090_Fs6_v2.flac",
@@ -355,9 +355,9 @@
    "hikey": 91,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 502798
+   "bytes": 127029
   },
   {
    "file": "fm_bells_093_A6_v2.flac",
@@ -366,9 +366,9 @@
    "hikey": 94,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 519309
+   "bytes": 125630
   },
   {
    "file": "fm_bells_096_C7_v2.flac",
@@ -377,10 +377,10 @@
    "hikey": 108,
    "lovel": 81,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 80000,
    "orig": "rendered",
-   "bytes": 517453
+   "bytes": 110902
   }
  ],
- "total_bytes": 11099246
+ "total_bytes": 2761333
 }

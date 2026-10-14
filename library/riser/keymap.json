@@ -1,10 +1,10 @@
 {
  "name": "riser",
- "category": "FX",
+ "category": "SYNTH",
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": false,
  "zones": [
   {
@@ -14,10 +14,10 @@
    "hikey": 72,
    "lovel": 1,
    "hivel": 127,
-   "frames": 176400,
+   "frames": 128000,
    "orig": "rendered",
-   "bytes": 402527
+   "bytes": 313496
   }
  ],
- "total_bytes": 402527
+ "total_bytes": 313496
 }

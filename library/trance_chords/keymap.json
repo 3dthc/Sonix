@@ -4,7 +4,7 @@
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": false,
  "zones": [
   {
@@ -14,9 +14,9 @@
    "hikey": 37,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 92201
+   "bytes": 80911
   },
   {
    "file": "trance_chords_039_Ds2_v1.flac",
@@ -25,9 +25,9 @@
    "hikey": 40,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 94320
+   "bytes": 83017
   },
   {
    "file": "trance_chords_042_Fs2_v1.flac",
@@ -36,9 +36,9 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 96960
+   "bytes": 85090
   },
   {
    "file": "trance_chords_045_A2_v1.flac",
@@ -47,9 +47,9 @@
    "hikey": 46,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 99349
+   "bytes": 87420
   },
   {
    "file": "trance_chords_048_C3_v1.flac",
@@ -58,9 +58,9 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 101685
+   "bytes": 89587
   },
   {
    "file": "trance_chords_051_Ds3_v1.flac",
@@ -69,9 +69,9 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 104514
+   "bytes": 91889
   },
   {
    "file": "trance_chords_054_Fs3_v1.flac",
@@ -80,9 +80,9 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 106966
+   "bytes": 93989
   },
   {
    "file": "trance_chords_057_A3_v1.flac",
@@ -91,9 +91,9 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 109896
+   "bytes": 96274
   },
   {
    "file": "trance_chords_060_C4_v1.flac",
@@ -102,9 +102,9 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 112830
+   "bytes": 98688
   },
   {
    "file": "trance_chords_063_Ds4_v1.flac",
@@ -113,9 +113,9 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 115567
+   "bytes": 101316
   },
   {
    "file": "trance_chords_066_Fs4_v1.flac",
@@ -124,9 +124,9 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 118308
+   "bytes": 103733
   },
   {
    "file": "trance_chords_069_A4_v1.flac",
@@ -135,9 +135,9 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 121695
+   "bytes": 106383
   },
   {
    "file": "trance_chords_072_C5_v1.flac",
@@ -146,9 +146,9 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 124635
+   "bytes": 109013
   },
   {
    "file": "trance_chords_075_Ds5_v1.flac",
@@ -157,9 +157,9 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 128317
+   "bytes": 111899
   },
   {
    "file": "trance_chords_078_Fs5_v1.flac",
@@ -168,10 +168,10 @@
    "hikey": 90,
    "lovel": 1,
    "hivel": 127,
-   "frames": 70560,
+   "frames": 51200,
    "orig": "rendered",
-   "bytes": 131844
+   "bytes": 114668
   }
  ],
- "total_bytes": 1659087
+ "total_bytes": 1453877
 }

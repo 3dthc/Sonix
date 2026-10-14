@@ -14,9 +14,9 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 127,
-   "frames": 161873,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_G1_k12_50_100_rr2.wav",
-   "bytes": 95309,
+   "bytes": 42414,
    "tune": -63
   },
   {
@@ -26,9 +26,9 @@
    "hikey": 45,
    "lovel": 1,
    "hivel": 127,
-   "frames": 176400,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_G#1_k11_50_100_rr2.wav",
-   "bytes": 178109,
+   "bytes": 76831,
    "tune": -7
   },
   {
@@ -38,9 +38,9 @@
    "hikey": 48,
    "lovel": 1,
    "hivel": 127,
-   "frames": 176400,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_B1_k13_50_100_rr2.wav",
-   "bytes": 101157,
+   "bytes": 42871,
    "tune": 59
   },
   {
@@ -50,9 +50,9 @@
    "hikey": 50,
    "lovel": 1,
    "hivel": 127,
-   "frames": 176400,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_C#2_k10_50_100_rr2.wav",
-   "bytes": 108517,
+   "bytes": 43150,
    "tune": 2
   },
   {
@@ -62,9 +62,9 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 127,
-   "frames": 130810,
+   "frames": 119748,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_D#2_k14_50_100_rr2.wav",
-   "bytes": 81397,
+   "bytes": 38094,
    "tune": -33
   },
   {
@@ -74,9 +74,9 @@
    "hikey": 54,
    "lovel": 1,
    "hivel": 127,
-   "frames": 130893,
+   "frames": 114680,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_F2_k9alt_50_100_rr2.wav",
-   "bytes": 118424,
+   "bytes": 54432,
    "tune": -42
   },
   {
@@ -86,9 +86,9 @@
    "hikey": 56,
    "lovel": 1,
    "hivel": 127,
-   "frames": 176400,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_G2_k15_50_100_rr2.wav",
-   "bytes": 187874,
+   "bytes": 81131,
    "tune": -32
   },
   {
@@ -98,9 +98,9 @@
    "hikey": 59,
    "lovel": 1,
    "hivel": 127,
-   "frames": 176400,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_A#2_k8_50_100_rr2.wav",
-   "bytes": 171784,
+   "bytes": 73773,
    "tune": -54
   },
   {
@@ -110,9 +110,9 @@
    "hikey": 62,
    "lovel": 1,
    "hivel": 127,
-   "frames": 103356,
+   "frames": 89577,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_C#3_k16_50_100_rr2.wav",
-   "bytes": 102756,
+   "bytes": 47589,
    "tune": 45
   },
   {
@@ -122,9 +122,9 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 127,
-   "frames": 152783,
+   "frames": 132300,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_D#3_k7_50_100_rr2.wav",
-   "bytes": 140935,
+   "bytes": 64978,
    "tune": -48
   },
   {
@@ -134,9 +134,9 @@
    "hikey": 66,
    "lovel": 1,
    "hivel": 127,
-   "frames": 117994,
+   "frames": 104129,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_F3_k17_50_100_rr2.wav",
-   "bytes": 114614,
+   "bytes": 53342,
    "tune": -38
   },
   {
@@ -146,9 +146,9 @@
    "hikey": 68,
    "lovel": 1,
    "hivel": 127,
-   "frames": 117727,
+   "frames": 108437,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_G3_k6_50_100_rr2.wav",
-   "bytes": 126191,
+   "bytes": 58754,
    "tune": -16
   },
   {
@@ -158,9 +158,9 @@
    "hikey": 71,
    "lovel": 1,
    "hivel": 127,
-   "frames": 75006,
+   "frames": 61382,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_A#3_k18_50_100_rr2.wav",
-   "bytes": 60412,
+   "bytes": 26816,
    "tune": -52
   },
   {
@@ -170,9 +170,9 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 127,
-   "frames": 86601,
+   "frames": 72939,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_C#4_k5_50_100_rr2.wav",
-   "bytes": 123262,
+   "bytes": 56237,
    "tune": -9
   },
   {
@@ -182,9 +182,9 @@
    "hikey": 74,
    "lovel": 1,
    "hivel": 127,
-   "frames": 68646,
+   "frames": 55959,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_D4_k19_50_100_rr2.wav",
-   "bytes": 53424,
+   "bytes": 23565,
    "tune": 48
   },
   {
@@ -194,9 +194,9 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 127,
-   "frames": 56557,
+   "frames": 46974,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_D#4_k20_50_100_rr2.wav",
-   "bytes": 51115,
+   "bytes": 22936,
    "tune": -11
   },
   {
@@ -206,9 +206,9 @@
    "hikey": 78,
    "lovel": 1,
    "hivel": 127,
-   "frames": 52204,
+   "frames": 41913,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_F4_k21_50_100_rr2.wav",
-   "bytes": 50702,
+   "bytes": 22302,
    "tune": -49
   },
   {
@@ -218,9 +218,9 @@
    "hikey": 80,
    "lovel": 1,
    "hivel": 127,
-   "frames": 61586,
+   "frames": 50708,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_G4_k22_50_100_rr2.wav",
-   "bytes": 62792,
+   "bytes": 28206,
    "tune": -33
   },
   {
@@ -230,9 +230,9 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 127,
-   "frames": 44946,
+   "frames": 37803,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_A#4_k2_50_100_rr2.wav",
-   "bytes": 42159,
+   "bytes": 18721,
    "tune": -47
   },
   {
@@ -242,9 +242,9 @@
    "hikey": 84,
    "lovel": 1,
    "hivel": 127,
-   "frames": 38168,
+   "frames": 34018,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_B4_k23_50_100_rr2.wav",
-   "bytes": 46299,
+   "bytes": 21749,
    "tune": 43
   },
   {
@@ -254,9 +254,9 @@
    "hikey": 86,
    "lovel": 1,
    "hivel": 127,
-   "frames": 63477,
+   "frames": 50945,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_C#5_k24_50_100_rr2.wav",
-   "bytes": 51291,
+   "bytes": 22822,
    "tune": -58
   },
   {
@@ -266,9 +266,9 @@
    "hikey": 89,
    "lovel": 1,
    "hivel": 127,
-   "frames": 68061,
+   "frames": 53493,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_E5_k25_50_100_rr2.wav",
-   "bytes": 63349,
+   "bytes": 26509,
    "tune": 28
   },
   {
@@ -278,9 +278,9 @@
    "hikey": 91,
    "lovel": 1,
    "hivel": 127,
-   "frames": 66380,
+   "frames": 58684,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_F#5_k1_50_100_rr2.wav",
-   "bytes": 52677,
+   "bytes": 24007,
    "tune": 23
   },
   {
@@ -290,9 +290,9 @@
    "hikey": 94,
    "lovel": 1,
    "hivel": 127,
-   "frames": 49324,
+   "frames": 41812,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_G#5_k26_50_100_rr2.wav",
-   "bytes": 42879,
+   "bytes": 19184,
    "tune": -7
   },
   {
@@ -302,11 +302,11 @@
    "hikey": 109,
    "lovel": 1,
    "hivel": 127,
-   "frames": 67333,
+   "frames": 58527,
    "orig": "raw/VCSL/Idiophones/Plucked Idiophones/Kalimba, Tanzania/MBira3_pluck_Main_C#6_k27_50_100_rr2.wav",
-   "bytes": 52119,
+   "bytes": 23756,
    "tune": -36
   }
  ],
- "total_bytes": 2279547
+ "total_bytes": 1014169
 }

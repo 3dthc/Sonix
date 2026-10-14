@@ -63,8 +63,8 @@ def trim_start(x, thresh_db=-50.0, pre_ms=2.0):
     return x[idx:]
 
 
-def fit_length(x, max_s, fade_s=0.3, floor_db=-72.0):
-    """Cut the tail where it falls below `floor_db` (re peak) or at max_s, then fade out."""
+def fit_length(x, max_s, fade_s=0.3, floor_db=-60.0):
+    """Cut the tail where it falls below `floor_db` (re peak) or at max_s, then fade out. (44.1 kHz input)"""
     env = np.max(np.abs(x), axis=1)
     peak = env.max()
     above = np.nonzero(env > peak * 10 ** (floor_db / 20))[0]
@@ -76,7 +76,7 @@ def fit_length(x, max_s, fade_s=0.3, floor_db=-72.0):
     return x
 
 
-def find_loop(x, region=(0.35, 0.9), xfade_s=0.25, win=4096):
+def find_loop(x, region=(0.35, 0.9), xfade_s=0.25, win=4096, sr=SR):
     """Pick loop points in the steady part and bake an equal-power crossfade.
 
     Returns (y, loop_start, loop_end): y ends at loop_end; playback jumps from
@@ -86,7 +86,7 @@ def find_loop(x, region=(0.35, 0.9), xfade_s=0.25, win=4096):
     n = len(mono)
     end = int(n * region[1])
     lo = int(n * region[0])
-    L = int(xfade_s * SR)
+    L = int(xfade_s * sr)
     ref = mono[end - win:end]
     # search start candidates in the first half of the region
     s_lo, s_hi = max(lo, L + win), max(lo + 1, int(n * (region[0] + (region[1] - region[0]) * 0.45)))
@@ -209,22 +209,40 @@ def key_ranges(roots, stretch=12):
     return out
 
 
+def to_rate(x, rate):
+    if rate == SR:
+        return x
+    fr = Fraction(rate, SR).limit_denominator(1000)
+    return resample_poly(x, fr.numerator, fr.denominator, axis=0).astype(np.float32)
+
+
 def build_instrument(name, category, source, zones, out_root, loop=False,
-                     max_len=8.0, peak_db=-1.0, loop_region=(0.35, 0.9), trim=True):
-    """zones: list of dicts {audio (array) or path, root, vel (layer index), lovel, hivel}."""
+                     max_len=8.0, peak_db=-1.0, loop_region=(0.35, 0.9), trim=True,
+                     rate=SR, mono=False, floor_db=-60.0, fade_s=0.3):
+    """zones: list of dicts {audio (array) or path, root, vel (layer index), lovel, hivel}.
+
+    rate: the stored sample rate (32000 or 22050 for sounds with little or nothing above 16 / 11 kHz: synth pads,
+    basses); mono: store one channel (the engine's chorus and spread widen it); floor_db: where a one-shot's tail
+    is cut (re its peak), then faded over fade_s."""
     assert source in SOURCES, source
     out_dir = os.path.join(out_root, name)
+    if os.path.isdir(out_dir):                       # a rebuild replaces the whole instrument
+        for f in os.listdir(out_dir):
+            os.remove(os.path.join(out_dir, f))
     os.makedirs(out_dir, exist_ok=True)
     processed = []
     for z in zones:
         x = z["audio"] if "audio" in z else load(z["path"])
         if trim:
             x = trim_start(x)
-        x = fit_length(x, z.get("max_len", max_len), fade_s=0.02 if loop else 0.3)
+        x = fit_length(x, z.get("max_len", max_len), fade_s=0.02 if loop else fade_s, floor_db=floor_db)
+        if mono:
+            x = np.repeat(x.mean(axis=1, keepdims=True), 2, axis=1)
+        x = to_rate(x, rate)
         ls = le = None
         q = None
         if loop:
-            x, ls, le, q = find_loop(x, region=loop_region)
+            x, ls, le, q = find_loop(x, region=loop_region, sr=rate)
         processed.append((z, x, ls, le, q))
 
     gain = 10 ** (peak_db / 20) / max(np.max(np.abs(x)) for _, x, *_ in processed)
@@ -238,7 +256,8 @@ def build_instrument(name, category, source, zones, out_root, loop=False,
     for z, x, ls, le, q in processed:
         fn = f"{name}_{z['root']:03d}_{midi_name(z['root']).replace('#', 's')}_v{z['vel']}.flac"
         path = os.path.join(out_dir, fn)
-        sf.write(path, np.clip(x * gain, -1, 1), SR, subtype="PCM_16", format="FLAC")
+        y = np.clip(x * gain, -1, 1)
+        sf.write(path, y[:, :1] if mono else y, rate, subtype="PCM_16", format="FLAC")
         size = os.path.getsize(path)
         total += size
         lk, hk = ranges[z["vel"]][z["root"]]
@@ -254,7 +273,7 @@ def build_instrument(name, category, source, zones, out_root, loop=False,
 
     keymap = {"name": name, "category": category, "source": source,
               "license": SOURCES[source]["license"], "credit": SOURCES[source]["credit"],
-              "samplerate": SR, "loop": loop, "zones": sorted(entries, key=lambda e: (e["lovel"], e["root"])),
+              "samplerate": rate, "loop": loop, "zones": sorted(entries, key=lambda e: (e["lovel"], e["root"])),
               "total_bytes": total}
     json.dump(keymap, open(os.path.join(out_dir, "keymap.json"), "w"), indent=1)
     return keymap

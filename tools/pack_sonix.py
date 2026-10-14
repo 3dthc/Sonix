@@ -8,7 +8,7 @@ INSTRUMENT option list in vst/params.json. The engine decodes an instrument into
 
 Sample file "SNXB" v1 (read by src/engine.c, "sample file"):
   header (32 bytes): "SNXB", u32 version 1, u32 samples, u32 zones, u32 data offset, u32 flags (1 = mono),
-                     f32 level trim, u32 reserved
+                     f32 level trim, u32 sample rate (44100, 32000 or 22050; 0 in older files = 44100)
   per sample (16 bytes): u32 byte offset into data, u32 frames, u32 loop start, u32 loop end (0 = one-shot)
   per zone (12 bytes): u8 lokey, hikey, root, lovel, hivel, pad; i16 tune (cents); u32 sample index
   data, per sample: u32 len0, u32 len1, then the left and right bitstreams.
@@ -29,24 +29,36 @@ REPO = os.path.dirname(HERE)
 LIB = os.path.join(REPO, "library")
 ENGINE = os.path.join(REPO, "engine")
 
-# The INSTRUMENT list, in the panel's category order. Display names are what the LCD shows (keep them short).
+# The INSTRUMENT list, in category order: (file, display name, short name for the LCD's layer cells, <= 12 chars).
 ORDER = [
-    ("grand_piano", "Grand Piano"), ("upright_piano", "Upright Piano"),
-    ("fm_epiano", "FM E-Piano"), ("clavisynth", "Clavisynth"), ("harpsichord", "Harpsichord"),
-    ("drawbar_organ", "Drawbar Organ"), ("pipe_organ", "Pipe Organ"),
-    ("warm_pad", "Warm Pad"),
-    ("string_ensemble", "String Ensemble"),
-    ("orch_brass", "Orchestral Brass"), ("synth_brass", "Synth Brass"),
-    ("aah_choir", "Aah Choir"), ("ooh_choir", "Ooh Choir"),
-    ("supersaw_lead", "Supersaw Lead"),
-    ("nylon_guitar", "Nylon Guitar"), ("steel_guitar", "Steel Guitar"), ("concert_harp", "Concert Harp"),
-    ("kalimba", "Kalimba"), ("synth_pluck", "Synth Pluck"),
-    ("sub_bass", "Sub Bass"),
-    ("vibraphone", "Vibraphone"), ("marimba", "Marimba"), ("glockenspiel", "Glockenspiel"),
-    ("tubular_bells", "Tubular Bells"), ("fm_bells", "FM Bells"),
-    ("trance_chords", "Trance Chords"),
-    ("riser", "Riser"), ("downlifter", "Downlifter"),
+    ("grand_piano", "Grand Piano", "GRAND PIANO"), ("upright_piano", "Upright Piano", "UPRIGHT"),
+    ("fm_epiano", "FM E-Piano", "FM E-PIANO"), ("clavisynth", "Clavisynth", "CLAVISYNTH"),
+    ("harpsichord", "Harpsichord", "HARPSICHORD"), ("drawbar_organ", "Drawbar Organ", "DRAWBAR"),
+    ("pipe_organ", "Pipe Organ", "PIPE ORGAN"),
+    ("nylon_guitar", "Nylon Guitar", "NYLON GTR"), ("steel_guitar", "Steel Guitar", "STEEL GTR"),
+    ("clean_electric", "Clean Electric", "CLEAN ELEC"), ("muted_electric", "Muted Electric", "MUTED ELEC"),
+    ("string_ensemble", "String Ensemble", "STRING ENS"), ("solo_violin", "Solo Violin", "SOLO VIOLIN"),
+    ("pizz_strings", "Pizzicato", "PIZZICATO"), ("trem_strings", "Tremolo Strings", "TREMOLO"),
+    ("spic_strings", "Spiccato", "SPICCATO"), ("synth_strings", "Synth Strings", "SYNTH STR"),
+    ("orch_brass", "Orchestral Brass", "ORCH BRASS"), ("synth_brass", "Synth Brass", "SYNTH BRASS"),
+    ("tenor_sax", "Tenor Sax", "TENOR SAX"),
+    ("aah_choir", "Aah Choir", "AAH CHOIR"), ("ooh_choir", "Ooh Choir", "OOH CHOIR"),
+    ("warm_pad", "Warm Pad", "WARM PAD"), ("analog_pad", "Analog Pad", "ANALOG PAD"),
+    ("glass_pad", "Glass Pad", "GLASS PAD"), ("air_pad", "Air Pad", "AIR PAD"),
+    ("trance_chords", "Trance Chords", "TRANCE CHRD"), ("dub_chord", "Dub Chord", "DUB CHORD"),
+    ("riser", "Riser", "RISER"), ("downlifter", "Downlifter", "DOWNLIFTER"),
+    ("supersaw_lead", "Supersaw Lead", "SUPERSAW"), ("square_lead", "Square Lead", "SQUARE LEAD"),
+    ("flute", "Flute", "FLUTE"),
+    ("concert_harp", "Concert Harp", "HARP"), ("kalimba", "Kalimba", "KALIMBA"),
+    ("synth_pluck", "Synth Pluck", "SYNTH PLUCK"),
+    ("sub_bass", "Sub Bass", "SUB BASS"), ("upright_bass", "Upright Bass", "UPRIGHT BASS"),
+    ("analog_bass", "Analog Bass", "ANALOG BASS"), ("fm_bass", "FM Bass", "FM BASS"),
+    ("vibraphone", "Vibraphone", "VIBRAPHONE"), ("marimba", "Marimba", "MARIMBA"),
+    ("glockenspiel", "Glockenspiel", "GLOCKENSPIEL"), ("tubular_bells", "Tubular Bells", "TUBULAR"),
+    ("fm_bells", "FM Bells", "FM BELLS"),
 ]
+
+LIBRARY_VERSION = "0.3.0"   # written to engine/LIBRARY_VERSION; install.sh rebuilds the instruments when it differs
 
 REF_DB = -20.0      # every instrument is trimmed so its typical note attack sits near this loudness,
 PEAK_MAX = 0.4      # unless that would push a single hard-played note's peak above this (a 4-note chord then stays
@@ -117,10 +129,10 @@ def encode_channel(x):
 
 
 # ------------------------------------------------------------------ packing
-def attack_db(audio):
+def attack_db(audio, rate=44100):
     """Loudness of the loudest half second (the attack for most sounds; the peak of a riser)."""
     x = audio.astype(np.float64) / 32768
-    w = int(0.5 * 44100)
+    w = int(0.5 * rate)
     best = -120.0
     for s in range(0, max(1, len(x) - w + 1), w // 2):
         best = max(best, 10 * np.log10(np.mean(x[s:s + w] ** 2) + 1e-12))
@@ -129,12 +141,13 @@ def attack_db(audio):
 
 def pack(name):
     k = json.load(open(os.path.join(LIB, name, "keymap.json")))
-    assert k["samplerate"] == 44100, name
+    rate = k["samplerate"]
+    assert rate in (44100, 32000, 22050), name
     samples, zones, levels, peaks = [], [], [], []
     mono = True
     for z in k["zones"]:
         a, sr = sf.read(os.path.join(LIB, name, z["file"]), dtype="int16", always_2d=True)
-        assert sr == 44100
+        assert sr == rate
         if a.shape[1] == 1:
             a = np.repeat(a, 2, axis=1)
         if not np.array_equal(a[:, 0], a[:, 1]):
@@ -146,7 +159,7 @@ def pack(name):
         samples.append((a, ls, le))
         zones.append((z["lokey"], z["hikey"], z["root"], z["lovel"], z["hivel"], int(z.get("tune", 0)), idx))
         if z["hivel"] >= 100 or z["lovel"] == 1 and z["hivel"] == 127:
-            levels.append(attack_db(a))
+            levels.append(attack_db(a, rate))
             peaks.append(np.abs(a.astype(np.int32)).max() / 32768)
     # loudness trim: typical attack of the top velocity layer to REF_DB
     gain = float(np.clip(10 ** ((REF_DB - np.median(levels)) / 20), 0.25, 8.0)) if levels else 1.0
@@ -164,7 +177,7 @@ def pack(name):
         raw.append(a)
     ns, nz = len(samples), len(zones)
     doff = 32 + ns * 16 + nz * 12
-    out = bytearray(b"SNXB" + struct.pack("<IIIIIfI", 1, ns, nz, doff, 1 if mono else 0, gain, 0))
+    out = bytearray(b"SNXB" + struct.pack("<IIIIIfI", 1, ns, nz, doff, 1 if mono else 0, gain, rate))
     for e in ents:
         out += struct.pack("<IIII", *e)
     for lo, hi, root, lv, hv, tune, idx in zones:
@@ -182,17 +195,19 @@ def pack(name):
     return len(out), gain, mono
 
 
-CATEGORIES = ["PIANO", "KEYS", "PAD", "STRINGS", "BRASS", "CHOIR", "LEAD", "PLUCK", "BASS", "BELLS", "SYNTH", "FX"]
+CATEGORIES = ["PIANO", "KEYS", "GUITAR", "STRINGS", "BRASS", "CHOIR", "PAD", "SYNTH", "LEAD", "PLUCK", "BASS", "BELLS"]
 
 
 def write_tables():
-    names = [n for n, _ in ORDER]
+    names = [n for n, _, _ in ORDER]
+    assert all(len(sh) <= 12 for _, _, sh in ORDER)
     cats = [CATEGORIES.index(json.load(open(os.path.join(LIB, n, "keymap.json")))["category"]) for n in names]
     with open(os.path.join(REPO, "src", "instruments.h"), "w") as f:
         f.write("/* Generated by tools/pack_sonix.py: the INSTRUMENT list (engine/<file>.snx), in panel order. */\n")
         f.write(f"#define NINST {len(names)}\n")
         f.write("static const char *INST_FILE[NINST] = {\n" + "".join(f'    "{n}",\n' for n in names) + "};\n")
-        f.write("static const char *INST_NAME[NINST] = {\n" + "".join(f'    "{d}",\n' for _, d in ORDER) + "};\n")
+        f.write("static const char *INST_NAME[NINST] = {\n" + "".join(f'    "{d}",\n' for _, d, _ in ORDER) + "};\n")
+        f.write("static const char *INST_SHORT[NINST] = {\n" + "".join(f'    "{sh}",\n' for _, _, sh in ORDER) + "};\n")
         f.write(f"#define NCAT {len(CATEGORIES)}\n")
         f.write("static const char *CAT_NAME[NCAT] = { " + ", ".join(f'"{c}"' for c in CATEGORIES) + " };\n")
         f.write("static const unsigned char INST_CAT[NINST] = { " + ", ".join(str(c) for c in cats) + " };\n")
@@ -200,8 +215,8 @@ def write_tables():
     if os.path.exists(pp):
         p = json.load(open(pp))
         for q in p["params"]:
-            if q["key"] in ("browse", "inst_a", "inst_b", "inst_c", "inst_d"):
-                q["options"] = [d for _, d in ORDER]
+            if q["key"] in ("inst_a", "inst_b", "inst_c", "inst_d"):
+                q["options"] = [d for _, d, _ in ORDER]
                 if q["default"] not in q["options"]:
                     q["default"] = ORDER[0][1]
         json.dump(p, open(pp, "w"), indent=2)
@@ -210,13 +225,16 @@ def write_tables():
 
 def main():
     os.makedirs(ENGINE, exist_ok=True)
-    want = sys.argv[1:] or [n for n, _ in ORDER]
+    want = sys.argv[1:] or [n for n, _, _ in ORDER]
     total = 0
     for n in want:
         size, gain, mono = pack(n)
         total += size
         print(f"{n:16s} {size / 1e6:6.1f} MB  trim {gain:5.2f}{'  mono' if mono else ''}", flush=True)
     write_tables()
+    if not sys.argv[1:]:
+        with open(os.path.join(ENGINE, "LIBRARY_VERSION"), "w") as f:
+            f.write(LIBRARY_VERSION + "\n")
     print(f"packed {len(want)} instruments, {total / 1e6:.1f} MB")
 
 

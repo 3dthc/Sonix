@@ -12,8 +12,8 @@
 # Safe to run again: each step skips what is already done.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-VERSION="0.2.0"
-ENGINE_VERSION="0.1.0"       # an optional prebuilt instruments zip
+VERSION="0.3.0"
+ENGINE_VERSION="0.3.0"       # an optional prebuilt instruments zip
 MPC_VST="${MPC_VST:-$HERE/../mpc-vst-plugins}"
 step() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail() { printf '\n\033[31mERROR:\033[0m %s\n' "$*" >&2; exit 1; }
@@ -41,6 +41,10 @@ export MPC_VST
 step "2/4  Instruments"
 missing() { local m=""; for f in $INSTRUMENTS; do [ -f "$HERE/engine/$f.snx" ] || m="$m $f"; done; echo "$m"; }
 mkdir -p "$HERE/engine"
+if [ "$(cat "$HERE/engine/LIBRARY_VERSION" 2>/dev/null)" != "$ENGINE_VERSION" ]; then
+  echo "the instruments in engine/ are from an older version: rebuilding them"
+  rm -f "$HERE"/engine/*.snx "$HERE/engine/LIBRARY_VERSION"
+fi
 if [ -n "$(missing)" ]; then
   zip=""
   for d in "${DL_DIRS[@]}"; do

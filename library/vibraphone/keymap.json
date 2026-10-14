@@ -14,9 +14,9 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 64,
-   "frames": 158333,
+   "frames": 100611,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_F2_v2_rr1_Main.wav",
-   "bytes": 71894
+   "bytes": 28611
   },
   {
    "file": "vibraphone_057_A3_v1.flac",
@@ -25,9 +25,9 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_A2_v2_rr1_Main.wav",
-   "bytes": 171143
+   "bytes": 73849
   },
   {
    "file": "vibraphone_060_C4_v1.flac",
@@ -36,9 +36,9 @@
    "hikey": 62,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_C3_v2_rr1_Main.wav",
-   "bytes": 177612
+   "bytes": 74944
   },
   {
    "file": "vibraphone_064_E4_v1.flac",
@@ -47,9 +47,9 @@
    "hikey": 65,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_E3_v2_rr1_Main.wav",
-   "bytes": 213649
+   "bytes": 82911
   },
   {
    "file": "vibraphone_067_G4_v1.flac",
@@ -58,9 +58,9 @@
    "hikey": 69,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_G3_v2_rr1_Main.wav",
-   "bytes": 214748
+   "bytes": 81560
   },
   {
    "file": "vibraphone_071_B4_v1.flac",
@@ -69,9 +69,9 @@
    "hikey": 72,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_B3_v2_rr1_Main.wav",
-   "bytes": 215728
+   "bytes": 81062
   },
   {
    "file": "vibraphone_074_D5_v1.flac",
@@ -80,9 +80,9 @@
    "hikey": 75,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_D4_v2_rr1_Main.wav",
-   "bytes": 216818
+   "bytes": 81078
   },
   {
    "file": "vibraphone_077_F5_v1.flac",
@@ -91,9 +91,9 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_F4_v2_rr1_Main.wav",
-   "bytes": 189556
+   "bytes": 78080
   },
   {
    "file": "vibraphone_081_A5_v1.flac",
@@ -102,9 +102,9 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 64,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_A4_v2_rr1_Main.wav",
-   "bytes": 202012
+   "bytes": 80325
   },
   {
    "file": "vibraphone_084_C6_v1.flac",
@@ -113,9 +113,9 @@
    "hikey": 86,
    "lovel": 1,
    "hivel": 64,
-   "frames": 220434,
+   "frames": 183078,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_C5_v2_rr1_Main.wav",
-   "bytes": 128132
+   "bytes": 63553
   },
   {
    "file": "vibraphone_088_E6_v1.flac",
@@ -124,9 +124,9 @@
    "hikey": 100,
    "lovel": 1,
    "hivel": 64,
-   "frames": 296242,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_E5_v2_rr1_Main.wav",
-   "bytes": 172185
+   "bytes": 75902
   },
   {
    "file": "vibraphone_053_F3_v2.flac",
@@ -135,9 +135,9 @@
    "hikey": 55,
    "lovel": 65,
    "hivel": 127,
-   "frames": 157995,
+   "frames": 136910,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_F2_v3_rr1_Main.wav",
-   "bytes": 92974
+   "bytes": 45703
   },
   {
    "file": "vibraphone_057_A3_v2.flac",
@@ -146,9 +146,9 @@
    "hikey": 58,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_A2_v3_rr1_Main.wav",
-   "bytes": 197041
+   "bytes": 79105
   },
   {
    "file": "vibraphone_060_C4_v2.flac",
@@ -157,9 +157,9 @@
    "hikey": 62,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_C3_v3_rr1_Main.wav",
-   "bytes": 205403
+   "bytes": 81639
   },
   {
    "file": "vibraphone_064_E4_v2.flac",
@@ -168,9 +168,9 @@
    "hikey": 65,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_E3_v3_rr1_Main.wav",
-   "bytes": 226301
+   "bytes": 87504
   },
   {
    "file": "vibraphone_067_G4_v2.flac",
@@ -179,9 +179,9 @@
    "hikey": 69,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_G3_v3_rr1_Main.wav",
-   "bytes": 227173
+   "bytes": 86052
   },
   {
    "file": "vibraphone_071_B4_v2.flac",
@@ -190,9 +190,9 @@
    "hikey": 72,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_B3_v3_rr1_Main.wav",
-   "bytes": 232431
+   "bytes": 88292
   },
   {
    "file": "vibraphone_074_D5_v2.flac",
@@ -201,9 +201,9 @@
    "hikey": 75,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_D4_v3_rr1_Main.wav",
-   "bytes": 231371
+   "bytes": 88544
   },
   {
    "file": "vibraphone_077_F5_v2.flac",
@@ -212,9 +212,9 @@
    "hikey": 79,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_F4_v3_rr1_Main.wav",
-   "bytes": 232420
+   "bytes": 91382
   },
   {
    "file": "vibraphone_081_A5_v2.flac",
@@ -223,9 +223,9 @@
    "hikey": 82,
    "lovel": 65,
    "hivel": 127,
-   "frames": 308700,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_A4_v3_rr1_Main.wav",
-   "bytes": 213481
+   "bytes": 82450
   },
   {
    "file": "vibraphone_084_C6_v2.flac",
@@ -234,9 +234,9 @@
    "hikey": 86,
    "lovel": 65,
    "hivel": 127,
-   "frames": 220775,
+   "frames": 190711,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_C5_v3_rr1_Main.wav",
-   "bytes": 153563
+   "bytes": 75121
   },
   {
    "file": "vibraphone_088_E6_v2.flac",
@@ -245,10 +245,10 @@
    "hikey": 100,
    "lovel": 65,
    "hivel": 127,
-   "frames": 263837,
+   "frames": 220500,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_E5_v3_rr1_Main.wav",
-   "bytes": 187922
+   "bytes": 87179
   }
  ],
- "total_bytes": 4173557
+ "total_bytes": 1694846
 }

@@ -1,0 +1,166 @@
+{
+ "name": "dub_chord",
+ "category": "SYNTH",
+ "source": "sonix",
+ "license": "Sonix project (original synthesis)",
+ "credit": "Rendered by the Sonix render generator",
+ "samplerate": 32000,
+ "loop": false,
+ "zones": [
+  {
+   "file": "dub_chord_036_C2_v1.flac",
+   "root": 36,
+   "lokey": 24,
+   "hikey": 37,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 45267
+  },
+  {
+   "file": "dub_chord_039_Ds2_v1.flac",
+   "root": 39,
+   "lokey": 38,
+   "hikey": 40,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 46628
+  },
+  {
+   "file": "dub_chord_042_Fs2_v1.flac",
+   "root": 42,
+   "lokey": 41,
+   "hikey": 43,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 48031
+  },
+  {
+   "file": "dub_chord_045_A2_v1.flac",
+   "root": 45,
+   "lokey": 44,
+   "hikey": 46,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 49658
+  },
+  {
+   "file": "dub_chord_048_C3_v1.flac",
+   "root": 48,
+   "lokey": 47,
+   "hikey": 49,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 51581
+  },
+  {
+   "file": "dub_chord_051_Ds3_v1.flac",
+   "root": 51,
+   "lokey": 50,
+   "hikey": 52,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 53244
+  },
+  {
+   "file": "dub_chord_054_Fs3_v1.flac",
+   "root": 54,
+   "lokey": 53,
+   "hikey": 55,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 55437
+  },
+  {
+   "file": "dub_chord_057_A3_v1.flac",
+   "root": 57,
+   "lokey": 56,
+   "hikey": 58,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 57552
+  },
+  {
+   "file": "dub_chord_060_C4_v1.flac",
+   "root": 60,
+   "lokey": 59,
+   "hikey": 61,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 59799
+  },
+  {
+   "file": "dub_chord_063_Ds4_v1.flac",
+   "root": 63,
+   "lokey": 62,
+   "hikey": 64,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 62199
+  },
+  {
+   "file": "dub_chord_066_Fs4_v1.flac",
+   "root": 66,
+   "lokey": 65,
+   "hikey": 67,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 64481
+  },
+  {
+   "file": "dub_chord_069_A4_v1.flac",
+   "root": 69,
+   "lokey": 68,
+   "hikey": 70,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 66948
+  },
+  {
+   "file": "dub_chord_072_C5_v1.flac",
+   "root": 72,
+   "lokey": 71,
+   "hikey": 73,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 70105
+  },
+  {
+   "file": "dub_chord_075_Ds5_v1.flac",
+   "root": 75,
+   "lokey": 74,
+   "hikey": 87,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 48000,
+   "orig": "rendered",
+   "bytes": 73258
+  }
+ ],
+ "total_bytes": 804188
+}

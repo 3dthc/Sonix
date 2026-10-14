@@ -2,14 +2,15 @@
   "name": "Sonix",
   "vendor": "3dthc",
   "uid": "SnX1",
-  "version": 200,
+  "version": 300,
   "so": "sonix.so",
   "params": "params.json",
   "defines": {
     "MODULE_SUBDIR": "\"engine\"",
     "HAS_DISPLAY_REV": 1,
+    "DISPLAY_REV_NO_UPDATE": 1,
     "HAS_LFO_BPM": 1,
-    "PARAM_TEXT_MAX": 40
+    "PARAM_TEXT_MAX": 48
   },
   "build": {
     "root": "..",
@@ -26,5 +27,8 @@
     ]
   },
   "layout": "layout.conf",
-  "art": "html"
+  "art": "html",
+  "programs": {
+    "param": "preset"
+  }
 }

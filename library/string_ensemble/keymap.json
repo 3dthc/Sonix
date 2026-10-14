@@ -4,7 +4,7 @@
  "source": "vsco2ce",
  "license": "CC0-1.0",
  "credit": "VSCO 2 Community Edition by Versilian Studios (CC0)",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": true,
  "zones": [
   {
@@ -14,12 +14,12 @@
    "hikey": 38,
    "lovel": 1,
    "hivel": 80,
-   "frames": 319124,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_C1_v1_1.wav",
-   "bytes": 372090,
-   "loop_start": 136804,
-   "loop_end": 319124,
-   "loop_score": 0.895
+   "bytes": 105254,
+   "loop_start": 42419,
+   "loop_end": 81600,
+   "loop_score": 0.795
   },
   {
    "file": "string_ensemble_040_E2_v1.flac",
@@ -28,12 +28,12 @@
    "hikey": 41,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_E1_v1_1.wav",
-   "bytes": 337990,
-   "loop_start": 183631,
-   "loop_end": 337365,
-   "loop_score": 0.773
+   "bytes": 95047,
+   "loop_start": 46964,
+   "loop_end": 81600,
+   "loop_score": 0.381
   },
   {
    "file": "string_ensemble_043_G2_v1.flac",
@@ -42,12 +42,12 @@
    "hikey": 45,
    "lovel": 1,
    "hivel": 80,
-   "frames": 302759,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_G1_v1_1.wav",
-   "bytes": 336314,
-   "loop_start": 157401,
-   "loop_end": 302759,
-   "loop_score": 0.831
+   "bytes": 99265,
+   "loop_start": 46595,
+   "loop_end": 81600,
+   "loop_score": 0.602
   },
   {
    "file": "string_ensemble_047_B2_v1.flac",
@@ -56,12 +56,12 @@
    "hikey": 48,
    "lovel": 1,
    "hivel": 80,
-   "frames": 335481,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_B1_v1_1.wav",
-   "bytes": 363577,
-   "loop_start": 215958,
-   "loop_end": 335481,
-   "loop_score": 0.939
+   "bytes": 104581,
+   "loop_start": 48626,
+   "loop_end": 81600,
+   "loop_score": 0.834
   },
   {
    "file": "string_ensemble_050_D3_v1.flac",
@@ -70,12 +70,12 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_D2_v1_1.wav",
-   "bytes": 377613,
-   "loop_start": 182996,
-   "loop_end": 337365,
-   "loop_score": 0.891
+   "bytes": 103817,
+   "loop_start": 42677,
+   "loop_end": 81600,
+   "loop_score": 0.728
   },
   {
    "file": "string_ensemble_055_G3_v1.flac",
@@ -84,12 +84,12 @@
    "hikey": 57,
    "lovel": 1,
    "hivel": 80,
-   "frames": 283458,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Viola Section/susvib/ViolaEns_susvib_G2_v1_1.wav",
-   "bytes": 290652,
-   "loop_start": 166337,
-   "loop_end": 283458,
-   "loop_score": 0.783
+   "bytes": 87746,
+   "loop_start": 45356,
+   "loop_end": 81600,
+   "loop_score": 0.615
   },
   {
    "file": "string_ensemble_059_B3_v1.flac",
@@ -98,12 +98,12 @@
    "hikey": 60,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Viola Section/susvib/ViolaEns_susvib_B2_v1_1.wav",
-   "bytes": 325495,
-   "loop_start": 213415,
-   "loop_end": 337365,
-   "loop_score": 0.884
+   "bytes": 89163,
+   "loop_start": 28921,
+   "loop_end": 81600,
+   "loop_score": 0.647
   },
   {
    "file": "string_ensemble_062_D4_v1.flac",
@@ -112,12 +112,12 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Viola Section/susvib/ViolaEns_susvib_D3_v1_1.wav",
-   "bytes": 340678,
-   "loop_start": 181321,
-   "loop_end": 337365,
-   "loop_score": 0.671
+   "bytes": 90402,
+   "loop_start": 37274,
+   "loop_end": 81600,
+   "loop_score": 0.662
   },
   {
    "file": "string_ensemble_066_Fs4_v1.flac",
@@ -126,12 +126,12 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 80,
-   "frames": 335120,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_F#3_v1.wav",
-   "bytes": 486476,
-   "loop_start": 187597,
-   "loop_end": 335120,
-   "loop_score": 0.707
+   "bytes": 124560,
+   "loop_start": 38928,
+   "loop_end": 81600,
+   "loop_score": 0.493
   },
   {
    "file": "string_ensemble_069_A4_v1.flac",
@@ -140,12 +140,12 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_A3_v1.wav",
-   "bytes": 508645,
-   "loop_start": 170693,
-   "loop_end": 337365,
-   "loop_score": 0.711
+   "bytes": 123886,
+   "loop_start": 36262,
+   "loop_end": 81600,
+   "loop_score": 0.685
   },
   {
    "file": "string_ensemble_072_C5_v1.flac",
@@ -154,12 +154,12 @@
    "hikey": 74,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_C4_v1.wav",
-   "bytes": 548799,
-   "loop_start": 170657,
-   "loop_end": 337365,
-   "loop_score": 0.812
+   "bytes": 141036,
+   "loop_start": 34408,
+   "loop_end": 81600,
+   "loop_score": 0.936
   },
   {
    "file": "string_ensemble_076_E5_v1.flac",
@@ -168,12 +168,12 @@
    "hikey": 77,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_E4_v1.wav",
-   "bytes": 556810,
-   "loop_start": 171859,
-   "loop_end": 337365,
-   "loop_score": 0.608
+   "bytes": 137763,
+   "loop_start": 38513,
+   "loop_end": 81600,
+   "loop_score": 0.482
   },
   {
    "file": "string_ensemble_079_G5_v1.flac",
@@ -182,12 +182,12 @@
    "hikey": 81,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_G4_v1.wav",
-   "bytes": 634019,
-   "loop_start": 121878,
-   "loop_end": 337365,
-   "loop_score": 0.588
+   "bytes": 158581,
+   "loop_start": 47003,
+   "loop_end": 81600,
+   "loop_score": 0.724
   },
   {
    "file": "string_ensemble_083_B5_v1.flac",
@@ -196,12 +196,12 @@
    "hikey": 84,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_B4_v1.wav",
-   "bytes": 546554,
-   "loop_start": 140337,
-   "loop_end": 337365,
-   "loop_score": 0.605
+   "bytes": 132960,
+   "loop_start": 30582,
+   "loop_end": 81600,
+   "loop_score": 0.625
   },
   {
    "file": "string_ensemble_086_D6_v1.flac",
@@ -210,12 +210,12 @@
    "hikey": 98,
    "lovel": 1,
    "hivel": 80,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_D5_v1.wav",
-   "bytes": 665368,
-   "loop_start": 161138,
-   "loop_end": 337365,
-   "loop_score": 0.663
+   "bytes": 164083,
+   "loop_start": 45003,
+   "loop_end": 81600,
+   "loop_score": 0.584
   },
   {
    "file": "string_ensemble_036_C2_v2.flac",
@@ -224,12 +224,12 @@
    "hikey": 38,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_C1_v3_1.wav",
-   "bytes": 638600,
-   "loop_start": 119638,
-   "loop_end": 337365,
-   "loop_score": 0.677
+   "bytes": 183883,
+   "loop_start": 29075,
+   "loop_end": 81600,
+   "loop_score": 0.72
   },
   {
    "file": "string_ensemble_040_E2_v2.flac",
@@ -238,12 +238,12 @@
    "hikey": 41,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_E1_v3_1.wav",
-   "bytes": 632077,
-   "loop_start": 151549,
-   "loop_end": 337365,
-   "loop_score": 0.615
+   "bytes": 180220,
+   "loop_start": 50682,
+   "loop_end": 81600,
+   "loop_score": 0.754
   },
   {
    "file": "string_ensemble_043_G2_v2.flac",
@@ -252,12 +252,12 @@
    "hikey": 45,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_G1_v3_1.wav",
-   "bytes": 624365,
-   "loop_start": 202932,
-   "loop_end": 337365,
-   "loop_score": 0.712
+   "bytes": 179788,
+   "loop_start": 46029,
+   "loop_end": 81600,
+   "loop_score": 0.727
   },
   {
    "file": "string_ensemble_047_B2_v2.flac",
@@ -266,12 +266,12 @@
    "hikey": 48,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_B1_v3_1.wav",
-   "bytes": 640763,
-   "loop_start": 176745,
-   "loop_end": 337365,
-   "loop_score": 0.841
+   "bytes": 183192,
+   "loop_start": 35150,
+   "loop_end": 81600,
+   "loop_score": 0.544
   },
   {
    "file": "string_ensemble_050_D3_v2.flac",
@@ -280,12 +280,12 @@
    "hikey": 52,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Cello Section/susvib/susvib_D2_v3_1.wav",
-   "bytes": 657494,
-   "loop_start": 152688,
-   "loop_end": 337365,
-   "loop_score": 0.831
+   "bytes": 186201,
+   "loop_start": 41934,
+   "loop_end": 81600,
+   "loop_score": 0.761
   },
   {
    "file": "string_ensemble_055_G3_v2.flac",
@@ -294,12 +294,12 @@
    "hikey": 57,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Viola Section/susvib/ViolaEns_susvib_G2_v2_1.wav",
-   "bytes": 632176,
-   "loop_start": 147662,
-   "loop_end": 337365,
-   "loop_score": 0.667
+   "bytes": 176850,
+   "loop_start": 49264,
+   "loop_end": 81600,
+   "loop_score": 0.62
   },
   {
    "file": "string_ensemble_059_B3_v2.flac",
@@ -308,12 +308,12 @@
    "hikey": 60,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Viola Section/susvib/ViolaEns_susvib_B2_v2_1.wav",
-   "bytes": 679922,
-   "loop_start": 181939,
-   "loop_end": 337365,
-   "loop_score": 0.719
+   "bytes": 191419,
+   "loop_start": 36103,
+   "loop_end": 81600,
+   "loop_score": 0.607
   },
   {
    "file": "string_ensemble_062_D4_v2.flac",
@@ -322,12 +322,12 @@
    "hikey": 64,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Viola Section/susvib/ViolaEns_susvib_D3_v2_1.wav",
-   "bytes": 667112,
-   "loop_start": 147360,
-   "loop_end": 337365,
-   "loop_score": 0.794
+   "bytes": 188759,
+   "loop_start": 42084,
+   "loop_end": 81600,
+   "loop_score": 0.732
   },
   {
    "file": "string_ensemble_066_Fs4_v2.flac",
@@ -336,12 +336,12 @@
    "hikey": 67,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_F#3_v2.wav",
-   "bytes": 599755,
-   "loop_start": 133180,
-   "loop_end": 337365,
-   "loop_score": 0.578
+   "bytes": 169292,
+   "loop_start": 48186,
+   "loop_end": 81600,
+   "loop_score": 0.563
   },
   {
    "file": "string_ensemble_069_A4_v2.flac",
@@ -350,12 +350,12 @@
    "hikey": 70,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_A3_v2.wav",
-   "bytes": 615400,
-   "loop_start": 181090,
-   "loop_end": 337365,
-   "loop_score": 0.618
+   "bytes": 171356,
+   "loop_start": 49800,
+   "loop_end": 81600,
+   "loop_score": 0.669
   },
   {
    "file": "string_ensemble_072_C5_v2.flac",
@@ -364,12 +364,12 @@
    "hikey": 74,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_C4_v2.wav",
-   "bytes": 723226,
-   "loop_start": 199234,
-   "loop_end": 337365,
-   "loop_score": 0.884
+   "bytes": 201085,
+   "loop_start": 47120,
+   "loop_end": 81600,
+   "loop_score": 0.755
   },
   {
    "file": "string_ensemble_076_E5_v2.flac",
@@ -378,12 +378,12 @@
    "hikey": 77,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_E4_v2.wav",
-   "bytes": 707493,
-   "loop_start": 185750,
-   "loop_end": 337365,
-   "loop_score": 0.548
+   "bytes": 193688,
+   "loop_start": 32231,
+   "loop_end": 81600,
+   "loop_score": 0.53
   },
   {
    "file": "string_ensemble_079_G5_v2.flac",
@@ -392,12 +392,12 @@
    "hikey": 81,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_G4_v2.wav",
-   "bytes": 819142,
-   "loop_start": 121035,
-   "loop_end": 337365,
-   "loop_score": 0.75
+   "bytes": 212699,
+   "loop_start": 39816,
+   "loop_end": 81600,
+   "loop_score": 0.476
   },
   {
    "file": "string_ensemble_083_B5_v2.flac",
@@ -406,12 +406,12 @@
    "hikey": 84,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_B4_v2.wav",
-   "bytes": 794746,
-   "loop_start": 148570,
-   "loop_end": 337365,
-   "loop_score": 0.559
+   "bytes": 207597,
+   "loop_start": 35745,
+   "loop_end": 81600,
+   "loop_score": 0.617
   },
   {
    "file": "string_ensemble_086_D6_v2.flac",
@@ -420,13 +420,13 @@
    "hikey": 98,
    "lovel": 81,
    "hivel": 127,
-   "frames": 337365,
+   "frames": 81600,
    "orig": "raw/VSCO-2-CE/Strings/Violin Section/susVib/VlnEns_susVib_D5_v2.wav",
-   "bytes": 819238,
-   "loop_start": 129068,
-   "loop_end": 337365,
-   "loop_score": 0.524
+   "bytes": 217108,
+   "loop_start": 34254,
+   "loop_end": 81600,
+   "loop_score": 0.492
   }
  ],
- "total_bytes": 16942589
+ "total_bytes": 4601281
 }

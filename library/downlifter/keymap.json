@@ -1,10 +1,10 @@
 {
  "name": "downlifter",
- "category": "FX",
+ "category": "SYNTH",
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": false,
  "zones": [
   {
@@ -14,10 +14,10 @@
    "hikey": 72,
    "lovel": 1,
    "hivel": 127,
-   "frames": 132300,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 288849
+   "bytes": 229010
   }
  ],
- "total_bytes": 288849
+ "total_bytes": 229010
 }

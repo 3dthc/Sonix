@@ -4,382 +4,146 @@
     {
       "key": "volume",
       "name": "Volume",
-      "min": 0,
-      "max": 1,
+      "min": 0.0,
+      "max": 1.0,
       "default": 0.8,
       "dynamic_display": true
     },
     {
-      "key": "browse",
-      "name": "Instrument",
+      "key": "preset",
+      "name": "Preset",
       "options": [
-        "Grand Piano",
-        "Upright Piano",
-        "FM E-Piano",
-        "Clavisynth",
+        "Concert Grand",
+        "Velvet Grand",
+        "Bright Stage",
+        "Felt Piano",
+        "Lo-Fi Upright",
+        "Upright Ballad",
+        "Piano & Strings",
+        "Octave Grand",
+        "Cinematic Piano",
+        "Pad Layer Grand",
+        "Saloon Upright",
+        "FM Tine EP",
+        "Soul EP",
+        "EP & Pad",
+        "Funky Clav",
         "Harpsichord",
-        "Drawbar Organ",
-        "Pipe Organ",
-        "Warm Pad",
+        "Harpsi 4-Foot",
+        "Gospel Drawbars",
+        "Church Organ",
+        "Dark Cathedral",
+        "Organ Pad",
+        "Bell EP",
+        "Nylon Classic",
+        "Steel Acoustic",
+        "Twelve String",
+        "Clean Electric",
+        "Jazz Box",
+        "Dream Chorus Gtr",
+        "Palm Muted",
+        "Funk Mute",
+        "Nylon & Strings",
+        "Ambient Guitar",
         "String Ensemble",
+        "Slow Strings",
+        "Solo Violin",
+        "Pizzicato",
+        "Tremolo Strings",
+        "Spiccato",
+        "Synth Strings",
+        "Strings & Brass",
+        "Epic Octaves",
+        "Pizz & Spic",
+        "Machine Strings",
         "Orchestral Brass",
+        "Horn Swell",
         "Synth Brass",
+        "Big Synth Brass",
+        "Tenor Sax",
+        "Smoky Sax",
+        "Horn Section",
+        "Brass Pad",
+        "Brass Stab",
+        "Fanfare",
         "Aah Choir",
         "Ooh Choir",
+        "Choir Ensemble",
+        "Heaven Choir",
+        "Dark Choir",
+        "Vox Pad",
+        "Breathy Voices",
+        "Choir & Organ",
+        "Choir Swell",
+        "Vocal Shimmer",
+        "Warm Pad",
+        "Analog Pad",
+        "Glass Pad",
+        "Air Pad",
+        "Sweep Pad",
+        "Dark Matter",
+        "Shimmer Pad",
+        "80s Poly",
+        "Evolving Air",
+        "Pad Stack",
+        "Silk Pad",
+        "Trance Chords",
+        "Dub Chord",
+        "Deep Dub",
+        "Rave Stab",
+        "Riser",
+        "Downlifter",
+        "Supersaw Stack",
+        "Chip Square",
+        "Wobble Stab",
+        "Tape Chords",
+        "Space Chord",
         "Supersaw Lead",
-        "Nylon Guitar",
-        "Steel Guitar",
+        "Square Lead",
+        "Flute",
+        "Breathy Flute",
+        "Saw & Square",
+        "Vibrato Lead",
+        "Octave Lead",
+        "Mellow Square",
+        "Trance Lead",
+        "Flute & Strings",
+        "Detuned Lead",
         "Concert Harp",
         "Kalimba",
         "Synth Pluck",
+        "Harp & Strings",
+        "Pluck Delay",
+        "Kalimba Dream",
+        "Bright Pluck",
+        "Celestial Harp",
+        "Muted Pluck",
+        "Pizz & Pluck",
+        "Mbira Keys",
         "Sub Bass",
+        "Upright Bass",
+        "Analog Bass",
+        "FM Bass",
+        "Sub & Saw",
+        "Jazz Upright",
+        "Acid Bass",
+        "Deep FM",
+        "Picked Bass",
+        "Big Bass",
         "Vibraphone",
         "Marimba",
         "Glockenspiel",
         "Tubular Bells",
         "FM Bells",
-        "Trance Chords",
-        "Riser",
-        "Downlifter"
+        "Music Box",
+        "Crystal Bells",
+        "Mallet Stack",
+        "Celeste",
+        "Church Bells",
+        "Dream Vibes"
       ],
-      "default": "Grand Piano"
-    },
-    {
-      "key": "edit_layer",
-      "name": "Edit Layer",
-      "options": [
-        "A",
-        "B",
-        "C",
-        "D"
-      ],
-      "default": "A"
-    },
-    {
-      "key": "layer_a",
-      "name": "Layer A",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "On"
-    },
-    {
-      "key": "layer_b",
-      "name": "Layer B",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "Off"
-    },
-    {
-      "key": "layer_c",
-      "name": "Layer C",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "Off"
-    },
-    {
-      "key": "layer_d",
-      "name": "Layer D",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "Off"
-    },
-    {
-      "key": "inst_a",
-      "name": "Layer A Instrument",
-      "options": [
-        "Grand Piano",
-        "Upright Piano",
-        "FM E-Piano",
-        "Clavisynth",
-        "Harpsichord",
-        "Drawbar Organ",
-        "Pipe Organ",
-        "Warm Pad",
-        "String Ensemble",
-        "Orchestral Brass",
-        "Synth Brass",
-        "Aah Choir",
-        "Ooh Choir",
-        "Supersaw Lead",
-        "Nylon Guitar",
-        "Steel Guitar",
-        "Concert Harp",
-        "Kalimba",
-        "Synth Pluck",
-        "Sub Bass",
-        "Vibraphone",
-        "Marimba",
-        "Glockenspiel",
-        "Tubular Bells",
-        "FM Bells",
-        "Trance Chords",
-        "Riser",
-        "Downlifter"
-      ],
-      "default": "Grand Piano"
-    },
-    {
-      "key": "inst_b",
-      "name": "Layer B Instrument",
-      "options": [
-        "Grand Piano",
-        "Upright Piano",
-        "FM E-Piano",
-        "Clavisynth",
-        "Harpsichord",
-        "Drawbar Organ",
-        "Pipe Organ",
-        "Warm Pad",
-        "String Ensemble",
-        "Orchestral Brass",
-        "Synth Brass",
-        "Aah Choir",
-        "Ooh Choir",
-        "Supersaw Lead",
-        "Nylon Guitar",
-        "Steel Guitar",
-        "Concert Harp",
-        "Kalimba",
-        "Synth Pluck",
-        "Sub Bass",
-        "Vibraphone",
-        "Marimba",
-        "Glockenspiel",
-        "Tubular Bells",
-        "FM Bells",
-        "Trance Chords",
-        "Riser",
-        "Downlifter"
-      ],
-      "default": "Warm Pad"
-    },
-    {
-      "key": "inst_c",
-      "name": "Layer C Instrument",
-      "options": [
-        "Grand Piano",
-        "Upright Piano",
-        "FM E-Piano",
-        "Clavisynth",
-        "Harpsichord",
-        "Drawbar Organ",
-        "Pipe Organ",
-        "Warm Pad",
-        "String Ensemble",
-        "Orchestral Brass",
-        "Synth Brass",
-        "Aah Choir",
-        "Ooh Choir",
-        "Supersaw Lead",
-        "Nylon Guitar",
-        "Steel Guitar",
-        "Concert Harp",
-        "Kalimba",
-        "Synth Pluck",
-        "Sub Bass",
-        "Vibraphone",
-        "Marimba",
-        "Glockenspiel",
-        "Tubular Bells",
-        "FM Bells",
-        "Trance Chords",
-        "Riser",
-        "Downlifter"
-      ],
-      "default": "String Ensemble"
-    },
-    {
-      "key": "inst_d",
-      "name": "Layer D Instrument",
-      "options": [
-        "Grand Piano",
-        "Upright Piano",
-        "FM E-Piano",
-        "Clavisynth",
-        "Harpsichord",
-        "Drawbar Organ",
-        "Pipe Organ",
-        "Warm Pad",
-        "String Ensemble",
-        "Orchestral Brass",
-        "Synth Brass",
-        "Aah Choir",
-        "Ooh Choir",
-        "Supersaw Lead",
-        "Nylon Guitar",
-        "Steel Guitar",
-        "Concert Harp",
-        "Kalimba",
-        "Synth Pluck",
-        "Sub Bass",
-        "Vibraphone",
-        "Marimba",
-        "Glockenspiel",
-        "Tubular Bells",
-        "FM Bells",
-        "Trance Chords",
-        "Riser",
-        "Downlifter"
-      ],
-      "default": "Aah Choir"
-    },
-    {
-      "key": "cutoff",
-      "name": "Cutoff",
-      "min": 0,
-      "max": 1,
-      "default": 1.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "resonance",
-      "name": "Resonance",
-      "min": 0,
-      "max": 1,
-      "default": 0.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "env_amt",
-      "name": "Env Amount",
-      "min": 0,
-      "max": 1,
-      "default": 0.5,
-      "dynamic_display": true
-    },
-    {
-      "key": "attack",
-      "name": "Attack",
-      "min": 0,
-      "max": 1,
-      "default": 0.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "decay",
-      "name": "Decay",
-      "min": 0,
-      "max": 1,
-      "default": 0.5,
-      "dynamic_display": true
-    },
-    {
-      "key": "sustain",
-      "name": "Sustain",
-      "min": 0,
-      "max": 1,
-      "default": 1.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "release",
-      "name": "Release",
-      "min": 0,
-      "max": 1,
-      "default": 0.35,
-      "dynamic_display": true
-    },
-    {
-      "key": "lfo_rate",
-      "name": "LFO Rate",
-      "min": 0,
-      "max": 1,
-      "default": 0.5,
-      "dynamic_display": true
-    },
-    {
-      "key": "lfo_depth",
-      "name": "LFO Depth",
-      "min": 0,
-      "max": 1,
-      "default": 0.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "chorus",
-      "name": "Chorus",
-      "min": 0,
-      "max": 1,
-      "default": 0.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "delay",
-      "name": "Delay",
-      "min": 0,
-      "max": 1,
-      "default": 0.0,
-      "dynamic_display": true
-    },
-    {
-      "key": "reverb",
-      "name": "Reverb",
-      "min": 0,
-      "max": 1,
-      "default": 0.15,
-      "dynamic_display": true
-    },
-    {
-      "key": "tune",
-      "name": "Tune",
-      "min": -24,
-      "max": 24,
-      "default": 0,
-      "dynamic_display": true,
-      "display": "int"
-    },
-    {
-      "key": "a4_ref",
-      "name": "A4 Ref",
-      "min": 400,
-      "max": 480,
-      "default": 440,
-      "dynamic_display": true,
-      "display": "int"
-    },
-    {
-      "key": "theme",
-      "name": "Theme",
-      "options": [
-        "Midnight",
-        "Platinum",
-        "Studio Grey"
-      ],
-      "default": "Midnight"
-    },
-    {
-      "key": "fav",
-      "name": "Favorite",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "Off"
-    },
-    {
-      "key": "prev",
-      "name": "Previous",
-      "momentary": true
-    },
-    {
-      "key": "next",
-      "name": "Next",
-      "momentary": true
-    },
-    {
-      "key": "theme_next",
-      "name": "Next Theme",
-      "momentary": true,
-      "step_of": "theme",
-      "step_delta": 1
+      "default": "Concert Grand",
+      "qlink_ticks": 3
     },
     {
       "key": "cat_piano",
@@ -392,8 +156,8 @@
       "momentary": true
     },
     {
-      "key": "cat_pad",
-      "name": "Category Pad",
+      "key": "cat_guitar",
+      "name": "Category Guitar",
       "momentary": true
     },
     {
@@ -409,6 +173,16 @@
     {
       "key": "cat_choir",
       "name": "Category Choir",
+      "momentary": true
+    },
+    {
+      "key": "cat_pad",
+      "name": "Category Pad",
+      "momentary": true
+    },
+    {
+      "key": "cat_synth",
+      "name": "Category Synth",
       "momentary": true
     },
     {
@@ -432,14 +206,804 @@
       "momentary": true
     },
     {
-      "key": "cat_synth",
-      "name": "Category Synth",
+      "key": "prev",
+      "name": "Previous Preset",
       "momentary": true
     },
     {
-      "key": "cat_fx",
-      "name": "Category Fx",
+      "key": "next",
+      "name": "Next Preset",
       "momentary": true
+    },
+    {
+      "key": "fav",
+      "name": "Favourite",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "fav_only",
+      "name": "Favourites Only",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "cutoff",
+      "name": "Cutoff",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 1.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "resonance",
+      "name": "Resonance",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "env_amt",
+      "name": "Env Amount",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "key_track",
+      "name": "Key Track",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "attack",
+      "name": "Attack",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "decay",
+      "name": "Decay",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "sustain",
+      "name": "Sustain",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 1.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "release",
+      "name": "Release",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.55,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo_rate",
+      "name": "LFO Rate",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo_filter",
+      "name": "LFO Filter",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo_pitch",
+      "name": "LFO Pitch",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo_amp",
+      "name": "LFO Amp",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "chorus",
+      "name": "Chorus",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "delay",
+      "name": "Delay",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "reverb",
+      "name": "Reverb",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.2,
+      "dynamic_display": true
+    },
+    {
+      "key": "layer_a",
+      "name": "Layer A",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "On"
+    },
+    {
+      "key": "inst_a",
+      "name": "Layer A Sound",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Clean Electric",
+        "Muted Electric",
+        "String Ensemble",
+        "Solo Violin",
+        "Pizzicato",
+        "Tremolo Strings",
+        "Spiccato",
+        "Synth Strings",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Tenor Sax",
+        "Aah Choir",
+        "Ooh Choir",
+        "Warm Pad",
+        "Analog Pad",
+        "Glass Pad",
+        "Air Pad",
+        "Trance Chords",
+        "Dub Chord",
+        "Riser",
+        "Downlifter",
+        "Supersaw Lead",
+        "Square Lead",
+        "Flute",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Upright Bass",
+        "Analog Bass",
+        "FM Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells"
+      ],
+      "default": "Grand Piano"
+    },
+    {
+      "key": "level_a",
+      "name": "Layer A Level",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
+      "key": "pan_a",
+      "name": "Layer A Pan",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "octave_a",
+      "name": "Layer A Octave",
+      "min": -3,
+      "max": 3,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "fine_a",
+      "name": "Layer A Fine",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "solo_a",
+      "name": "Layer A Solo",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_a_prev",
+      "name": "Layer A Previous",
+      "momentary": true,
+      "step_of": "inst_a",
+      "step_delta": -1
+    },
+    {
+      "key": "inst_a_next",
+      "name": "Layer A Next",
+      "momentary": true,
+      "step_of": "inst_a",
+      "step_delta": 1
+    },
+    {
+      "key": "layer_b",
+      "name": "Layer B",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_b",
+      "name": "Layer B Sound",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Clean Electric",
+        "Muted Electric",
+        "String Ensemble",
+        "Solo Violin",
+        "Pizzicato",
+        "Tremolo Strings",
+        "Spiccato",
+        "Synth Strings",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Tenor Sax",
+        "Aah Choir",
+        "Ooh Choir",
+        "Warm Pad",
+        "Analog Pad",
+        "Glass Pad",
+        "Air Pad",
+        "Trance Chords",
+        "Dub Chord",
+        "Riser",
+        "Downlifter",
+        "Supersaw Lead",
+        "Square Lead",
+        "Flute",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Upright Bass",
+        "Analog Bass",
+        "FM Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells"
+      ],
+      "default": "Grand Piano"
+    },
+    {
+      "key": "level_b",
+      "name": "Layer B Level",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
+      "key": "pan_b",
+      "name": "Layer B Pan",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "octave_b",
+      "name": "Layer B Octave",
+      "min": -3,
+      "max": 3,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "fine_b",
+      "name": "Layer B Fine",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "solo_b",
+      "name": "Layer B Solo",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_b_prev",
+      "name": "Layer B Previous",
+      "momentary": true,
+      "step_of": "inst_b",
+      "step_delta": -1
+    },
+    {
+      "key": "inst_b_next",
+      "name": "Layer B Next",
+      "momentary": true,
+      "step_of": "inst_b",
+      "step_delta": 1
+    },
+    {
+      "key": "layer_c",
+      "name": "Layer C",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_c",
+      "name": "Layer C Sound",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Clean Electric",
+        "Muted Electric",
+        "String Ensemble",
+        "Solo Violin",
+        "Pizzicato",
+        "Tremolo Strings",
+        "Spiccato",
+        "Synth Strings",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Tenor Sax",
+        "Aah Choir",
+        "Ooh Choir",
+        "Warm Pad",
+        "Analog Pad",
+        "Glass Pad",
+        "Air Pad",
+        "Trance Chords",
+        "Dub Chord",
+        "Riser",
+        "Downlifter",
+        "Supersaw Lead",
+        "Square Lead",
+        "Flute",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Upright Bass",
+        "Analog Bass",
+        "FM Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells"
+      ],
+      "default": "Grand Piano"
+    },
+    {
+      "key": "level_c",
+      "name": "Layer C Level",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
+      "key": "pan_c",
+      "name": "Layer C Pan",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "octave_c",
+      "name": "Layer C Octave",
+      "min": -3,
+      "max": 3,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "fine_c",
+      "name": "Layer C Fine",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "solo_c",
+      "name": "Layer C Solo",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_c_prev",
+      "name": "Layer C Previous",
+      "momentary": true,
+      "step_of": "inst_c",
+      "step_delta": -1
+    },
+    {
+      "key": "inst_c_next",
+      "name": "Layer C Next",
+      "momentary": true,
+      "step_of": "inst_c",
+      "step_delta": 1
+    },
+    {
+      "key": "layer_d",
+      "name": "Layer D",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_d",
+      "name": "Layer D Sound",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Clean Electric",
+        "Muted Electric",
+        "String Ensemble",
+        "Solo Violin",
+        "Pizzicato",
+        "Tremolo Strings",
+        "Spiccato",
+        "Synth Strings",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Tenor Sax",
+        "Aah Choir",
+        "Ooh Choir",
+        "Warm Pad",
+        "Analog Pad",
+        "Glass Pad",
+        "Air Pad",
+        "Trance Chords",
+        "Dub Chord",
+        "Riser",
+        "Downlifter",
+        "Supersaw Lead",
+        "Square Lead",
+        "Flute",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Upright Bass",
+        "Analog Bass",
+        "FM Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells"
+      ],
+      "default": "Grand Piano"
+    },
+    {
+      "key": "level_d",
+      "name": "Layer D Level",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
+      "key": "pan_d",
+      "name": "Layer D Pan",
+      "min": -1.0,
+      "max": 1.0,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "octave_d",
+      "name": "Layer D Octave",
+      "min": -3,
+      "max": 3,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "fine_d",
+      "name": "Layer D Fine",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "solo_d",
+      "name": "Layer D Solo",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_d_prev",
+      "name": "Layer D Previous",
+      "momentary": true,
+      "step_of": "inst_d",
+      "step_delta": -1
+    },
+    {
+      "key": "inst_d_next",
+      "name": "Layer D Next",
+      "momentary": true,
+      "step_of": "inst_d",
+      "step_delta": 1
+    },
+    {
+      "key": "a4_ref",
+      "name": "A4 Ref",
+      "min": 400,
+      "max": 480,
+      "default": 440,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "tune",
+      "name": "Tune",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "transpose",
+      "name": "Transpose",
+      "min": -24,
+      "max": 24,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "bend_range",
+      "name": "Bend Range",
+      "min": 0,
+      "max": 24,
+      "default": 2,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "polyphony",
+      "name": "Polyphony",
+      "min": 1,
+      "max": 32,
+      "default": 16,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "vel_sens",
+      "name": "Velocity",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
+      "key": "vel_filter",
+      "name": "Vel > Filter",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.25,
+      "dynamic_display": true
+    },
+    {
+      "key": "spread",
+      "name": "Spread",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.3,
+      "dynamic_display": true
+    },
+    {
+      "key": "delay_time",
+      "name": "Delay Time",
+      "options": [
+        "1/16",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4T",
+        "1/4",
+        "1/4.",
+        "1/2"
+      ],
+      "default": "1/8."
+    },
+    {
+      "key": "delay_fb",
+      "name": "Delay Feedback",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.4,
+      "dynamic_display": true
+    },
+    {
+      "key": "delay_tone",
+      "name": "Delay Tone",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.55,
+      "dynamic_display": true
+    },
+    {
+      "key": "delay_width",
+      "name": "Delay Width",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
+      "key": "rev_size",
+      "name": "Reverb Size",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.6,
+      "dynamic_display": true
+    },
+    {
+      "key": "rev_damp",
+      "name": "Reverb Damping",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.4,
+      "dynamic_display": true
+    },
+    {
+      "key": "rev_predelay",
+      "name": "Reverb Pre-Delay",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.1,
+      "dynamic_display": true
+    },
+    {
+      "key": "rev_width",
+      "name": "Reverb Width",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 1.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "theme",
+      "name": "Theme",
+      "options": [
+        "Midnight",
+        "Platinum",
+        "Studio Grey"
+      ],
+      "default": "Midnight"
+    },
+    {
+      "key": "anim",
+      "name": "Animation",
+      "options": [
+        "Off",
+        "Low",
+        "Smooth"
+      ],
+      "default": "Smooth"
+    },
+    {
+      "key": "mod_wheel",
+      "name": "Mod Wheel",
+      "options": [
+        "Vibrato",
+        "Filter",
+        "Off"
+      ],
+      "default": "Vibrato"
+    },
+    {
+      "key": "vel_curve",
+      "name": "Velocity Curve",
+      "options": [
+        "Soft",
+        "Normal",
+        "Hard"
+      ],
+      "default": "Normal"
     },
     {
       "key": "category",
@@ -453,7 +1017,7 @@
       "key": "wave",
       "name": "Waveform",
       "min": 0,
-      "max": 8,
+      "max": 32,
       "default": 0,
       "display": "int"
     },
@@ -482,32 +1046,56 @@
       "display": "int"
     },
     {
-      "key": "load_state",
-      "name": "Loading",
+      "key": "act_a",
+      "name": "Layer A Active",
       "min": 0,
-      "max": 2,
+      "max": 1,
       "default": 0,
       "display": "int"
     },
     {
-      "key": "lcd_name",
-      "name": "LCD Name",
+      "key": "act_b",
+      "name": "Layer B Active",
       "min": 0,
       "max": 1,
       "default": 0,
-      "display": "string"
+      "display": "int"
     },
     {
-      "key": "lcd_cat",
-      "name": "LCD Category",
+      "key": "act_c",
+      "name": "Layer C Active",
       "min": 0,
       "max": 1,
       "default": 0,
-      "display": "string"
+      "display": "int"
+    },
+    {
+      "key": "act_d",
+      "name": "Layer D Active",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
     },
     {
       "key": "lcd_top",
       "name": "LCD Top",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_ref",
+      "name": "LCD Reference",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_name",
+      "name": "LCD Preset",
       "min": 0,
       "max": 1,
       "default": 0,
@@ -547,25 +1135,153 @@
     },
     {
       "key": "lcd_line",
-      "name": "LCD Readout",
+      "name": "LCD Line",
       "min": 0,
       "max": 1,
       "default": 0,
       "display": "string"
     },
     {
-      "key": "fav_lo",
-      "name": "Favorites 1",
+      "key": "lcat_a",
+      "name": "Layer A Category",
       "min": 0,
-      "max": 16383,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcat_b",
+      "name": "Layer B Category",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcat_c",
+      "name": "Layer C Category",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcat_d",
+      "name": "Layer D Category",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lname_a",
+      "name": "Layer A Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lname_b",
+      "name": "Layer B Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lname_c",
+      "name": "Layer C Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lname_d",
+      "name": "Layer D Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "fav_0",
+      "name": "Favourites 1",
+      "min": 0,
+      "max": 8191,
       "default": 0,
       "display": "int"
     },
     {
-      "key": "fav_hi",
-      "name": "Favorites 2",
+      "key": "fav_1",
+      "name": "Favourites 2",
       "min": 0,
-      "max": 16383,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_2",
+      "name": "Favourites 3",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_3",
+      "name": "Favourites 4",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_4",
+      "name": "Favourites 5",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_5",
+      "name": "Favourites 6",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_6",
+      "name": "Favourites 7",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_7",
+      "name": "Favourites 8",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_8",
+      "name": "Favourites 9",
+      "min": 0,
+      "max": 8191,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_9",
+      "name": "Favourites 10",
+      "min": 0,
+      "max": 8191,
       "default": 0,
       "display": "int"
     }

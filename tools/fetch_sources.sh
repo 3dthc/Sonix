@@ -17,22 +17,26 @@ fetch() {  # fetch <owner/repo> <path> [path ...]
 
 fetch sgossner/VSCO-2-CE LICENSE \
   "Strings/Violin Section/susVib" "Strings/Viola Section/susvib" "Strings/Cello Section/susvib" \
-  "Brass/Trumpet/sus" "Brass/F Horn/sus" "Brass/Tenor Trombone/sus"
+  "Brass/Trumpet/sus" "Brass/F Horn/sus" "Brass/Tenor Trombone/sus" \
+  "Strings/Solo Violin/Arco Vib" "Strings/Violin Section/Pizz" "Strings/Viola Section/pizz" \
+  "Strings/Cello Section/pizzT" "Strings/Violin Section/Trem" "Strings/Viola Section/trem" \
+  "Strings/Cello Section/trem" "Strings/Violin Section/Spic" "Strings/Viola Section/spic" \
+  "Strings/Cello Section/spic" "Strings/Solo Contrabass/Pizz" "Woodwinds/Flute/susvib"
 
 fetch sgossner/VCSL LICENSE \
   "Idiophones/Struck Idiophones/Vibraphone" "Idiophones/Struck Idiophones/Glockenspiel" \
   "Idiophones/Struck Idiophones/Tubular Bells 2" "Idiophones/Struck Idiophones/Marimba" \
   "Chordophones/Composite Chordophones/Concert Harp" "Idiophones/Plucked Idiophones/Kalimba, Tanzania" \
   "Chordophones/Zithers/Harpsichord, Flemish" "Aerophones/Edge-blown Aerophones/Pipe Organ" \
-  "Electrophones/TX81Z/Clavisynth"
+  "Electrophones/TX81Z/Clavisynth" "Aerophones/Reed Aerophones/Tenor Saxophone/Vibrato"
 
-# Salamander: 4 of the 16 velocity layers
+# Salamander: 3 of the 16 velocity layers
 dir="$RAW/SalamanderGrandPiano"
 if [ ! -d "$dir/.git" ]; then
   GIT_LFS_SKIP_SMUDGE=1 git clone -q --filter=blob:none --no-checkout https://github.com/sfzinstruments/SalamanderGrandPiano.git "$dir"
   git -C "$dir" config gc.auto 0
 fi
-git -C "$dir" ls-tree -r --name-only HEAD Samples | grep -E 'v(4|8|12|16)\.flac$' > "$dir/.sonix-files"
+git -C "$dir" ls-tree -r --name-only HEAD Samples | grep -E 'v(6|11|16)\.flac$' > "$dir/.sonix-files"
 git -C "$dir" checkout -q HEAD --pathspec-from-file="$dir/.sonix-files"
 git -C "$dir" checkout -q HEAD -- LICENSE README.md
 

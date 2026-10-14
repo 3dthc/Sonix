@@ -1,19 +1,22 @@
 /* Sonix: a ROMpler for MPC OS (mpc_engine, see mpc-vst-plugins wrapper/engine.h).
  *
- * Four layers (A-D), each playing one of the packed instruments (engine/<name>.snx, built by tools/pack_sonix.py) and
- * switched on or off on the faceplate. A note finds its zone by key and velocity in every layer that is on, is
- * repitched from the zone's root (plus the zone's own tuning correction, TUNE in semitones and the A4 REF pitch
- * standard), loops through its sustain loop if it has one, runs through a 12 dB low-pass (CUTOFF, RESONANCE, ENV AMT
- * on the amp envelope's shape, the LFO) and an ADSR. Then chorus, a tempo-synced ping-pong delay and reverb.
- * 16 notes of polyphony; sustain pedal and pitch bend (+/-2).
+ * Four layers (A-D), each playing one of the packed instruments (engine/<name>.snx, built by tools/pack_sonix.py),
+ * with its own level, pan, octave, fine tune, on and solo. A note finds its zone by key and velocity in every layer
+ * that plays, is repitched from the zone's root, runs through a 12 dB low-pass (CUTOFF, RESONANCE, ENV AMT, KEY TRACK,
+ * velocity, LFO, mod wheel) and an ADSR; the LFO also gives vibrato and tremolo. Then chorus, a tempo-synced delay
+ * and reverb. 128 factory presets (src/presets.h, tools/presets.py) are MPC's PRESET list (vst.json "programs").
  *
- * The faceplate browses the EDIT LAYER's instrument by category (the 12 category buttons, PREV / NEXT) and reads
- * its LCD from the engine (lcd_* text, the wave / LED / CPU pictures). Those change only on events, never per audio
- * block, because every repaint costs MPC's screen thread (mpc-vst-plugins docs/NOTES.md, "Animation is expensive").
+ * Samples stay compressed in RAM and every voice decodes its own sample as it plays (the lossless codec is cheap to
+ * run forward), so the whole library (~115 MB) is resident and any preset plays at once, with no decode-on-pick
+ * pause. A looped voice jumps back to its loop start through a decoder state saved when the bank loaded. One loader
+ * thread reads every bank in the background when the first Sonix opens, the ones the current preset uses first;
+ * the banks are shared by every Sonix instance in the process.
  *
- * The sample banks (loading on a worker thread, the lossless codec, retiring unused banks) are adapted from Fretty
- * (3dthc/fretty-mpc, MIT). A bank is decoded into RAM the first time an instrument is picked, and shared by every
- * Sonix instance in the process. */
+ * The faceplate's pictures (the LCD waveform, LEDs, CPU bar, lit category) change only on events, or for the
+ * waveform at most every 100 ms while notes sound (ANIMATION setting), because every repaint costs MPC's screen
+ * thread (mpc-vst-plugins docs/NOTES.md, "Animation is expensive").
+ *
+ * The codec and the effects are adapted from Fretty (3dthc/fretty-mpc, MIT). */
 #define _GNU_SOURCE
 #include <math.h>
 #include <pthread.h>
@@ -25,47 +28,43 @@
 #include <unistd.h>
 #include "engine.h"
 #include "instruments.h"
+#include "params.h"
+#include "presets.h"
 
 #define SR 44100.0f
 #define MAX_EV 256
-
-/* ---------- the shared sample banks ---------- */
-typedef struct { uint32_t off, frames, loop_s, loop_e; } ent_t;
-typedef struct __attribute__((packed)) { uint8_t lo, hi, root, lv, hv, pad; int16_t tune; uint32_t smp; } zone_t;
-
-enum { BANK_NONE, BANK_LOADING, BANK_READY, BANK_FAILED, BANK_RETIRING };
-enum { FLAG_MONO = 1 };
-
-typedef struct {
-    int state, stop;
-    char path[1200];
-    uint8_t *map; size_t maplen;
-    uint32_t nsamp, nzone, flags;
-    float gain;
-    const ent_t *ent; const zone_t *zone;
-    int16_t *head; uint32_t *hoff;           /* every sample decoded to interleaved stereo */
-    pthread_t loader; int have_loader, own_tables;
-} bank_t;
-
-static bank_t g_banks[NINST];
-static int g_shutdown;
-static int g_bank_users[NINST];             /* instances that have the instrument picked */
-static double g_bank_idle[NINST];           /* when the last of them moved on */
-static int g_users;
-static char g_data_dir[1024];
-static pthread_mutex_t g_bank_mx = PTHREAD_MUTEX_INITIALIZER;
-
-static double now_s(void) { struct timespec t; clock_gettime(CLOCK_MONOTONIC, &t); return t.tv_sec + t.tv_nsec * 1e-9; }
-static int bank_state_of(int i) { return __atomic_load_n(&g_banks[i].state, __ATOMIC_ACQUIRE); }
+#define NLAYER 4
+#define MAX_POLY 32
+#define MAX_V (MAX_POLY * NLAYER)
+#define RING 2048                    /* decoded frames a voice keeps: enough for 15x speed over a 128-frame block */
+#define PI_F 3.14159265f
 
 /* ---------- sample file (written by tools/pack_sonix.py) ----------
  * header (32 bytes): "SNXB", u32 version 1, u32 samples, u32 zones, u32 data offset, u32 flags (1 = mono), f32 level
- * trim, u32 reserved; per sample { u32 byte offset into data, u32 frames, u32 loop start, u32 loop end (0 = none) };
- * per zone zone_t; then the data. Each sample: u32 len0, u32 len1, then one or two bitstreams (left, right; mono has
- * one). A stream is 1024-frame blocks: a header byte (order << 5 | k), then one Rice code per frame (a run of q zeros,
- * a 1, k low bits; 24 zeros = a raw 20-bit value) of the zigzagged residual of a fixed order-0..3 predictor that runs
- * across blocks. Lossless 16-bit. (The codec is Fretty's.) */
-typedef struct { const uint8_t *p; size_t n, pos; uint64_t cache; int avail; } br_t;
+ * trim, u32 sample rate (0 = 44100); per sample { u32 byte offset into data, u32 frames, u32 loop start, u32 loop end
+ * (0 = none) }; per zone zone_t; then the data. Each sample: u32 len0, u32 len1, then one or two bitstreams (left,
+ * right; mono has one). A stream is 1024-frame blocks: a header byte (order << 5 | k), then one Rice code per frame (a
+ * run of q zeros, a 1, k low bits; 24 zeros = a raw 20-bit value) of the zigzagged residual of a fixed order-0..3
+ * predictor that runs across blocks. Lossless 16-bit. (The codec is Fretty's.) */
+typedef struct { uint32_t off, frames, loop_s, loop_e; } ent_t;
+typedef struct __attribute__((packed)) { uint8_t lo, hi, root, lv, hv, pad; int16_t tune; uint32_t smp; } zone_t;
+typedef struct { uint32_t bit; int32_t h1, h2, h3; uint8_t order, k; } seek_t;    /* a decoder state at a frame */
+typedef struct { const uint8_t *s[2]; uint32_t len[2]; seek_t loop[2]; } sinfo_t;
+
+enum { BANK_NONE, BANK_LOADING, BANK_READY, BANK_FAILED };
+enum { FLAG_MONO = 1 };
+
+typedef struct {
+    int state;
+    uint8_t *file;
+    uint32_t nsamp, nzone, flags, rate;
+    float gain, step;                /* level trim; playback step at the root (rate / 44100) */
+    const ent_t *ent; const zone_t *zone;
+    sinfo_t *si;
+} bank_t;
+
+typedef struct { const uint8_t *p; uint32_t n, pos; uint64_t cache; int avail; } br_t;
+typedef struct { br_t b; int32_t h1, h2, h3; int order, k; uint32_t i; } dec_t;
 
 static inline void br_fill(br_t *b) {
     while (b->avail <= 56) {
@@ -81,273 +80,245 @@ static inline uint32_t br_take(br_t *b, int k) {
     b->cache <<= k; b->avail -= k;
     return v;
 }
-
-static int decode_channel(const uint8_t *src, size_t len, int16_t *dst, uint32_t frames) {
-    br_t b = { src, len, 0, 0, 0 };
-    int32_t h1 = 0, h2 = 0, h3 = 0;
-    int order = 0, k = 0;
-    for (uint32_t i = 0; i < frames; i++) {
-        br_fill(&b);
+static void dec_seek(dec_t *d, const uint8_t *p, uint32_t n, const seek_t *s, uint32_t frame) {
+    d->b.p = p; d->b.n = n; d->b.pos = s->bit >> 3; d->b.cache = 0; d->b.avail = 0;
+    br_fill(&d->b);
+    br_take(&d->b, (int)(s->bit & 7));
+    d->h1 = s->h1; d->h2 = s->h2; d->h3 = s->h3; d->order = s->order; d->k = s->k; d->i = frame;
+}
+static void dec_state(const dec_t *d, seek_t *s) {
+    s->bit = d->b.pos * 8 - (uint32_t)d->b.avail;
+    s->h1 = d->h1; s->h2 = d->h2; s->h3 = d->h3; s->order = (uint8_t)d->order; s->k = (uint8_t)d->k;
+}
+/* Decode `count` frames into ring[slot...] (wrapping at RING), keeping the bit reader and predictor in registers:
+ * the hot loop of every voice. Returns -1 on a corrupt stream. */
+/* refill: eight bytes at once (big-endian) while they are inside the stream, one at a time near its end. Bits below
+ * `avail` are always the stream's own next bits, so OR-ing the same word again later is harmless. */
+#define REFILL() do { \
+        if (avail <= 56) { \
+            if (pos + 8 <= n) { \
+                uint64_t w_; memcpy(&w_, p + pos, 8); w_ = __builtin_bswap64(w_); \
+                cache |= w_ >> avail; int by_ = (63 - avail) >> 3; pos += by_; avail += by_ * 8; \
+            } else while (avail <= 56) { uint64_t by_ = pos < n ? p[pos] : 0; pos++; cache |= by_ << (56 - avail); avail += 8; } \
+        } } while (0)
+#define TAKE(v_, k_) do { int kk_ = (k_); if (kk_) { v_ = (uint32_t)(cache >> (64 - kk_)); cache <<= kk_; avail -= kk_; } else v_ = 0; } while (0)
+static int dec_run(dec_t *d, int16_t *ring, uint32_t slot, uint32_t count) {
+    const uint8_t *p = d->b.p;
+    uint32_t n = d->b.n, pos = d->b.pos, i = d->i;
+    uint64_t cache = d->b.cache;
+    int avail = d->b.avail, order = d->order, k = d->k;
+    int32_t h1 = d->h1, h2 = d->h2, h3 = d->h3;
+    int err = 0;
+    while (count) {
         if ((i & 1023) == 0) {
-            uint32_t hd = br_take(&b, 8);
+            uint32_t hd;
+            REFILL(); TAKE(hd, 8);
             order = (int)(hd >> 5); k = (int)(hd & 31);
-            if (order > 3 || k > 20) return -1;
-            br_fill(&b);
+            if (order > 3 || k > 20) { err = 1; break; }
         }
-        int z = b.cache ? __builtin_clzll(b.cache) : 64;
-        uint32_t u;
-        if (z >= 24) { br_take(&b, 24); u = br_take(&b, 20); }
-        else { br_take(&b, z + 1); u = ((uint32_t)z << k) | br_take(&b, k); }
-        int32_t r = (int32_t)(u >> 1) ^ -(int32_t)(u & 1);
-        int32_t x;
-        switch (order) {
-        case 0: x = r; break;
-        case 1: x = r + h1; break;
-        case 2: x = r + 2 * h1 - h2; break;
-        default: x = r + 3 * h1 - 3 * h2 + h3; break;
+        uint32_t run = 1024 - (i & 1023);
+        if (run > count) run = count;
+        for (uint32_t j = 0; j < run; j++) {
+            REFILL();
+            int z = cache ? __builtin_clzll(cache) : 64;
+            uint32_t u, lo;
+            if (z >= 24) { cache <<= 24; avail -= 24; TAKE(u, 20); }
+            else { cache <<= z + 1; avail -= z + 1; TAKE(lo, k); u = ((uint32_t)z << k) | lo; }
+            int32_t r = (int32_t)(u >> 1) ^ -(int32_t)(u & 1), x;
+            switch (order) {
+            case 0: x = r; break;
+            case 1: x = r + h1; break;
+            case 2: x = r + 2 * h1 - h2; break;
+            default: x = r + 3 * h1 - 3 * h2 + h3; break;
+            }
+            if (x < -32768) x = -32768, err = 1;
+            if (x > 32767) x = 32767, err = 1;
+            h3 = h2; h2 = h1; h1 = x;
+            ring[slot] = (int16_t)x;
+            slot = (slot + 1) & (RING - 1);
         }
-        if (x < -32768 || x > 32767) return -1;
-        dst[2 * (size_t)i] = (int16_t)x;
-        h3 = h2; h2 = h1; h1 = x;
+        i += run; count -= run;
+        if (err) break;
     }
-    return b.pos <= len + 8 ? 0 : -1;
+    d->b.pos = pos; d->b.cache = cache; d->b.avail = avail;
+    d->order = order; d->k = k; d->h1 = h1; d->h2 = h2; d->h3 = h3; d->i = i;
+    return err ? -1 : 0;
 }
+#undef REFILL
+#undef TAKE
 
-static void bank_free_data(bank_t *b) {
-    free(b->map);
-    if (b->own_tables) { free((void *)b->ent); free((void *)b->zone); }
-    free(b->head); free(b->hoff);
-    b->map = NULL; b->ent = NULL; b->zone = NULL; b->head = NULL; b->hoff = NULL;
-    b->own_tables = 0;
-}
+/* ---------- the shared banks: one loader thread reads them all, the wanted ones first ---------- */
+static bank_t g_banks[NINST];
+static int g_prio[NINST];
+static int g_users, g_shutdown, g_loader_on, g_loaded;
+static pthread_t g_loader;
+static char g_data_dir[1024];
+static pthread_mutex_t g_bank_mx = PTHREAD_MUTEX_INITIALIZER;
 
-/* Memory: before a new instrument loads, give back the ones no Sonix has picked for a while. A retiring bank is
- * unplayable at once (voices on it stop at their next block) and is freed only a second later, so no audio thread
- * can still be reading it. */
-#ifndef BANK_IDLE_S
-#define BANK_IDLE_S 20.0
-#endif
-static int lock_unless_shutdown(void) {
-    while (pthread_mutex_trylock(&g_bank_mx)) {
-        if (__atomic_load_n(&g_shutdown, __ATOMIC_ACQUIRE)) return 0;
-        usleep(2000);
+static int bank_state_of(int i) { return __atomic_load_n(&g_banks[i].state, __ATOMIC_ACQUIRE); }
+
+static int bank_load(bank_t *b, const char *path) {
+    FILE *f = fopen(path, "rb");
+    long size = 0;
+    if (!f) return -1;
+    if (fseek(f, 0, SEEK_END) || (size = ftell(f)) < 32 || size > (256L << 20) || fseek(f, 0, SEEK_SET)) { fclose(f); return -1; }
+    uint8_t *m = malloc((size_t)size);
+    if (!m || fread(m, 1, (size_t)size, f) != (size_t)size) { fclose(f); free(m); return -1; }
+    fclose(f);
+    b->file = m;
+    uint32_t ver, ns, nz, doff, flags, rate;
+    float gain;
+    if (memcmp(m, "SNXB", 4)) return -1;
+    memcpy(&ver, m + 4, 4); memcpy(&ns, m + 8, 4); memcpy(&nz, m + 12, 4); memcpy(&doff, m + 16, 4);
+    memcpy(&flags, m + 20, 4); memcpy(&gain, m + 24, 4); memcpy(&rate, m + 28, 4);
+    size_t need = 32 + (size_t)ns * sizeof(ent_t) + (size_t)nz * sizeof(zone_t);
+    if (ver != 1 || ns == 0 || ns > 65535 || nz == 0 || nz > 4096 || doff != need || doff > (size_t)size) return -1;
+    if (!(gain > 0.05f && gain < 20.0f)) gain = 1.0f;
+    if (rate == 0) rate = 44100;
+    if (rate < 8000 || rate > 96000) return -1;
+    b->nsamp = ns; b->nzone = nz; b->flags = flags; b->gain = gain; b->rate = rate; b->step = rate / SR;
+    b->ent = (const ent_t *)(m + 32);
+    b->zone = (const zone_t *)(m + 32 + ns * sizeof(ent_t));
+    for (uint32_t z = 0; z < nz; z++)
+        if (b->zone[z].smp >= ns || b->zone[z].lo > b->zone[z].hi || b->zone[z].lv > b->zone[z].hv) return -1;
+    b->si = calloc(ns, sizeof(sinfo_t));
+    if (!b->si) return -1;
+    const uint8_t *data = m + doff;
+    size_t dlen = (size_t)size - doff;
+    int nch = (flags & FLAG_MONO) ? 1 : 2;
+    for (uint32_t i = 0; i < ns; i++) {
+        const ent_t *e = &b->ent[i];
+        sinfo_t *si = &b->si[i];
+        if (e->frames < 8 || e->frames > 60 * 96000 || (size_t)e->off + 8 > dlen) return -1;
+        if (e->loop_e && (e->loop_e > e->frames || e->loop_s + 64 >= e->loop_e)) return -1;
+        uint32_t l0, l1;
+        memcpy(&l0, data + e->off, 4); memcpy(&l1, data + e->off + 4, 4);
+        if ((size_t)e->off + 8 + (size_t)l0 + l1 > dlen || (nch == 2 && !l1)) return -1;
+        si->s[0] = data + e->off + 8; si->len[0] = l0;
+        si->s[1] = data + e->off + 8 + l0; si->len[1] = l1;
+        if (!e->loop_e) continue;
+        for (int c = 0; c < nch; c++) {                 /* run up to the loop start once, to jump there later */
+            dec_t d; seek_t z = { 0, 0, 0, 0, 0, 0 };
+            int16_t scratch[RING];
+            dec_seek(&d, si->s[c], si->len[c], &z, 0);
+            for (uint32_t k = 0; k < e->loop_s; k += RING)
+                if (dec_run(&d, scratch, 0, e->loop_s - k < RING ? e->loop_s - k : RING)) return -1;
+            dec_state(&d, &si->loop[c]);
+            if (__atomic_load_n(&g_shutdown, __ATOMIC_ACQUIRE)) return -1;
+        }
     }
-    return 1;
-}
-
-static void release_idle_banks(int except) {
-    for (int i = 0; i < NINST; i++) {
-        if (i == except) continue;
-        if (!lock_unless_shutdown()) return;
-        int go = g_banks[i].state == BANK_READY && __atomic_load_n(&g_bank_users[i], __ATOMIC_ACQUIRE) == 0 &&
-                 now_s() - g_bank_idle[i] > BANK_IDLE_S;
-        if (go) __atomic_store_n(&g_banks[i].state, BANK_RETIRING, __ATOMIC_RELEASE);
-        pthread_mutex_unlock(&g_bank_mx);
-        if (!go) continue;
-        for (int w = 0; w < 50 && !__atomic_load_n(&g_shutdown, __ATOMIC_ACQUIRE); w++) usleep(20000);
-        if (!lock_unless_shutdown()) return;
-        if (__atomic_load_n(&g_bank_users[i], __ATOMIC_ACQUIRE) == 0 && !g_banks[i].stop) {
-            bank_t *b = &g_banks[i];
-            if (b->have_loader) { pthread_join(b->loader, NULL); b->have_loader = 0; }
-            bank_free_data(b);
-            __atomic_store_n(&b->state, BANK_NONE, __ATOMIC_RELEASE);
-        } else __atomic_store_n(&g_banks[i].state, BANK_READY, __ATOMIC_RELEASE);
-        pthread_mutex_unlock(&g_bank_mx);
-    }
+    return 0;
 }
 
 static void *loader_main(void *arg) {
-    bank_t *b = arg;
-    release_idle_banks((int)(b - g_banks));
-    FILE *f = fopen(b->path, "rb");
-    long size = 0;
-    if (!f || fseek(f, 0, SEEK_END) || (size = ftell(f)) < 32 || fseek(f, 0, SEEK_SET)) goto fail;
-    b->maplen = (size_t)size;
-    b->map = malloc(b->maplen);
-    if (!b->map || fread(b->map, 1, b->maplen, f) != b->maplen) goto fail;
-    fclose(f); f = NULL;
-    {
-        const uint8_t *m = b->map;
-        uint32_t ver, ns, nz, doff, flags;
-        float gain;
-        if (memcmp(m, "SNXB", 4)) goto fail;
-        memcpy(&ver, m + 4, 4); memcpy(&ns, m + 8, 4); memcpy(&nz, m + 12, 4); memcpy(&doff, m + 16, 4);
-        memcpy(&flags, m + 20, 4); memcpy(&gain, m + 24, 4);
-        size_t need = 32 + (size_t)ns * sizeof(ent_t) + (size_t)nz * sizeof(zone_t);
-        if (ver != 1 || ns == 0 || ns > 65535 || nz == 0 || nz > 4096 || doff != need || doff > b->maplen) goto fail;
-        if (!(gain > 0.05f && gain < 20.0f)) gain = 1.0f;
-        b->nsamp = ns; b->nzone = nz; b->flags = flags; b->gain = gain;
-        b->ent = (const ent_t *)(m + 32);
-        b->zone = (const zone_t *)(m + 32 + ns * sizeof(ent_t));
-        for (uint32_t z = 0; z < nz; z++)
-            if (b->zone[z].smp >= ns || b->zone[z].lo > b->zone[z].hi || b->zone[z].lv > b->zone[z].hv) goto fail;
-        size_t total = 0, dlen = b->maplen - doff;
-        for (uint32_t i = 0; i < ns; i++) {
-            const ent_t *e = &b->ent[i];
-            if (e->frames < 8 || e->frames > 60 * 44100 || (size_t)e->off + 8 > dlen) goto fail;
-            if (e->loop_e && (e->loop_e > e->frames || e->loop_s + 64 >= e->loop_e)) goto fail;
-            total += e->frames + 1;                       /* +1: a guard frame for interpolation */
-        }
-        b->head = malloc(total * 4);
-        b->hoff = malloc(ns * sizeof(uint32_t));
-        if (!b->head || !b->hoff) goto fail;
-        size_t at = 0;
-        for (uint32_t i = 0; i < ns && !b->stop; i++) {
-            const ent_t *e = &b->ent[i];
-            const uint8_t *src = m + doff + e->off;
-            uint32_t l0, l1;
-            memcpy(&l0, src, 4); memcpy(&l1, src + 4, 4);
-            if ((size_t)e->off + 8 + (size_t)l0 + l1 > dlen) goto fail;
-            int16_t *dst = b->head + at * 2;
-            if (decode_channel(src + 8, l0, dst, e->frames)) goto fail;
-            if (b->flags & FLAG_MONO)
-                for (uint32_t k = 0; k < e->frames; k++) dst[2 * (size_t)k + 1] = dst[2 * (size_t)k];
-            else if (decode_channel(src + 8 + l0, l1, dst + 1, e->frames)) goto fail;
-            /* guard frame: a looped sample continues into its loop start, a one-shot into silence */
-            uint32_t g = e->loop_e ? e->loop_s : e->frames;
-            dst[2 * (size_t)e->frames] = g < e->frames ? dst[2 * (size_t)g] : 0;
-            dst[2 * (size_t)e->frames + 1] = g < e->frames ? dst[2 * (size_t)g + 1] : 0;
-            b->hoff[i] = (uint32_t)at;
-            at += e->frames + 1;
-        }
-        if (b->stop) goto fail;
+    (void)arg;
+    for (;;) {
+        int pick = -1;
+        pthread_mutex_lock(&g_bank_mx);
+        for (int i = 0; i < NINST; i++)
+            if (g_banks[i].state == BANK_NONE && (pick < 0 || g_prio[i] > g_prio[pick])) pick = i;
+        if (pick >= 0) g_banks[pick].state = BANK_LOADING;
+        pthread_mutex_unlock(&g_bank_mx);
+        if (pick < 0 || __atomic_load_n(&g_shutdown, __ATOMIC_ACQUIRE)) break;
+        char path[1200];
+        snprintf(path, sizeof path, "%s/%s.snx", g_data_dir, INST_FILE[pick]);
+        bank_t *b = &g_banks[pick];
+        int ok = bank_load(b, path) == 0;
+        if (!ok) { free(b->file); free(b->si); b->file = NULL; b->si = NULL; }
+        __atomic_store_n(&b->state, ok ? BANK_READY : BANK_FAILED, __ATOMIC_RELEASE);
+        __atomic_add_fetch(&g_loaded, 1, __ATOMIC_ACQ_REL);
     }
-    {   /* keep the small tables and the decoded audio; drop the compressed file */
-        ent_t *e = malloc(b->nsamp * sizeof(ent_t));
-        zone_t *z = malloc(b->nzone * sizeof(zone_t));
-        if (!e || !z) { free(e); free(z); goto fail; }
-        memcpy(e, b->ent, b->nsamp * sizeof(ent_t)); memcpy(z, b->zone, b->nzone * sizeof(zone_t));
-        b->ent = e; b->zone = z;
-        free(b->map); b->map = NULL;
-        b->own_tables = 1;
-    }
-    __atomic_store_n(&b->state, BANK_READY, __ATOMIC_RELEASE);
-    return NULL;
-fail:
-    if (f) fclose(f);
-    __atomic_store_n(&b->state, BANK_FAILED, __ATOMIC_RELEASE);
     return NULL;
 }
 
 static void banks_attach(const char *data_dir) {
     pthread_mutex_lock(&g_bank_mx);
-    if (g_users++ == 0) snprintf(g_data_dir, sizeof g_data_dir, "%s", data_dir ? data_dir : ".");
-    pthread_mutex_unlock(&g_bank_mx);
-}
-
-static void bank_request(int i) {     /* start loading if nobody has yet (cheap to call every block) */
-    if (i < 0 || i >= NINST || bank_state_of(i) != BANK_NONE) return;
-    pthread_mutex_lock(&g_bank_mx);
-    bank_t *b = &g_banks[i];
-    if (b->state == BANK_NONE) {
-        if (b->have_loader) pthread_join(b->loader, NULL);
-        memset(b, 0, sizeof *b);
-        snprintf(b->path, sizeof b->path, "%s/%s.snx", g_data_dir, INST_FILE[i]);
-        b->state = BANK_LOADING;
-        b->have_loader = !pthread_create(&b->loader, NULL, loader_main, b);
-        if (!b->have_loader) b->state = BANK_FAILED;
+    if (g_users++ == 0) {
+        snprintf(g_data_dir, sizeof g_data_dir, "%s", data_dir ? data_dir : ".");
+        g_shutdown = 0; g_loaded = 0;
+        memset(g_prio, 0, sizeof g_prio);
+        g_loader_on = !pthread_create(&g_loader, NULL, loader_main, NULL);
     }
     pthread_mutex_unlock(&g_bank_mx);
 }
 
 static void banks_detach(void) {
     pthread_mutex_lock(&g_bank_mx);
-    if (--g_users == 0) {
-        __atomic_store_n(&g_shutdown, 1, __ATOMIC_RELEASE);
-        for (int i = 0; i < NINST; i++) g_banks[i].stop = 1;
-        for (int i = 0; i < NINST; i++) {
-            bank_t *b = &g_banks[i];
-            if (b->have_loader) pthread_join(b->loader, NULL);
-            bank_free_data(b);
-            memset(b, 0, sizeof *b);
-            g_bank_users[i] = 0;
-        }
-        __atomic_store_n(&g_shutdown, 0, __ATOMIC_RELEASE);
-    }
+    int last = --g_users == 0;
+    if (last) __atomic_store_n(&g_shutdown, 1, __ATOMIC_RELEASE);
+    pthread_mutex_unlock(&g_bank_mx);
+    if (!last) return;
+    if (g_loader_on) { pthread_join(g_loader, NULL); g_loader_on = 0; }
+    pthread_mutex_lock(&g_bank_mx);
+    if (g_users == 0)
+        for (int i = 0; i < NINST; i++) { free(g_banks[i].file); free(g_banks[i].si); memset(&g_banks[i], 0, sizeof g_banks[i]); }
     pthread_mutex_unlock(&g_bank_mx);
 }
 
-/* ---------- parameters (order = vst/params.json, the VST index) ---------- */
-/* VOLUME is parameter 0 on purpose: MPC's host sets parameter 0 to the far end and back on insert and on every STOP
- * (mpc-vst-plugins docs/NOTES.md), which must not change the sound. */
-#define NLAYER 4
-enum {
-    P_VOLUME, P_BROWSE, P_EDIT, P_LAYER_A, P_LAYER_B, P_LAYER_C, P_LAYER_D, P_INST_A, P_INST_B, P_INST_C, P_INST_D,
-    P_CUTOFF, P_RESO, P_ENVAMT, P_ATTACK, P_DECAY, P_SUSTAIN, P_RELEASE, P_LFO_RATE, P_LFO_DEPTH,
-    P_CHORUS, P_DELAY, P_REVERB, P_TUNE, P_A4, P_THEME, P_FAV, P_PREV, P_NEXT, P_THEME_NEXT,
-    P_CAT0, P_CAT_LAST = P_CAT0 + NCAT - 1,
-    P_CATEGORY, P_WAVE, P_MIDI_LED, P_LFO_LED, P_CPU, P_LOAD,
-    P_LCD_NAME, P_LCD_CAT, P_LCD_TOP, P_LCD_A, P_LCD_B, P_LCD_C, P_LCD_D, P_LCD_LINE, P_FAV_LO, P_FAV_HI, NP
-};
-static const char *PKEY[NP] = {
-    "volume", "browse", "edit_layer", "layer_a", "layer_b", "layer_c", "layer_d", "inst_a", "inst_b", "inst_c", "inst_d",
-    "cutoff", "resonance", "env_amt", "attack", "decay", "sustain", "release", "lfo_rate", "lfo_depth",
-    "chorus", "delay", "reverb", "tune", "a4_ref", "theme", "fav", "prev", "next", "theme_next",
-    "cat_piano", "cat_keys", "cat_pad", "cat_strings", "cat_brass", "cat_choir", "cat_lead", "cat_pluck", "cat_bass",
-    "cat_bells", "cat_synth", "cat_fx",
-    "category", "wave", "midi_led", "lfo_led", "cpu", "load_state",
-    "lcd_name", "lcd_cat", "lcd_top", "lcd_a", "lcd_b", "lcd_c", "lcd_d", "lcd_line", "fav_lo", "fav_hi"
-};
-static float PDEF[NP];
-static void init_defaults(void) {
+static void bank_want(int i) {         /* the loader takes the banks a preset uses before the rest */
+    if (i >= 0 && i < NINST && g_prio[i] < 1) __atomic_store_n(&g_prio[i], 1, __ATOMIC_RELEASE);
+}
+
+/* ---------- parameters (src/params.h, from tools/sonix_params.py) ---------- */
+static float clamp01(float x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+static float time_of(float p, float lo) { return lo * powf(10.0f / lo, clamp01(p)); }     /* 1 ms / 5 ms .. 10 s */
+static float lfo_hz(float p) { return 0.05f * powf(400.0f, clamp01(p)); }                  /* 0.05 .. 20 Hz */
+static float cutoff_hz(float p) { return 20.0f * powf(1000.0f, clamp01(p)); }              /* 20 Hz .. 20 kHz */
+static float tone_hz(float p) { return 800.0f * powf(15.0f, clamp01(p)); }                 /* 800 Hz .. 12 kHz */
+static int preset_key_index[NPRESET_KEYS];
+
+static void init_tables(void) {
     static int done;
     if (done) return;
-    PDEF[P_VOLUME] = 0.8f; PDEF[P_LAYER_A] = 1;
-    PDEF[P_INST_A] = 0; PDEF[P_INST_B] = 7; PDEF[P_INST_C] = 8; PDEF[P_INST_D] = 11;   /* piano, pad, strings, aah choir */
-    PDEF[P_CUTOFF] = 1.0f; PDEF[P_ENVAMT] = 0.5f; PDEF[P_DECAY] = 0.5f; PDEF[P_SUSTAIN] = 1.0f; PDEF[P_RELEASE] = 0.35f;
-    PDEF[P_LFO_RATE] = 0.5f; PDEF[P_REVERB] = 0.15f; PDEF[P_A4] = 440;
+    for (int k = 0; k < NPRESET_KEYS; k++) {
+        preset_key_index[k] = -1;
+        for (int i = 0; i < NP; i++) if (!strcmp(PKEY[i], PRESET_KEYS[k])) preset_key_index[k] = i;
+    }
     done = 1;
 }
-/* knobs whose move the LCD's bottom line reports for a moment */
-static int is_knob(int i) { return i == P_VOLUME || (i >= P_CUTOFF && i <= P_A4); }
-
-static float clamp01(float x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-/* envelope times: 1 ms .. 10 s on a log scale (attack), 5 ms .. 10 s (decay, release) */
-static float time_of(float p, float lo) { return lo * powf(10.0f / lo, clamp01(p)); }
-static float lfo_hz(float p) { return 0.05f * powf(400.0f, clamp01(p)); }
-static float cutoff_hz(float p) { return 20.0f * powf(1000.0f, clamp01(p)); }      /* 20 Hz .. 20 kHz */
 
 /* ---------- voices ---------- */
 enum { ENV_OFF, ENV_ATTACK, ENV_DECAY, ENV_SUSTAIN, ENV_RELEASE, ENV_KILL };
-#define POLY 16                     /* notes that sound at once (each plays on every layer that is on) */
-#define MAX_V 80                    /* voice slots: 16 notes x 4 layers plus room for stolen notes to fade */
 
 typedef struct {
-    int stage, bank, layer, key, held, sustained;
-    uint32_t note_id;
-    uint32_t smp, frames, loop_s, loop_e;
-    double pos;
-    float semis, gain, env;
-    float ic1[2], ic2[2];           /* filter state, per channel */
+    int stage, bank, layer, key, held, sustained, nch, done;
+    uint32_t note_id, smp, produced;
+    double sp;                       /* position in the decoded stream (a loop's repeats continue it) */
+    float semis, gain, env, vel;     /* semis: from the zone root, with the zone's tuning correction */
+    float ic1[2], ic2[2];            /* filter state, per channel */
+    dec_t d[2];
+    int16_t ring[2][RING];
 } voice_t;
 
 typedef struct { uint8_t st, d1, d2; } ev_t;
 
-#define DLY_LEN 65536               /* delay line: 1.49 s */
+#define DLY_LEN 131072               /* delay line: 2.97 s (a half note at 40 BPM) */
+#define PRE_LEN 8192                 /* reverb pre-delay */
 typedef struct {
     float p[NP];
-    float prev_mom[NP];             /* momentary buttons act on the press only */
+    float prev_mom[NP];
     voice_t v[MAX_V];
     ev_t ev[MAX_EV]; int nev;
     int pedal;
-    float bend;
+    float bend, mw;
     float vol_smooth;
     uint32_t note_counter;
-    int8_t held_bank[NINST];        /* banks this instance holds a "use" on */
-    float lfo_ph;
+    float lfo_ph, vib_ph, trem_prev;
     /* effects */
     float *cho; int cho_w; float cho_ph;
     float *dly; int dly_w; float dly_t, dly_lp[2];
     float *rv; int rv_comb[8], rv_len_c[8], rv_ap[4], rv_len_a[4]; float rv_store[8];
-    float bpm;                      /* host tempo (vst.json HAS_LFO_BPM sends "lfo_bpm"); 0 = not known */
+    float *pre; int pre_w;
+    float bpm;
     /* what the faceplate shows */
-    int rev;                        /* display_rev: bumped when something the page shows changed */
-    double clock;                   /* seconds rendered */
-    int touch;  double touch_t;     /* the knob moved last, and when (its value shows on the LCD for a moment) */
-    int touch_shown;
-    double midi_t, wave_t, cpu_t;   /* when the MIDI LED lit, the wave picture changed, the CPU meter was set */
+    int rev;
+    double clock;
+    int touch; double touch_t; int touch_shown;
+    double midi_t, wave_t, cpu_t, quiet_t;
     double cpu_acc; int cpu_n;
-    int sounding;
+    float level;                     /* output level the waveform follows */
+    int wave_ph;
+    int layer_busy[NLAYER];
 } inst_t;
 
 static int find_key(const char *k) {
@@ -358,50 +329,66 @@ static int ival(const inst_t *s, int i, int lo, int hi) {
     int x = (int)lroundf(s->p[i]);
     return x < lo ? lo : x > hi ? hi : x;
 }
-static int layer_on(const inst_t *s, int l) { return s->p[P_LAYER_A + l] > 0.5f; }
-static int layer_inst(const inst_t *s, int l) { return ival(s, P_INST_A + l, 0, NINST - 1); }
-static int edit_layer(const inst_t *s) { return ival(s, P_EDIT, 0, NLAYER - 1); }
+#define LP(base, l) ((base) + (l) * (P_LAYER_B - P_LAYER_A))   /* a layer's parameter: A's index + l x stride */
+static int layer_on(const inst_t *s, int l) { return s->p[LP(P_LAYER_A, l)] > 0.5f; }
+static int layer_inst(const inst_t *s, int l) { return ival(s, LP(P_INST_A, l), 0, NINST - 1); }
+static int any_solo(const inst_t *s) {
+    for (int l = 0; l < NLAYER; l++) if (layer_on(s, l) && s->p[LP(P_SOLO_A, l)] > 0.5f) return 1;
+    return 0;
+}
+static int layer_plays(const inst_t *s, int l) {
+    return layer_on(s, l) && (!any_solo(s) || s->p[LP(P_SOLO_A, l)] > 0.5f);
+}
+static int cur_preset(const inst_t *s) { return ival(s, P_PRESET, 0, NPRESET - 1); }
 
-/* memory: this instance holds a use on each bank one of its layers that is on has picked */
-static void sync_banks(inst_t *s) {
-    int want[NINST] = { 0 };
-    for (int l = 0; l < NLAYER; l++) if (layer_on(s, l)) want[layer_inst(s, l)] = 1;
-    for (int b = 0; b < NINST; b++) {
-        if (want[b] && !s->held_bank[b]) { __atomic_add_fetch(&g_bank_users[b], 1, __ATOMIC_ACQ_REL); s->held_bank[b] = 1; }
-        else if (!want[b] && s->held_bank[b]) {
-            if (__atomic_sub_fetch(&g_bank_users[b], 1, __ATOMIC_ACQ_REL) == 0) g_bank_idle[b] = now_s();
-            s->held_bank[b] = 0;
-        }
-        if (want[b]) bank_request(b);
-    }
+static void want_banks(inst_t *s) {
+    for (int l = 0; l < NLAYER; l++) if (layer_on(s, l)) bank_want(layer_inst(s, l));
 }
 
-static int fav_get(const inst_t *s, int inst) {
-    int lo = ival(s, P_FAV_LO, 0, 16383), hi = ival(s, P_FAV_HI, 0, 16383);
-    return inst < 14 ? (lo >> inst) & 1 : (hi >> (inst - 14)) & 1;
+/* favourites: one bit per preset in ten 13-bit parameters (saved with the project) */
+static int fav_get(const inst_t *s, int pr) { return (ival(s, P_FAV_0 + pr / 13, 0, 8191) >> (pr % 13)) & 1; }
+static void fav_set(inst_t *s, int pr, int on) {
+    int w = ival(s, P_FAV_0 + pr / 13, 0, 8191);
+    w = on ? w | (1 << (pr % 13)) : w & ~(1 << (pr % 13));
+    s->p[P_FAV_0 + pr / 13] = (float)w;
 }
-static void fav_set(inst_t *s, int inst, int on) {
-    int lo = ival(s, P_FAV_LO, 0, 16383), hi = ival(s, P_FAV_HI, 0, 16383);
-    if (inst < 14) lo = on ? lo | (1 << inst) : lo & ~(1 << inst);
-    else hi = on ? hi | (1 << (inst - 14)) : hi & ~(1 << (inst - 14));
-    s->p[P_FAV_LO] = (float)lo; s->p[P_FAV_HI] = (float)hi;
+static int any_fav(const inst_t *s, int cat) {
+    for (int i = 0; i < NPRESET; i++) if (fav_get(s, i) && (cat < 0 || PRESET_CAT[i] == cat)) return 1;
+    return 0;
 }
 
-/* the derived values the page reads back: the edit layer's instrument, its category and favourite mark */
-static void refresh_derived(inst_t *s) {
-    int inst = layer_inst(s, edit_layer(s));
-    s->p[P_BROWSE] = (float)inst;
-    s->p[P_CATEGORY] = (float)INST_CAT[inst];
-    s->p[P_FAV] = (float)fav_get(s, inst);
+static void apply_preset(inst_t *s, int pr) {
+    if (pr < 0) pr = 0;
+    if (pr >= NPRESET) pr = NPRESET - 1;
+    for (int k = 0; k < NPRESET_KEYS; k++) if (preset_key_index[k] >= 0) s->p[preset_key_index[k]] = PRESET_VAL[pr][k];
+    for (int l = 0; l < NLAYER; l++) s->p[LP(P_SOLO_A, l)] = 0;
+    s->p[P_PRESET] = (float)pr;
+    s->p[P_CATEGORY] = (float)PRESET_CAT[pr];
+    s->p[P_FAV] = (float)fav_get(s, pr);
+    s->touch_shown = 0;
+    want_banks(s);
     s->rev++;
 }
-
-static void set_edit_inst(inst_t *s, int inst) {
-    if (inst < 0) inst = 0;
-    if (inst >= NINST) inst = NINST - 1;
-    s->p[P_INST_A + edit_layer(s)] = (float)inst;
-    sync_banks(s);
-    refresh_derived(s);
+static int edited(const inst_t *s) {
+    int pr = cur_preset(s);
+    for (int k = 0; k < NPRESET_KEYS; k++) {
+        int i = preset_key_index[k];
+        if (i >= 0 && fabsf(s->p[i] - PRESET_VAL[pr][k]) > 0.0015f) return 1;
+    }
+    return 0;
+}
+/* prev / next: every preset in order, or only the favourites while FAV LIST is on (and there are some) */
+static void step_preset(inst_t *s, int dir) {
+    int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, -1), cur = cur_preset(s);
+    for (int k = 1; k <= NPRESET; k++) {
+        int i = ((cur + dir * k) % NPRESET + NPRESET) % NPRESET;
+        if (!only || fav_get(s, i)) { apply_preset(s, i); return; }
+    }
+}
+static void jump_category(inst_t *s, int cat) {
+    int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, cat);
+    for (int i = 0; i < NPRESET; i++)
+        if (PRESET_CAT[i] == cat && (!only || fav_get(s, i))) { apply_preset(s, i); return; }
 }
 
 static const zone_t *find_zone(const bank_t *b, int key, int vel) {
@@ -420,7 +407,7 @@ static const zone_t *find_zone(const bank_t *b, int key, int vel) {
     return best;
 }
 
-/* polyphony counts notes, not voices: a note on four layers is one note. Over POLY notes, the oldest note (a
+/* polyphony counts notes, not voices: a note on four layers is one note. Over POLYPHONY notes, the oldest note (a
  * released one first) fades out in ~3 ms on every layer. */
 static void make_room(inst_t *s) {
     uint32_t ids[MAX_V]; int rel[MAX_V], n = 0;
@@ -432,7 +419,7 @@ static void make_room(inst_t *s) {
         if (k == n) { ids[n] = v->note_id; rel[n] = 1; n++; }
         if (v->stage != ENV_RELEASE) rel[k] = 0;
     }
-    if (n < POLY) return;
+    if (n < ival(s, P_POLYPHONY, 1, MAX_POLY)) return;
     int pick = -1;
     for (int k = 0; k < n; k++) if (rel[k] && (pick < 0 || ids[k] < ids[pick])) pick = k;
     if (pick < 0) for (int k = 0; k < n; k++) if (pick < 0 || ids[k] < ids[pick]) pick = k;
@@ -443,60 +430,54 @@ static void make_room(inst_t *s) {
 static voice_t *free_voice(inst_t *s) {
     voice_t *f = NULL;
     for (int i = 0; i < MAX_V; i++) if (s->v[i].stage == ENV_OFF) return &s->v[i];
-    for (int i = 0; i < MAX_V; i++)                    /* all busy: the oldest fading voice */
+    for (int i = 0; i < MAX_V; i++)
         if (s->v[i].stage == ENV_KILL && (!f || s->v[i].note_id < f->note_id)) f = &s->v[i];
     if (!f) for (int i = 0; i < MAX_V; i++) if (!f || s->v[i].note_id < f->note_id) f = &s->v[i];
     return f;
 }
 
-/* the LCD waveform picture for a note: a shape per kind of sound, small or large by velocity (1..8; 0 = idle) */
-static int wave_frame(int cat, int vel) {
-    int shape;
-    switch (cat) {
-    case 0: case 7: case 9: shape = 0; break;            /* piano, pluck, bells: a decaying ring */
-    case 1: shape = 1; break;                             /* keys: rounded */
-    case 8: shape = 2; break;                             /* bass: sine */
-    default: shape = 3; break;                            /* pads, strings, brass, choir, lead, synth, fx: rich */
-    }
-    return 1 + shape * 2 + (vel >= 90);
-}
+static const float CURVE_EXP[3] = { 0.6f, 1.2f, 2.2f };   /* velocity curve: soft, normal, hard */
 
 static void note_on(inst_t *s, int key, int vel) {
-    int layers_on = 0;
-    for (int l = 0; l < NLAYER; l++) layers_on += layer_on(s, l);
-    if (!layers_on) return;
+    int playing = 0;
+    for (int l = 0; l < NLAYER; l++) playing += layer_plays(s, l);
+    if (!playing) return;
     make_room(s);
     uint32_t id = ++s->note_counter;
-    float lg = 1.0f / sqrtf((float)layers_on);           /* stacked layers keep about the level of one */
+    float vn = powf(vel / 127.0f, CURVE_EXP[ival(s, P_VEL_CURVE, 0, 2)]);
+    int zvel = (int)lroundf(vn * 127.0f);                      /* the curve also picks the sample layer */
+    if (zvel < 1) zvel = 1;
+    float sens = clamp01(s->p[P_VEL_SENS]);
+    float vgain = (1.0f - sens) + sens * (0.08f + 0.92f * vn);
+    float lg = 1.0f / sqrtf((float)playing);                  /* stacked layers keep about the level of one */
     int any = 0;
     for (int l = 0; l < NLAYER; l++) {
-        if (!layer_on(s, l)) continue;
+        if (!layer_plays(s, l)) continue;
         int bi = layer_inst(s, l);
-        if (bank_state_of(bi) != BANK_READY) continue;    /* still loading: that layer is silent */
+        if (bank_state_of(bi) != BANK_READY) continue;          /* still loading: that layer is silent */
         const bank_t *b = &g_banks[bi];
-        const zone_t *z = find_zone(b, key, vel);
+        const zone_t *z = find_zone(b, key, zvel);
         if (!z) continue;
-        for (int i = 0; i < MAX_V; i++)                   /* the same key again on this layer: the old note rings out */
+        for (int i = 0; i < MAX_V; i++)                         /* the same key again on this layer: the old note rings out */
             if (s->v[i].stage != ENV_OFF && s->v[i].layer == l && s->v[i].key == key && s->v[i].stage < ENV_RELEASE) {
                 s->v[i].stage = ENV_RELEASE; s->v[i].held = 0; s->v[i].sustained = 0;
             }
         voice_t *v = free_voice(s);
-        const ent_t *e = &b->ent[z->smp];
-        memset(v, 0, sizeof *v);
+        const sinfo_t *si = &b->si[z->smp];
         v->stage = ENV_ATTACK;
-        v->bank = bi; v->layer = l; v->key = key; v->held = 1; v->note_id = id;
-        v->smp = z->smp; v->frames = e->frames; v->loop_s = e->loop_s; v->loop_e = e->loop_e;
+        v->bank = bi; v->layer = l; v->key = key; v->held = 1; v->sustained = 0; v->note_id = id;
+        v->smp = z->smp; v->nch = (b->flags & FLAG_MONO) ? 1 : 2; v->done = 0;
+        v->produced = 0; v->sp = 0; v->env = 0; v->vel = vn;
+        v->ic1[0] = v->ic1[1] = v->ic2[0] = v->ic2[1] = 0;
         v->semis = (float)(key - z->root) + z->tune * 0.01f;
-        float vn = vel / 127.0f;
-        v->gain = b->gain * lg * (0.18f + 0.82f * powf(vn, 1.6f));
+        v->gain = b->gain * lg * vgain;
+        seek_t start = { 0, 0, 0, 0, 0, 0 };
+        for (int c = 0; c < v->nch; c++) dec_seek(&v->d[c], si->s[c], si->len[c], &start, 0);
         any = 1;
     }
     if (!any) return;
-    /* faceplate: the MIDI LED lights; the LCD shows this kind of wave (changed at most ~6 times a second) */
     if (s->p[P_MIDI_LED] < 0.5f) { s->p[P_MIDI_LED] = 1; s->rev++; }
     s->midi_t = s->clock;
-    int wf = wave_frame(INST_CAT[layer_inst(s, edit_layer(s))], vel);
-    if (wf != (int)s->p[P_WAVE] && s->clock - s->wave_t > 0.16) { s->p[P_WAVE] = (float)wf; s->wave_t = s->clock; s->rev++; }
 }
 
 static void note_off(inst_t *s, int key) {
@@ -523,7 +504,8 @@ static void handle_event(inst_t *s, const ev_t *e) {
     if (type == 0x90 && e->d2 > 0) note_on(s, e->d1 & 127, e->d2 & 127);
     else if (type == 0x80 || (type == 0x90 && e->d2 == 0)) note_off(s, e->d1 & 127);
     else if (type == 0xB0) {
-        if (e->d1 == 64) {
+        if (e->d1 == 1) s->mw = (e->d2 & 127) / 127.0f;
+        else if (e->d1 == 64) {
             int down = e->d2 >= 64;
             if (!down && s->pedal)
                 for (int i = 0; i < MAX_V; i++)
@@ -533,8 +515,32 @@ static void handle_event(inst_t *s, const ev_t *e) {
         else if (e->d1 == 123) all_off(s, 0);
     } else if (type == 0xE0) {
         int pb = ((e->d2 & 127) << 7 | (e->d1 & 127)) - 8192;
-        s->bend = pb / 8192.0f * 2.0f;
+        s->bend = pb / 8192.0f;
     }
+}
+
+/* decode a voice's sample up to stream frame `need` (exclusive); a loop's end continues at its start, a one-shot's
+ * end is followed by silence */
+static int voice_fill(voice_t *v, const bank_t *b, uint32_t need) {
+    const ent_t *e = &b->ent[v->smp];
+    const sinfo_t *si = &b->si[v->smp];
+    while (v->produced < need) {
+        uint32_t slot = v->produced & (RING - 1), count = need - v->produced;
+        if (!v->done) {
+            uint32_t end = e->loop_e ? e->loop_e : e->frames;
+            if (v->d[0].i >= end) {
+                if (e->loop_e) {
+                    for (int c = 0; c < v->nch; c++) dec_seek(&v->d[c], si->s[c], si->len[c], &si->loop[c], e->loop_s);
+                } else v->done = 1;
+                continue;
+            }
+            if (count > end - v->d[0].i) count = end - v->d[0].i;
+            for (int c = 0; c < v->nch; c++) if (dec_run(&v->d[c], v->ring[c], slot, count)) return -1;
+        } else
+            for (uint32_t j = 0; j < count; j++) v->ring[0][(slot + j) & (RING - 1)] = v->ring[1][(slot + j) & (RING - 1)] = 0;
+        v->produced += count;
+    }
+    return 0;
 }
 
 /* ---------- reverb (Freeverb-style, 4 combs + 2 allpasses per side; from Fretty) ---------- */
@@ -549,9 +555,8 @@ static int reverb_init(inst_t *s) {
     return s->rv != NULL;
 }
 
-static void reverb_frame(inst_t *s, float in, float *ol, float *orr) {
+static void reverb_frame(inst_t *s, float in, float fb, float damp, float *ol, float *orr) {
     float *buf = s->rv;
-    float fb = 0.82f, damp = 0.32f;
     float out[2] = { 0, 0 };
     int base = 0;
     for (int c = 0; c < 8; c++) {
@@ -578,29 +583,33 @@ static void reverb_frame(inst_t *s, float in, float *ol, float *orr) {
     *ol = out[0]; *orr = out[1];
 }
 
+static int need_loading(const inst_t *s);
+
 /* ---------- engine entry points ---------- */
 static void *eng_create(const char *data_dir) {
-    init_defaults();
+    init_tables();
     inst_t *s = calloc(1, sizeof *s);
     if (!s) return NULL;
-    for (int i = 0; i < NP; i++) s->p[i] = PDEF[i];
+    for (int i = 0; i < NP; i++) s->p[i] = PINFO[i].def;
     s->vol_smooth = -1;
     s->touch = -1;
     s->cho = calloc(2 * 2048, sizeof(float));
     s->dly = calloc(2 * DLY_LEN, sizeof(float));
-    if (!s->cho || !s->dly || !reverb_init(s)) { free(s->cho); free(s->dly); free(s->rv); free(s); return NULL; }
+    s->pre = calloc(PRE_LEN, sizeof(float));
+    if (!s->cho || !s->dly || !s->pre || !reverb_init(s)) {
+        free(s->cho); free(s->dly); free(s->pre); free(s->rv); free(s); return NULL;
+    }
     banks_attach(data_dir);
-    sync_banks(s);
-    refresh_derived(s);
+    apply_preset(s, 0);
+    /* the first preset plays the moment Sonix opens: wait (up to 2 s) for its sounds, which the loader takes first */
+    for (int w = 0; w < 400 && need_loading(s); w++) usleep(5000);
     return s;
 }
 
 static void eng_destroy(void *inst) {
     inst_t *s = inst;
-    for (int l = 0; l < NLAYER; l++) s->p[P_LAYER_A + l] = 0;
-    sync_banks(s);
     banks_detach();
-    free(s->cho); free(s->dly); free(s->rv);
+    free(s->cho); free(s->dly); free(s->pre); free(s->rv);
     free(s);
 }
 
@@ -611,104 +620,131 @@ static void eng_midi(void *inst, const uint8_t *msg, int len) {
     s->ev[s->nev++] = e;
 }
 
-/* step through the instruments of the edit layer's category, wrapping */
-static void step_in_category(inst_t *s, int dir) {
-    int cur = layer_inst(s, edit_layer(s)), cat = INST_CAT[cur];
-    for (int k = 1; k <= NINST; k++) {
-        int i = ((cur + dir * k) % NINST + NINST) % NINST;
-        if (INST_CAT[i] == cat) { set_edit_inst(s, i); return; }
-    }
+static int is_computed(int i) {      /* the engine's own displays: never set from outside */
+    if (PINFO[i].kind == K_TEXT) return 1;
+    return i == P_CATEGORY || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
+           (i >= P_ACT_A && i <= P_ACT_D);
 }
 
 static void eng_set_param(void *inst, const char *key, const char *val) {
     inst_t *s = inst;
     if (!strcmp(key, "lfo_bpm")) { float b = (float)atof(val); if (b > 20 && b < 400) s->bpm = b; return; }
     int i = find_key(key);
-    if (i < 0) return;
+    if (i < 0 || is_computed(i)) return;
     float x = (float)atof(val);
     if (x != x) return;
-    if (i >= P_CATEGORY && i <= P_LCD_LINE) return;        /* the engine's own displays: not set from outside */
-    if (i == P_PREV || i == P_NEXT || (i >= P_CAT0 && i <= P_CAT_LAST)) {
+    if (PINFO[i].kind == K_MOMENTARY) {
         int press = x > 0.5f && s->prev_mom[i] <= 0.5f;
         s->prev_mom[i] = x;
         s->p[i] = x;
         if (!press) return;
-        if (i == P_PREV) step_in_category(s, -1);
-        else if (i == P_NEXT) step_in_category(s, 1);
-        else {                                                /* a category: its first instrument */
-            int c = i - P_CAT0;
-            for (int k = 0; k < NINST; k++) if (INST_CAT[k] == c) { set_edit_inst(s, k); break; }
-        }
+        if (i == P_PREV) step_preset(s, -1);
+        else if (i == P_NEXT) step_preset(s, 1);
+        else if (i >= P_CAT_PIANO && i < P_CAT_PIANO + NCAT) jump_category(s, i - P_CAT_PIANO);
         return;
     }
-    if (i == P_BROWSE) { set_edit_inst(s, (int)lroundf(x)); return; }
-    if (i == P_FAV) { fav_set(s, layer_inst(s, edit_layer(s)), x > 0.5f); refresh_derived(s); return; }
+    if (x < PINFO[i].lo) x = PINFO[i].lo;
+    if (x > PINFO[i].hi) x = PINFO[i].hi;
+    if (PINFO[i].whole) x = roundf(x);
+    if (i == P_PRESET) { if ((int)x != cur_preset(s)) apply_preset(s, (int)x); return; }
+    if (i == P_FAV) { fav_set(s, cur_preset(s), x > 0.5f); s->p[P_FAV] = x > 0.5f; s->rev++; return; }
     s->p[i] = x;
-    if (i == P_EDIT || (i >= P_LAYER_A && i <= P_INST_D) || i == P_FAV_LO || i == P_FAV_HI) {
-        if (i >= P_LAYER_A && i <= P_INST_D) sync_banks(s);
-        refresh_derived(s);
-    }
-    if (i == P_THEME || i == P_A4) s->rev++;
-    if (is_knob(i)) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; s->rev++; }
+    if (i >= P_FAV_0 && i <= P_FAV_9) { s->p[P_FAV] = (float)fav_get(s, cur_preset(s)); s->rev++; return; }
+    if (i >= P_LAYER_A && i <= P_SOLO_D) want_banks(s);
+    if (PINFO[i].kind == K_KNOB && i != P_VOLUME) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
+    s->rev++;
 }
 
 static int fmt_time(float sec, char *buf, int n) {
     return sec < 1.0f ? snprintf(buf, n, "%d ms", (int)lroundf(sec * 1000)) : snprintf(buf, n, "%.2f s", sec);
 }
+static int fmt_hz(float hz, char *buf, int n) {
+    return hz < 1000 ? snprintf(buf, n, "%d Hz", (int)lroundf(hz)) : snprintf(buf, n, "%.1f kHz", hz / 1000);
+}
+static int fmt_signed(int v, const char *unit, char *buf, int n) {
+    return v ? snprintf(buf, n, "%+d%s", v, unit) : snprintf(buf, n, "0%s", unit);
+}
 
 static int fmt_display(const inst_t *s, int i, char *buf, int n) {
     float x = s->p[i];
-    switch (i) {
-    case P_VOLUME: return x <= 0.001f ? snprintf(buf, n, "-inf dB") : snprintf(buf, n, "%.1f dB", 40.0f * log10f(x));
-    case P_CUTOFF: { float hz = cutoff_hz(x); return hz < 1000 ? snprintf(buf, n, "%d Hz", (int)lroundf(hz)) : snprintf(buf, n, "%.1f kHz", hz / 1000); }
-    case P_RESO: case P_SUSTAIN: case P_LFO_DEPTH: case P_CHORUS: case P_DELAY: case P_REVERB:
-        return snprintf(buf, n, "%d%%", (int)lroundf(clamp01(x) * 100));
-    case P_ENVAMT: { int v = (int)lroundf((clamp01(x) - 0.5f) * 200); return snprintf(buf, n, "%s%d%%", v > 0 ? "+" : "", v); }
-    case P_ATTACK: return fmt_time(time_of(x, 0.001f), buf, n);
-    case P_DECAY: case P_RELEASE: return fmt_time(time_of(x, 0.005f), buf, n);
-    case P_LFO_RATE: { float hz = lfo_hz(x); return snprintf(buf, n, hz < 10 ? "%.2f Hz" : "%.1f Hz", hz); }
-    case P_TUNE: { int t = (int)lroundf(x); return snprintf(buf, n, "%s%d st", t > 0 ? "+" : "", t); }
-    case P_A4: return snprintf(buf, n, "%d Hz", (int)lroundf(x));
+    switch (PINFO[i].fmt) {
+    case F_VOL: return x <= 0.001f ? snprintf(buf, n, "-inf dB") : snprintf(buf, n, "%.1f dB", 40.0f * log10f(x));
+    case F_LEVEL: return x <= 0.001f ? snprintf(buf, n, "-inf dB") : snprintf(buf, n, "%.1f dB", 40.0f * log10f(x / 0.8f));
+    case F_PCT: return snprintf(buf, n, "%d%%", (int)lroundf(clamp01(x) * 100));
+    case F_BIPOLAR: return fmt_signed((int)lroundf((clamp01(x) - 0.5f) * 200), "%", buf, n);
+    case F_CUTOFF: return fmt_hz(cutoff_hz(x), buf, n);
+    case F_TONE: return fmt_hz(tone_hz(x), buf, n);
+    case F_ATTACK: return fmt_time(time_of(x, 0.001f), buf, n);
+    case F_TIME: return fmt_time(time_of(x, 0.005f), buf, n);
+    case F_LFO: { float hz = lfo_hz(x); return snprintf(buf, n, hz < 10 ? "%.2f Hz" : "%.1f Hz", hz); }
+    case F_VIB: return snprintf(buf, n, "%d ct", (int)lroundf(x * x * 100));
+    case F_PAN: {
+        int v = (int)lroundf(x * 50);
+        return v == 0 ? snprintf(buf, n, "C") : snprintf(buf, n, "%c %d", v < 0 ? 'L' : 'R', abs(v));
+    }
+    case F_OCT: return fmt_signed((int)lroundf(x), "", buf, n);
+    case F_CENTS: return fmt_signed((int)lroundf(x), " ct", buf, n);
+    case F_SEMI:
+        if (i == P_BEND_RANGE) return snprintf(buf, n, "%d st", (int)lroundf(x));
+        return fmt_signed((int)lroundf(x), " st", buf, n);
+    case F_HZINT: return snprintf(buf, n, "%d Hz", (int)lroundf(x));
+    case F_INT: return snprintf(buf, n, "%d", (int)lroundf(x));
+    case F_PREDELAY: return snprintf(buf, n, "%d ms", (int)lroundf(clamp01(x) * 100));
     }
     return snprintf(buf, n, "%g", x);
 }
-
-static const char *SHORT_NAME[] = { "VOLUME", "", "", "", "", "", "", "", "", "", "", "CUTOFF", "RESONANCE", "ENV AMT",
-    "ATTACK", "DECAY", "SUSTAIN", "RELEASE", "LFO RATE", "LFO DEPTH", "CHORUS", "DELAY", "REVERB", "TUNE", "A4 REF" };
 
 static void upcase(char *d, const char *src, int n) {
     int k = 0;
     for (; src[k] && k < n - 1; k++) d[k] = (src[k] >= 'a' && src[k] <= 'z') ? src[k] - 32 : src[k];
     d[k] = 0;
 }
+static int need_loading(const inst_t *s) {
+    for (int l = 0; l < NLAYER; l++)
+        if (layer_on(s, l) && bank_state_of(layer_inst(s, l)) < BANK_READY) return 1;
+    return 0;
+}
 
+#define DOT "   \xc2\xb7   "
 static int lcd_text(inst_t *s, int i, char *buf, int n) {
-    int el = edit_layer(s), inst = layer_inst(s, el), st = bank_state_of(inst);
+    int pr = cur_preset(s);
     char name[64];
-    switch (i) {
-    case P_LCD_NAME:
-        upcase(name, INST_NAME[inst], sizeof name);
-        if (st == BANK_FAILED) return snprintf(buf, n, "SAMPLES MISSING");
-        return snprintf(buf, n, "%s%s", name, fav_get(s, inst) ? "  \xe2\x98\x85" : "");
-    case P_LCD_CAT: return snprintf(buf, n, "%s", CAT_NAME[INST_CAT[inst]]);
-    case P_LCD_TOP:
-        return snprintf(buf, n, "A4 %d Hz   LAYER %c   %02d/%02d", ival(s, P_A4, 400, 480), 'A' + el, inst + 1, NINST);
-    case P_LCD_A: case P_LCD_B: case P_LCD_C: case P_LCD_D: {
+    if (i >= P_LCD_A && i <= P_LCD_D) {
         int l = i - P_LCD_A;
-        if (!layer_on(s, l)) return snprintf(buf, n, "%c  ---", 'A' + l);
-        upcase(name, INST_NAME[layer_inst(s, l)], sizeof name);
-        return snprintf(buf, n, "%c  %s", 'A' + l, name);
+        if (!layer_on(s, l)) return snprintf(buf, n, "\xe2\x80\x94");
+        return snprintf(buf, n, "%s", INST_SHORT[layer_inst(s, l)]);
     }
+    if (i >= P_LCAT_A && i <= P_LCAT_D) {
+        int l = i - P_LCAT_A;
+        const char *st = !layer_on(s, l) ? DOT "OFF" : s->p[LP(P_SOLO_A, l)] > 0.5f ? DOT "SOLO" :
+                         !layer_plays(s, l) ? DOT "MUTED" : "";
+        return snprintf(buf, n, "%s%s", CAT_NAME[INST_CAT[layer_inst(s, l)]], st);
+    }
+    if (i >= P_LNAME_A && i <= P_LNAME_D) {
+        int inst = layer_inst(s, i - P_LNAME_A);
+        if (bank_state_of(inst) == BANK_FAILED) return snprintf(buf, n, "SOUND MISSING");
+        upcase(name, INST_NAME[inst], sizeof name);
+        return snprintf(buf, n, "%s", name);
+    }
+    switch (i) {
+    case P_LCD_TOP:
+        return snprintf(buf, n, "%s" DOT "%03d / %d%s", CAT_NAME[PRESET_CAT[pr]], pr + 1, NPRESET, edited(s) ? DOT "EDITED" : "");
+    case P_LCD_REF: {
+        int tr = ival(s, P_TRANSPOSE, -24, 24);
+        if (tr) return snprintf(buf, n, "TRANSPOSE %+d" DOT "A4  %d HZ", tr, ival(s, P_A4_REF, 400, 480));
+        return snprintf(buf, n, "A4  %d HZ", ival(s, P_A4_REF, 400, 480));
+    }
+    case P_LCD_NAME:
+        upcase(name, PRESET_NAME[pr], sizeof name);
+        return snprintf(buf, n, "%s%s", name, fav_get(s, pr) ? "  \xe2\x98\x85" : "");
     case P_LCD_LINE: {
-        if (st == BANK_LOADING) return snprintf(buf, n, "LOADING SAMPLES...");
+        if (need_loading(s)) return snprintf(buf, n, "Loading sounds...");
         if (s->touch >= 0 && s->touch_shown) {
             char v[32];
             fmt_display(s, s->touch, v, sizeof v);
-            return snprintf(buf, n, "\xe2\x96\xb8 %s  %s", SHORT_NAME[s->touch], v);
+            return snprintf(buf, n, "%s   %s", PNAME[s->touch], v);
         }
-        char c[32], r[32];
-        fmt_display(s, P_CUTOFF, c, sizeof c); fmt_display(s, P_RESO, r, sizeof r);
-        return snprintf(buf, n, "CUTOFF %s   RES %s   POLY %d", c, r, POLY);
+        return snprintf(buf, n, "%s", PRESET_DESC[pr]);
     }
     }
     return 0;
@@ -719,7 +755,7 @@ static int eng_get_param(void *inst, const char *key, char *buf, int n) {
     if (n <= 0) return 0;
     if (!strcmp(key, "display_rev")) return snprintf(buf, n, "%d", s->rev);
     int i = find_key(key);
-    if (i >= P_LCD_NAME && i <= P_LCD_LINE) return lcd_text(s, i, buf, n);
+    if (i >= 0 && PINFO[i].kind == K_TEXT) return lcd_text(s, i, buf, n);
     if (i >= 0) return snprintf(buf, n, "%g", s->p[i]);
     size_t kl = strlen(key);
     if (kl > 8 && !strcmp(key + kl - 8, "_display")) {
@@ -727,7 +763,7 @@ static int eng_get_param(void *inst, const char *key, char *buf, int n) {
         if (kl - 8 >= sizeof k2) return 0;
         memcpy(k2, key, kl - 8); k2[kl - 8] = 0;
         i = find_key(k2);
-        if (i >= 0 && is_knob(i)) return fmt_display(s, i, buf, n);
+        if (i >= 0 && PINFO[i].kind == K_KNOB) return fmt_display(s, i, buf, n);
     }
     return 0;
 }
@@ -738,14 +774,24 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     struct timespec t0;
     clock_gettime(CLOCK_MONOTONIC, &t0);
     if (frames > 128) frames = 128;
-    sync_banks(s);                                          /* re-request a bank retired while unused */
+    if (frames < 1) return;
     for (int i = 0; i < s->nev; i++) handle_event(s, &s->ev[i]);
     s->nev = 0;
+    const float dt = frames / SR;
 
-    float a4 = s->p[P_A4];
+    /* pitch: A4 reference, tune, transpose, bend; vibrato from the LFO and the mod wheel */
+    float a4 = s->p[P_A4_REF];
     if (!(a4 >= 400 && a4 <= 480)) a4 = 440;
-    float tune = roundf(s->p[P_TUNE]);
+    int mwmode = ival(s, P_MOD_WHEEL, 0, 2);
+    float lfo_rate = lfo_hz(s->p[P_LFO_RATE]);
+    s->lfo_ph += lfo_rate * dt; s->lfo_ph -= floorf(s->lfo_ph);
+    s->vib_ph += 5.5f * dt; s->vib_ph -= floorf(s->vib_ph);
+    float lfo = sinf(2 * PI_F * s->lfo_ph);
+    float vib_amt = s->p[P_LFO_PITCH] * s->p[P_LFO_PITCH];                     /* up to a semitone */
+    float pitch_mod = vib_amt * lfo + (mwmode == 0 ? s->mw * 0.5f * sinf(2 * PI_F * s->vib_ph) : 0.0f);
+    float global_semis = ival(s, P_TRANSPOSE, -24, 24) + s->p[P_TUNE] * 0.01f + s->bend * ival(s, P_BEND_RANGE, 0, 24) + pitch_mod;
     float pitch_base = a4 / 440.0f;
+
     float att = time_of(s->p[P_ATTACK], 0.001f), dec = time_of(s->p[P_DECAY], 0.005f);
     float rel = time_of(s->p[P_RELEASE], 0.005f);
     float sus = clamp01(s->p[P_SUSTAIN]);
@@ -754,31 +800,55 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     float rel_k = 1.0f - expf(-1.0f / (rel * SR * 0.33f));
     float kill_k = 1.0f - expf(-1.0f / (0.003f * SR * 0.33f));
 
-    /* filter: cutoff knob, +/- 5 octaves of envelope (ENV AMT, centre = none), +/- 2 octaves of LFO */
-    float cut_oct = log2f(cutoff_hz(s->p[P_CUTOFF]));
-    float env_oct = (clamp01(s->p[P_ENVAMT]) - 0.5f) * 10.0f;
-    float depth = clamp01(s->p[P_LFO_DEPTH]);
-    s->lfo_ph += lfo_hz(s->p[P_LFO_RATE]) * frames / SR;
-    if (s->lfo_ph >= 1.0f) s->lfo_ph -= floorf(s->lfo_ph);
-    float lfo_oct = depth * 2.0f * sinf(2.0f * 3.14159265f * s->lfo_ph);
-    int filter_on = s->p[P_CUTOFF] < 0.995f || fabsf(env_oct) > 0.05f || depth > 0.001f;
-    float k_res = 2.0f - 1.9f * clamp01(s->p[P_RESO]);
+    /* filter: cutoff, +/- 5 octaves of envelope (ENV AMT, centre = none), key track (octaves per octave from C4),
+     * velocity (soft notes darker), +/- 2 octaves of LFO, the mod wheel opening it */
+    float cut_oct = log2f(cutoff_hz(s->p[P_CUTOFF])) + (mwmode == 1 ? s->mw * 4.0f : 0.0f);
+    float env_oct = (clamp01(s->p[P_ENV_AMT]) - 0.5f) * 10.0f;
+    float lfo_oct = clamp01(s->p[P_LFO_FILTER]) * 2.0f * lfo;
+    float lfo_span = clamp01(s->p[P_LFO_FILTER]) * 2.0f;
+    float kt = clamp01(s->p[P_KEY_TRACK]), vf = clamp01(s->p[P_VEL_FILTER]);
+    float k_res = 2.0f - 1.9f * clamp01(s->p[P_RESONANCE]);
+    float open_oct = log2f(17500.0f);
+
+    /* tremolo, ramped across the block */
+    float tdep = clamp01(s->p[P_LFO_AMP]);
+    float trem = 1.0f - tdep * (0.5f + 0.5f * lfo);
+    float trem0 = s->trem_prev > 0 ? s->trem_prev : trem, trem_step = (trem - trem0) / frames;
+    s->trem_prev = trem;
+    float spread = clamp01(s->p[P_SPREAD]);
 
     float mix[256];
     memset(mix, 0, sizeof(float) * 2 * frames);
-    int sounding = 0, held = 0;
+    int sounding = 0, held = 0, busy[NLAYER] = { 0 };
     for (int vi = 0; vi < MAX_V; vi++) {
         voice_t *v = &s->v[vi];
         if (v->stage == ENV_OFF) continue;
         if (bank_state_of(v->bank) != BANK_READY) { v->stage = ENV_OFF; continue; }
         sounding++;
         held |= v->held;
+        busy[v->layer] = 1;
         const bank_t *b = &g_banks[v->bank];
-        const int16_t *base = b->head + 2 * (size_t)b->hoff[v->smp];
-        double inc = pitch_base * exp2((v->semis + tune + s->bend) / 12.0);
-        if (inc > 32) inc = 32;
+        const ent_t *e = &b->ent[v->smp];
+        int l = v->layer;
+        float lsemis = 12.0f * ival(s, LP(P_OCTAVE_A, l), -3, 3) + s->p[LP(P_FINE_A, l)] * 0.01f;
+        double inc = pitch_base * exp2((v->semis + lsemis + global_semis) / 12.0) * b->step;
+        if (inc > 15) inc = 15;
+        uint32_t need = (uint32_t)(v->sp + inc * frames) + 2;
+        if (voice_fill(v, b, need)) { v->stage = ENV_OFF; continue; }
+        float lv = s->p[LP(P_LEVEL_A, l)] * 1.25f;
+        float lgain = lv * lv;
+        float pan = s->p[LP(P_PAN_A, l)] + spread * (v->key - 60) / 30.0f;
+        if (pan < -1) pan = -1;
+        if (pan > 1) pan = 1;
+        float gl, gr;
+        if (v->nch == 1) { float th = (pan + 1) * PI_F * 0.25f; gl = cosf(th) * 1.41421f; gr = sinf(th) * 1.41421f; }
+        else { gl = pan > 0 ? 1 - pan : 1; gr = pan < 0 ? 1 + pan : 1; }
+        float voice_oct = cut_oct + kt * (v->key - 60) / 12.0f + vf * (v->vel - 1.0f) * 3.0f;
+        int filter_on = voice_oct - fabsf(env_oct) - lfo_span < open_oct;
         float g1 = 0, a1 = 0, a2 = 0, a3 = 0;
-        for (int f = 0; f < frames; f++) {
+        const int16_t *r0 = v->ring[0], *r1 = v->ring[v->nch - 1];
+        float tg = trem0;
+        for (int f = 0; f < frames; f++, tg += trem_step) {
             switch (v->stage) {
             case ENV_ATTACK: v->env += att_step; if (v->env >= 1.0f) { v->env = 1.0f; v->stage = ENV_DECAY; } break;
             case ENV_DECAY:
@@ -791,22 +861,22 @@ static void eng_render(void *inst, int16_t *out, int frames) {
             }
             if (v->stage >= ENV_RELEASE && v->env < 1e-4f) { v->stage = ENV_OFF; break; }
             if (v->stage == ENV_SUSTAIN && sus <= 0.0f) { v->stage = ENV_OFF; break; }
-            uint32_t ip = (uint32_t)v->pos;
-            float fr = (float)(v->pos - ip);
-            const int16_t *p0 = base + 2 * (size_t)ip;
-            float l = (p0[0] + (p0[2] - p0[0]) * fr) * (1.0f / 32768.0f);
-            float r = (p0[1] + (p0[3] - p0[1]) * fr) * (1.0f / 32768.0f);
+            if (!e->loop_e && v->sp >= e->frames) { v->stage = ENV_OFF; break; }
+            uint32_t ip = (uint32_t)v->sp;
+            float fr = (float)(v->sp - ip);
+            uint32_t i0 = ip & (RING - 1), i1 = (ip + 1) & (RING - 1);
+            float L = (r0[i0] + (r0[i1] - r0[i0]) * fr) * (1.0f / 32768.0f);
+            float R = (r1[i0] + (r1[i1] - r1[i0]) * fr) * (1.0f / 32768.0f);
             if (filter_on) {
                 if ((f & 15) == 0) {                          /* coefficients every 16 frames */
-                    float oct = cut_oct + env_oct * v->env + lfo_oct;
-                    float fc = exp2f(oct);
+                    float fc = exp2f(voice_oct + env_oct * v->env + lfo_oct);
                     if (fc < 20.0f) fc = 20.0f;
                     if (fc > 18000.0f) fc = 18000.0f;
-                    g1 = tanf(3.14159265f * fc / SR);
+                    g1 = tanf(PI_F * fc / SR);
                     a1 = 1.0f / (1.0f + g1 * (g1 + k_res)); a2 = g1 * a1; a3 = g1 * a2;
                 }
-                float in[2] = { l, r };
-                for (int c = 0; c < 2; c++) {                  /* TPT state-variable low-pass, 12 dB */
+                float in[2] = { L, R };
+                for (int c = 0; c < v->nch; c++) {             /* TPT state-variable low-pass, 12 dB (mono: once) */
                     float v3 = in[c] - v->ic2[c];
                     float v1 = a1 * v->ic1[c] + a2 * v3;
                     float v2 = v->ic2[c] + a2 * v->ic1[c] + a3 * v3;
@@ -814,15 +884,12 @@ static void eng_render(void *inst, int16_t *out, int frames) {
                     v->ic2[c] = 2 * v2 - v->ic2[c];
                     in[c] = v2;
                 }
-                l = in[0]; r = in[1];
+                L = in[0]; R = in[v->nch - 1];
             }
-            float g = v->env * v->gain;
-            mix[2 * f] += l * g;
-            mix[2 * f + 1] += r * g;
-            v->pos += inc;
-            if (v->loop_e) {
-                while (v->pos >= v->loop_e) v->pos -= (double)(v->loop_e - v->loop_s);
-            } else if (v->pos >= v->frames) { v->stage = ENV_OFF; break; }
+            float g = v->env * v->gain * lgain * tg;
+            mix[2 * f] += L * g * gl;
+            mix[2 * f + 1] += R * g * gr;
+            v->sp += inc;
         }
     }
 
@@ -833,76 +900,97 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     if (s->vol_smooth < 0) s->vol_smooth = target;
     float vstep = (target - s->vol_smooth) / frames;
     float dry = 1.0f - 0.35f * space, wet = space * 0.9f;
-    float cho_rate = 2 * 3.14159265f * 0.6f / SR, cho_depth = 0.0035f * SR * chorus, cho_base = 0.012f * SR;
+    float cho_rate = 2 * PI_F * 0.6f / SR, cho_depth = 0.0035f * SR * chorus, cho_base = 0.012f * SR;
     float beat = 60.0f / (s->bpm > 0 ? s->bpm : 120.0f);
-    float dly_target = 0.75f * beat * SR;                     /* a dotted eighth at the host tempo */
+    float dly_target = DELAY_BEATS[ival(s, P_DELAY_TIME, 0, NDELAY_TIMES - 1)] * beat * SR;
     while (dly_target > DLY_LEN - 4) dly_target *= 0.5f;
     if (s->dly_t <= 0) s->dly_t = dly_target;
-    float dly_fb = 0.25f + 0.45f * delay, dly_wet = 0.6f * delay;
-    float dly_lpk = 1.0f - expf(-2 * 3.14159265f * 3500.0f / SR);
+    float dly_fb = 0.85f * clamp01(s->p[P_DELAY_FB]), dly_wet = 0.7f * delay, dw = clamp01(s->p[P_DELAY_WIDTH]);
+    float dly_lpk = 1.0f - expf(-2 * PI_F * tone_hz(s->p[P_DELAY_TONE]) / SR);
+    float rv_fb = 0.70f + 0.27f * clamp01(s->p[P_REV_SIZE]), rv_damp = 0.05f + 0.65f * clamp01(s->p[P_REV_DAMP]);
+    int pre_n = (int)(clamp01(s->p[P_REV_PREDELAY]) * 0.1f * SR);
+    float rw = clamp01(s->p[P_REV_WIDTH]);
+    float peak = 0;
     for (int i = 0; i < frames; i++) {
         float ch[2] = { mix[2 * i], mix[2 * i + 1] };
         if (chorus > 0.001f) {
-            s->cho_ph += cho_rate; if (s->cho_ph > 2 * 3.14159265f) s->cho_ph -= 2 * 3.14159265f;
+            s->cho_ph += cho_rate; if (s->cho_ph > 2 * PI_F) s->cho_ph -= 2 * PI_F;
             int w = s->cho_w;
             s->cho[w] = ch[0]; s->cho[2048 + w] = ch[1];
             for (int c = 0; c < 2; c++) {
                 float d = cho_base + cho_depth * (1.0f + (c ? cosf(s->cho_ph) : sinf(s->cho_ph)));
                 float rp = (float)w - d;
                 while (rp < 0) rp += 2048;
-                int r0 = (int)rp; float fr = rp - r0;
+                int q = (int)rp; float fr = rp - q;
                 const float *buf = s->cho + c * 2048;
-                float dl = buf[r0 & 2047] + (buf[(r0 + 1) & 2047] - buf[r0 & 2047]) * fr;
+                float dl = buf[q & 2047] + (buf[(q + 1) & 2047] - buf[q & 2047]) * fr;
                 ch[c] = ch[c] * (1.0f - 0.3f * chorus) + dl * 0.75f * chorus;
             }
             s->cho_w = (w + 1) & 2047;
         }
-        if (delay > 0.004f) {                                 /* ping-pong: repeats walk left and right */
+        if (delay > 0.004f) {                                 /* ping-pong; WIDTH 0 keeps the repeats in the middle */
             s->dly_t += 0.0005f * (dly_target - s->dly_t);
             float rp = (float)s->dly_w - s->dly_t;
             while (rp < 0) rp += DLY_LEN;
-            int r0 = (int)rp; float fr = rp - r0;
-            int r1 = r0 + 1 < DLY_LEN ? r0 + 1 : 0;
-            float yl = s->dly[r0] + (s->dly[r1] - s->dly[r0]) * fr;
-            float yr = s->dly[DLY_LEN + r0] + (s->dly[DLY_LEN + r1] - s->dly[DLY_LEN + r0]) * fr;
+            int q = (int)rp; float fr = rp - q;
+            int q1 = q + 1 < DLY_LEN ? q + 1 : 0;
+            float yl = s->dly[q] + (s->dly[q1] - s->dly[q]) * fr;
+            float yr = s->dly[DLY_LEN + q] + (s->dly[DLY_LEN + q1] - s->dly[DLY_LEN + q]) * fr;
             s->dly_lp[0] += dly_lpk * (yl - s->dly_lp[0]);
             s->dly_lp[1] += dly_lpk * (yr - s->dly_lp[1]);
             s->dly[s->dly_w] = 0.5f * (ch[0] + ch[1]) + dly_fb * s->dly_lp[1];
             s->dly[DLY_LEN + s->dly_w] = dly_fb * s->dly_lp[0];
             if (++s->dly_w >= DLY_LEN) s->dly_w = 0;
-            ch[0] += dly_wet * yl; ch[1] += dly_wet * yr;
+            float a = 0.5f + 0.5f * dw, bb = 0.5f - 0.5f * dw;
+            ch[0] += dly_wet * (a * yl + bb * yr); ch[1] += dly_wet * (a * yr + bb * yl);
         } else if (s->dly_lp[0] != 0 || s->dly_lp[1] != 0) {
             memset(s->dly, 0, 2 * DLY_LEN * sizeof(float)); s->dly_lp[0] = s->dly_lp[1] = 0; s->dly_t = dly_target;
         }
         float rl = 0, rr = 0;
-        if (space > 0.001f) reverb_frame(s, (ch[0] + ch[1]) * 0.03f, &rl, &rr);
+        if (space > 0.001f) {
+            s->pre[s->pre_w] = (ch[0] + ch[1]) * 0.03f;
+            float in = s->pre[(s->pre_w - pre_n + PRE_LEN) & (PRE_LEN - 1)];
+            s->pre_w = (s->pre_w + 1) & (PRE_LEN - 1);
+            float o0, o1;
+            reverb_frame(s, in, rv_fb, rv_damp, &o0, &o1);
+            float a = 0.5f + 0.5f * rw, bb = 0.5f - 0.5f * rw;
+            rl = a * o0 + bb * o1; rr = a * o1 + bb * o0;
+        }
         s->vol_smooth += vstep;
         float o[2] = { (ch[0] * dry + rl * wet) * s->vol_smooth, (ch[1] * dry + rr * wet) * s->vol_smooth };
         for (int c = 0; c < 2; c++) {
             float y = o[c];
+            if (fabsf(y) > peak) peak = fabsf(y);
             if (y > 0.9f) y = 0.9f + 0.1f * tanhf((y - 0.9f) * 10.0f);
             else if (y < -0.9f) y = -0.9f + 0.1f * tanhf((y + 0.9f) * 10.0f);
             out[2 * i + c] = (int16_t)lrintf(y * 32767.0f);
         }
     }
 
-    /* ---- faceplate state: changed only on events, so MPC's screen thread stays idle between them ---- */
-    s->clock += frames / SR;
+    /* ---- faceplate state: changed only on events (the waveform at most every 100 ms) ---- */
+    s->clock += dt;
     if (held) s->midi_t = s->clock;                          /* the MIDI LED stays lit while keys are down */
     if (s->p[P_MIDI_LED] > 0.5f && s->clock - s->midi_t > 0.15) { s->p[P_MIDI_LED] = 0; s->rev++; }
-    if (sounding == 0 && s->sounding > 0) s->wave_t = s->clock;
-    s->sounding = sounding;
-    if (sounding == 0 && s->p[P_WAVE] > 0 && s->clock - s->wave_t > 0.5) { s->p[P_WAVE] = 0; s->rev++; }
-    int lfo_led = depth > 0.001f;                            /* lit while the LFO does something (no blinking: */
-    if (lfo_led != (int)s->p[P_LFO_LED]) { s->p[P_LFO_LED] = (float)lfo_led; s->rev++; }   /* a repaint per blink costs MPC CPU) */
-    int ld = bank_state_of(layer_inst(s, edit_layer(s)));
-    int lstate = ld == BANK_READY ? 0 : ld == BANK_FAILED ? 2 : 1;
-    if (lstate != (int)s->p[P_LOAD]) { s->p[P_LOAD] = (float)lstate; s->rev++; }
-    if (s->touch_shown && s->clock - s->touch_t > 1.5) { s->touch_shown = 0; s->rev++; }
+    for (int l = 0; l < NLAYER; l++)
+        if (busy[l] != (int)s->p[P_ACT_A + l]) { s->p[P_ACT_A + l] = (float)busy[l]; s->rev++; }
+    int lfo_led = s->p[P_LFO_FILTER] > 0.001f || s->p[P_LFO_PITCH] > 0.001f || s->p[P_LFO_AMP] > 0.001f;
+    if (lfo_led != (int)s->p[P_LFO_LED]) { s->p[P_LFO_LED] = (float)lfo_led; s->rev++; }
+    /* the waveform: its height follows the output level, it moves one step per tick while anything sounds */
+    s->level = peak > s->level ? peak : s->level * expf(-dt / 0.25f);
+    int anim = ival(s, P_ANIM, 0, 2);
+    if (sounding) s->quiet_t = s->clock;
+    if (anim && sounding && s->clock - s->wave_t >= (anim == 2 ? 0.095 : 0.195)) {
+        float dbl = 20.0f * log10f(s->level + 1e-9f);
+        int a = dbl >= -12 ? 3 : dbl >= -20 ? 2 : dbl >= -30 ? 1 : 0;
+        s->wave_ph = (s->wave_ph + 1) & 7;
+        s->p[P_WAVE] = (float)(1 + a * 8 + s->wave_ph);
+        s->wave_t = s->clock; s->rev++;
+    } else if ((!anim || s->clock - s->quiet_t > 0.3) && s->p[P_WAVE] > 0) { s->p[P_WAVE] = 0; s->rev++; }
+    if (s->touch_shown && s->clock - s->touch_t > 1.5) s->touch_shown = 0;
     /* CPU meter: this engine's share of the block's time, averaged, shown at most every 2 s */
     struct timespec t1;
     clock_gettime(CLOCK_MONOTONIC, &t1);
-    s->cpu_acc += ((t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) * 1e-9) / (frames / SR);
+    s->cpu_acc += ((t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) * 1e-9) / dt;
     s->cpu_n++;
     if (s->clock - s->cpu_t > 2.0) {
         int c = (int)lround(s->cpu_acc / s->cpu_n * 20.0);   /* 10 steps of 5% */

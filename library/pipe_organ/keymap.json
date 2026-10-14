@@ -4,7 +4,7 @@
  "source": "vcsl_organ",
  "license": "CC0-1.0 (VCSL); Info.txt grants the right to redistribute",
  "credit": "Pipe organ sampled by Simon Dalzell of Ivy Audio, from VCSL by Versilian Studios (credit encouraged)",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": true,
  "zones": [
   {
@@ -14,12 +14,12 @@
    "hikey": 37,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C1_rr1.wav",
-   "bytes": 261318,
-   "loop_start": 136449,
-   "loop_end": 211680,
-   "loop_score": 0.969
+   "bytes": 76828,
+   "loop_start": 27879,
+   "loop_end": 59840,
+   "loop_score": 0.962
   },
   {
    "file": "pipe_organ_039_Ds2_v1.flac",
@@ -28,12 +28,12 @@
    "hikey": 40,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#1_rr1.wav",
-   "bytes": 270062,
-   "loop_start": 129019,
-   "loop_end": 211680,
-   "loop_score": 0.997
+   "bytes": 80236,
+   "loop_start": 29017,
+   "loop_end": 59840,
+   "loop_score": 0.991
   },
   {
    "file": "pipe_organ_042_Fs2_v1.flac",
@@ -42,12 +42,12 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#1_rr1.wav",
-   "bytes": 260358,
-   "loop_start": 128071,
-   "loop_end": 211680,
-   "loop_score": 0.952
+   "bytes": 77186,
+   "loop_start": 37645,
+   "loop_end": 59840,
+   "loop_score": 0.93
   },
   {
    "file": "pipe_organ_045_A2_v1.flac",
@@ -56,11 +56,11 @@
    "hikey": 46,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A1_rr1.wav",
-   "bytes": 274213,
-   "loop_start": 85749,
-   "loop_end": 211680,
+   "bytes": 80316,
+   "loop_start": 37730,
+   "loop_end": 59840,
    "loop_score": 0.999
   },
   {
@@ -70,12 +70,12 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C2_rr1.wav",
-   "bytes": 278586,
-   "loop_start": 102728,
-   "loop_end": 211680,
-   "loop_score": 0.999
+   "bytes": 82904,
+   "loop_start": 29974,
+   "loop_end": 59840,
+   "loop_score": 0.997
   },
   {
    "file": "pipe_organ_051_Ds3_v1.flac",
@@ -84,12 +84,12 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#2_rr1.wav",
-   "bytes": 276961,
-   "loop_start": 138633,
-   "loop_end": 211680,
-   "loop_score": 0.996
+   "bytes": 82764,
+   "loop_start": 29022,
+   "loop_end": 59840,
+   "loop_score": 0.991
   },
   {
    "file": "pipe_organ_054_Fs3_v1.flac",
@@ -98,11 +98,11 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#2_rr1.wav",
-   "bytes": 279243,
-   "loop_start": 86915,
-   "loop_end": 211680,
+   "bytes": 83195,
+   "loop_start": 35868,
+   "loop_end": 59840,
    "loop_score": 1.0
   },
   {
@@ -112,12 +112,12 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A2_rr1.wav",
-   "bytes": 281296,
-   "loop_start": 103885,
-   "loop_end": 211680,
-   "loop_score": 0.996
+   "bytes": 84518,
+   "loop_start": 25296,
+   "loop_end": 59840,
+   "loop_score": 0.973
   },
   {
    "file": "pipe_organ_060_C4_v1.flac",
@@ -126,12 +126,12 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C3_rr1.wav",
-   "bytes": 288507,
-   "loop_start": 98056,
-   "loop_end": 211680,
-   "loop_score": 0.998
+   "bytes": 87286,
+   "loop_start": 38465,
+   "loop_end": 59840,
+   "loop_score": 0.988
   },
   {
    "file": "pipe_organ_063_Ds4_v1.flac",
@@ -140,12 +140,12 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#3_rr1.wav",
-   "bytes": 296076,
-   "loop_start": 114596,
-   "loop_end": 211680,
-   "loop_score": 0.999
+   "bytes": 90150,
+   "loop_start": 34748,
+   "loop_end": 59840,
+   "loop_score": 0.988
   },
   {
    "file": "pipe_organ_066_Fs4_v1.flac",
@@ -154,11 +154,11 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#3_rr1.wav",
-   "bytes": 306472,
-   "loop_start": 127333,
-   "loop_end": 211680,
+   "bytes": 91455,
+   "loop_start": 21874,
+   "loop_end": 59840,
    "loop_score": 1.0
   },
   {
@@ -168,12 +168,12 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A3_rr1.wav",
-   "bytes": 320012,
-   "loop_start": 80019,
-   "loop_end": 211680,
-   "loop_score": 0.996
+   "bytes": 98795,
+   "loop_start": 27637,
+   "loop_end": 59840,
+   "loop_score": 0.993
   },
   {
    "file": "pipe_organ_072_C5_v1.flac",
@@ -182,12 +182,12 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C4_rr1.wav",
-   "bytes": 321391,
-   "loop_start": 124094,
-   "loop_end": 211680,
-   "loop_score": 0.993
+   "bytes": 100153,
+   "loop_start": 22272,
+   "loop_end": 59840,
+   "loop_score": 0.996
   },
   {
    "file": "pipe_organ_075_Ds5_v1.flac",
@@ -196,11 +196,11 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#4_rr1.wav",
-   "bytes": 344364,
-   "loop_start": 110441,
-   "loop_end": 211680,
+   "bytes": 109266,
+   "loop_start": 30111,
+   "loop_end": 59840,
    "loop_score": 0.999
   },
   {
@@ -210,12 +210,12 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#4_rr1.wav",
-   "bytes": 341596,
-   "loop_start": 98905,
-   "loop_end": 211680,
-   "loop_score": 0.999
+   "bytes": 108105,
+   "loop_start": 31331,
+   "loop_end": 59840,
+   "loop_score": 0.949
   },
   {
    "file": "pipe_organ_081_A5_v1.flac",
@@ -224,11 +224,11 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A4_rr1.wav",
-   "bytes": 353561,
-   "loop_start": 93997,
-   "loop_end": 211680,
+   "bytes": 110706,
+   "loop_start": 34603,
+   "loop_end": 59840,
    "loop_score": 0.995
   },
   {
@@ -238,11 +238,11 @@
    "hikey": 85,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C5_rr1.wav",
-   "bytes": 370267,
-   "loop_start": 88653,
-   "loop_end": 211680,
+   "bytes": 118691,
+   "loop_start": 28038,
+   "loop_end": 59840,
    "loop_score": 0.999
   },
   {
@@ -252,11 +252,11 @@
    "hikey": 88,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#5_rr1.wav",
-   "bytes": 346676,
-   "loop_start": 101688,
-   "loop_end": 211680,
+   "bytes": 105976,
+   "loop_start": 24365,
+   "loop_end": 59840,
    "loop_score": 0.991
   },
   {
@@ -266,12 +266,12 @@
    "hikey": 91,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#5_rr1.wav",
-   "bytes": 379753,
-   "loop_start": 123075,
-   "loop_end": 211680,
-   "loop_score": 0.997
+   "bytes": 121069,
+   "loop_start": 31863,
+   "loop_end": 59840,
+   "loop_score": 0.996
   },
   {
    "file": "pipe_organ_093_A6_v1.flac",
@@ -280,12 +280,12 @@
    "hikey": 94,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A5_rr1.wav",
-   "bytes": 368219,
-   "loop_start": 113176,
-   "loop_end": 211680,
-   "loop_score": 0.995
+   "bytes": 116242,
+   "loop_start": 30230,
+   "loop_end": 59840,
+   "loop_score": 0.979
   },
   {
    "file": "pipe_organ_096_C7_v1.flac",
@@ -294,12 +294,12 @@
    "hikey": 108,
    "lovel": 1,
    "hivel": 64,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C6_rr1.wav",
-   "bytes": 357964,
-   "loop_start": 79501,
-   "loop_end": 211680,
-   "loop_score": 0.997
+   "bytes": 112558,
+   "loop_start": 30568,
+   "loop_end": 59840,
+   "loop_score": 0.991
   },
   {
    "file": "pipe_organ_036_C2_v2.flac",
@@ -308,12 +308,12 @@
    "hikey": 37,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_C1.wav",
-   "bytes": 356545,
-   "loop_start": 96919,
-   "loop_end": 211680,
-   "loop_score": 0.733
+   "bytes": 116352,
+   "loop_start": 21206,
+   "loop_end": 59840,
+   "loop_score": 0.565
   },
   {
    "file": "pipe_organ_039_Ds2_v2.flac",
@@ -322,12 +322,12 @@
    "hikey": 40,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_D#1.wav",
-   "bytes": 365051,
-   "loop_start": 98926,
-   "loop_end": 211680,
-   "loop_score": 0.834
+   "bytes": 119508,
+   "loop_start": 31426,
+   "loop_end": 59840,
+   "loop_score": 0.618
   },
   {
    "file": "pipe_organ_042_Fs2_v2.flac",
@@ -336,12 +336,12 @@
    "hikey": 43,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_F#1.wav",
-   "bytes": 384036,
-   "loop_start": 87922,
-   "loop_end": 211680,
-   "loop_score": 0.64
+   "bytes": 123991,
+   "loop_start": 37540,
+   "loop_end": 59840,
+   "loop_score": 0.6
   },
   {
    "file": "pipe_organ_045_A2_v2.flac",
@@ -350,12 +350,12 @@
    "hikey": 46,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_A1.wav",
-   "bytes": 396974,
-   "loop_start": 137981,
-   "loop_end": 211680,
-   "loop_score": 0.878
+   "bytes": 129967,
+   "loop_start": 30494,
+   "loop_end": 59840,
+   "loop_score": 0.722
   },
   {
    "file": "pipe_organ_048_C3_v2.flac",
@@ -364,12 +364,12 @@
    "hikey": 49,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_C2.wav",
-   "bytes": 396975,
-   "loop_start": 93571,
-   "loop_end": 211680,
-   "loop_score": 0.796
+   "bytes": 129918,
+   "loop_start": 33068,
+   "loop_end": 59840,
+   "loop_score": 0.537
   },
   {
    "file": "pipe_organ_051_Ds3_v2.flac",
@@ -378,12 +378,12 @@
    "hikey": 52,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_D#2.wav",
-   "bytes": 400885,
-   "loop_start": 91257,
-   "loop_end": 211680,
-   "loop_score": 0.755
+   "bytes": 132348,
+   "loop_start": 26297,
+   "loop_end": 59840,
+   "loop_score": 0.69
   },
   {
    "file": "pipe_organ_054_Fs3_v2.flac",
@@ -392,12 +392,12 @@
    "hikey": 55,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_F#2.wav",
-   "bytes": 439458,
-   "loop_start": 103601,
-   "loop_end": 211680,
-   "loop_score": 0.636
+   "bytes": 146843,
+   "loop_start": 28537,
+   "loop_end": 59840,
+   "loop_score": 0.762
   },
   {
    "file": "pipe_organ_057_A3_v2.flac",
@@ -406,12 +406,12 @@
    "hikey": 58,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_A2.wav",
-   "bytes": 425191,
-   "loop_start": 80262,
-   "loop_end": 211680,
-   "loop_score": 0.679
+   "bytes": 141552,
+   "loop_start": 32309,
+   "loop_end": 59840,
+   "loop_score": 0.715
   },
   {
    "file": "pipe_organ_060_C4_v2.flac",
@@ -420,12 +420,12 @@
    "hikey": 61,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_C3.wav",
-   "bytes": 402914,
-   "loop_start": 101822,
-   "loop_end": 211680,
-   "loop_score": 0.889
+   "bytes": 133540,
+   "loop_start": 24253,
+   "loop_end": 59840,
+   "loop_score": 0.831
   },
   {
    "file": "pipe_organ_063_Ds4_v2.flac",
@@ -434,12 +434,12 @@
    "hikey": 64,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_D#3.wav",
-   "bytes": 397636,
-   "loop_start": 122975,
-   "loop_end": 211680,
-   "loop_score": 0.907
+   "bytes": 132468,
+   "loop_start": 32550,
+   "loop_end": 59840,
+   "loop_score": 0.743
   },
   {
    "file": "pipe_organ_066_Fs4_v2.flac",
@@ -448,12 +448,12 @@
    "hikey": 67,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_F#3.wav",
-   "bytes": 423308,
-   "loop_start": 87202,
-   "loop_end": 211680,
-   "loop_score": 0.788
+   "bytes": 141732,
+   "loop_start": 21155,
+   "loop_end": 59840,
+   "loop_score": 0.831
   },
   {
    "file": "pipe_organ_069_A4_v2.flac",
@@ -462,12 +462,12 @@
    "hikey": 70,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_A3.wav",
-   "bytes": 410096,
-   "loop_start": 80190,
-   "loop_end": 211680,
-   "loop_score": 0.836
+   "bytes": 135126,
+   "loop_start": 21154,
+   "loop_end": 59840,
+   "loop_score": 0.824
   },
   {
    "file": "pipe_organ_072_C5_v2.flac",
@@ -476,12 +476,12 @@
    "hikey": 73,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_C4.wav",
-   "bytes": 416156,
-   "loop_start": 110731,
-   "loop_end": 211680,
-   "loop_score": 0.89
+   "bytes": 138214,
+   "loop_start": 24618,
+   "loop_end": 59840,
+   "loop_score": 0.828
   },
   {
    "file": "pipe_organ_075_Ds5_v2.flac",
@@ -490,12 +490,12 @@
    "hikey": 76,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_D#4.wav",
-   "bytes": 413283,
-   "loop_start": 133929,
-   "loop_end": 211680,
-   "loop_score": 0.892
+   "bytes": 137590,
+   "loop_start": 38495,
+   "loop_end": 59840,
+   "loop_score": 0.872
   },
   {
    "file": "pipe_organ_078_Fs5_v2.flac",
@@ -504,12 +504,12 @@
    "hikey": 79,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_F#4.wav",
-   "bytes": 420544,
-   "loop_start": 98211,
-   "loop_end": 211680,
-   "loop_score": 0.894
+   "bytes": 141081,
+   "loop_start": 32341,
+   "loop_end": 59840,
+   "loop_score": 0.744
   },
   {
    "file": "pipe_organ_081_A5_v2.flac",
@@ -518,12 +518,12 @@
    "hikey": 82,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_A4.wav",
-   "bytes": 420749,
-   "loop_start": 102648,
-   "loop_end": 211680,
-   "loop_score": 0.63
+   "bytes": 140136,
+   "loop_start": 38117,
+   "loop_end": 59840,
+   "loop_score": 0.879
   },
   {
    "file": "pipe_organ_084_C6_v2.flac",
@@ -532,12 +532,12 @@
    "hikey": 85,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_C5.wav",
-   "bytes": 432674,
-   "loop_start": 123971,
-   "loop_end": 211680,
-   "loop_score": 0.869
+   "bytes": 144985,
+   "loop_start": 35019,
+   "loop_end": 59840,
+   "loop_score": 0.812
   },
   {
    "file": "pipe_organ_087_Ds6_v2.flac",
@@ -546,12 +546,12 @@
    "hikey": 88,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_D#5.wav",
-   "bytes": 442722,
-   "loop_start": 85891,
-   "loop_end": 211680,
-   "loop_score": 0.74
+   "bytes": 146702,
+   "loop_start": 35664,
+   "loop_end": 59840,
+   "loop_score": 0.743
   },
   {
    "file": "pipe_organ_090_Fs6_v2.flac",
@@ -560,12 +560,12 @@
    "hikey": 91,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_F#5.wav",
-   "bytes": 440730,
-   "loop_start": 103557,
-   "loop_end": 211680,
-   "loop_score": 0.889
+   "bytes": 146155,
+   "loop_start": 21749,
+   "loop_end": 59840,
+   "loop_score": 0.792
   },
   {
    "file": "pipe_organ_093_A6_v2.flac",
@@ -574,12 +574,12 @@
    "hikey": 94,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_A5.wav",
-   "bytes": 430802,
-   "loop_start": 90588,
-   "loop_end": 211680,
-   "loop_score": 0.817
+   "bytes": 143298,
+   "loop_start": 35763,
+   "loop_end": 59840,
+   "loop_score": 0.829
   },
   {
    "file": "pipe_organ_096_C7_v2.flac",
@@ -588,13 +588,13 @@
    "hikey": 108,
    "lovel": 65,
    "hivel": 127,
-   "frames": 211680,
+   "frames": 59840,
    "orig": "raw/VCSL/Aerophones/Edge-blown Aerophones/Pipe Organ/Loud/Rode_Man3Open_C6.wav",
-   "bytes": 443154,
-   "loop_start": 131821,
-   "loop_end": 211680,
-   "loop_score": 0.936
+   "bytes": 149223,
+   "loop_start": 30555,
+   "loop_end": 59840,
+   "loop_score": 0.923
   }
  ],
- "total_bytes": 15236778
+ "total_bytes": 4889128
 }

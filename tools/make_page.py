@@ -11,7 +11,7 @@ OUT = os.path.join(LIB, "library")
 DEST = sys.argv[1]
 BUDGET_LO, BUDGET_HI = 300, 500
 
-ORDER = ["PIANO", "KEYS", "PAD", "STRINGS", "BRASS", "CHOIR", "LEAD", "PLUCK", "BASS", "BELLS", "SYNTH", "FX"]
+ORDER = ["PIANO", "KEYS", "GUITAR", "STRINGS", "BRASS", "CHOIR", "PAD", "SYNTH", "LEAD", "PLUCK", "BASS", "BELLS"]
 NEW = {"vibraphone", "glockenspiel", "tubular_bells", "marimba", "concert_harp", "kalimba", "harpsichord",
        "pipe_organ", "clavisynth", "steel_guitar", "orch_brass", "synth_brass", "drawbar_organ", "fm_bells",
        "synth_pluck", "ooh_choir", "trance_chords", "riser", "downlifter"}

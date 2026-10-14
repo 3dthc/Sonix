@@ -13,7 +13,9 @@ docker run --rm -v "$REPO":/r -w /r python:3.12-slim sh -euc '
   pip install -q --root-user-action=ignore --disable-pip-version-check numpy scipy soundfile
   python3 tools/build_demo.py
   python3 tools/build_batch2.py
+  python3 tools/build_batch3.py
   python3 -I tools/pack_sonix.py
+  python3 tools/sonix_params.py
   chown -R '"$(id -u):$(id -g)"' library engine src vst
 '
 echo "library built: $(du -sh "$REPO/engine" | cut -f1) in $REPO/engine"

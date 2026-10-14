@@ -1,7 +1,7 @@
-# Device test (v0.2.0: the Sonix faceplate)
+# Device test (v0.3.0: presets, layers, settings and the new faceplate)
 
-Goal: confirm the Sonix faceplate loads on the MPC Live II in all three colorways, every control on it works, the
-four layers and the effects sound right, and the page stays light on MPC's CPU.
+Goal: confirm on the MPC Live II that the 128 presets show in MPC's PRESET list and switch instantly, the three
+pages (MAIN, LAYERS, SETTINGS) work in all three colorways, and the page and the engine stay light on MPC's CPU.
 
 ## 1. Build (Ubuntu in WSL)
 Start Docker Desktop, then paste this into Ubuntu:
@@ -10,41 +10,42 @@ Start Docker Desktop, then paste this into Ubuntu:
 cd ~ && { [ -d Sonix ] || git clone https://github.com/3dthc/Sonix.git; } && cd Sonix && git pull && bash install.sh
 ```
 
-The first time, `install.sh` builds the 28 instruments from their open sources (about 2 GB of downloads, 10-20
-minutes); if you already built v0.1.0, it reuses them. The faceplate uses the toolchain's browser renderer, the same
-one Fretty's skin uses (its Docker image is built once). Expected near the end:
+v0.3 rebuilds the instruments (45 now, from the same open sources plus a few more folders: about 300 MB of new
+downloads, 10-20 minutes). Expected near the end:
 - `exported: VSTPluginMain`
 - `highest glibc: GLIBC_2.x` (2.31 or lower is ideal)
-- `dist/Sonix-0.2.0-mpc-armv7.zip`, about 220 MB, also copied to your Windows Downloads
+- `dist/Sonix-0.3.0-mpc-armv7.zip`, about 125 MB (v0.2 was 220 MB), also copied to your Windows Downloads
 
 If the build fails, send me the last ~30 lines of output.
 
 ## 2. Install
-Back up `MPC.settings`, then install the zip like your other plugins. It replaces v0.1.0 in the same folder
-(`3dthc - VST - Sonix`). The parameter list changed since v0.1.0, so open a fresh Sonix rather than a project saved
-with the test build.
+Back up `MPC.settings`, then install the zip like your other plugins. It replaces v0.2 in the same folder. The
+parameter list changed again, so open a fresh Sonix rather than a project saved with v0.2.
 
 ## 3. Checks on the MPC
 | # | Check | How | Expect |
 | --- | --- | --- | --- |
-| 1 | It loads | Plugin browser → Sonix on a new track | the Midnight faceplate, Grand Piano on the LCD |
-| 2 | Plays | Pads, soft to hard | piano, darker and quieter when soft; MIDI LED lit while a pad is held |
-| 3 | LCD wave | Play a few notes, then stop | a wave appears on the LCD while you play, flat again ~half a second after |
-| 4 | Categories | Tap PAD, STRINGS, BELLS ... | that button lights; LCD shows the category's first instrument |
-| 5 | PREV / NEXT | Tap them | steps through the instruments of the lit category (wraps around) |
-| 6 | Layers | LAYER B on, play | piano + Warm Pad together; the LCD's B cell shows WARM PAD |
-| 7 | Edit layer | Tap the B cell on the LCD, then a category | the B cell outlines; only layer B's instrument changes |
-| 8 | FAV | Tap FAV | a star after the LCD name; it stays when you come back to that instrument |
-| 9 | Filter | CUTOFF down, RESONANCE up, ENV AMT either way | darker, a resonant peak, a sweep on each note |
-| 10 | LFO | DEPTH up, RATE up and down | the filter wobbles; the LED by LFO lights while DEPTH is above 0 |
-| 11 | Effects | CHORUS, DELAY, REVERB | wider, echoes in time with the project tempo (dotted eighths), a room |
-| 12 | Knob readout | Turn any knob | the LCD's bottom line shows its name and value, then goes back after ~1.5 s |
-| 13 | Tuning | TUNE, A4 REF 432 / 440 / 442 | pitch moves; the LCD top line shows the A4 value |
-| 14 | Themes | Tap THEME three times | Platinum, Studio Grey, back to Midnight; the whole page changes |
-| 15 | Q-Links | Turn Q-Links 1-16 | 1-7 filter and envelope, 8 the instrument, 9-16 LFO, effects, tune, A4, volume |
-| 16 | CPU | All four layers on, a few busy chords, effects up | no crackles; the CPU bar in the header moves (it updates every 2 s) |
-| 17 | Screen load | Play busy parts with the page open | the screen stays responsive (pictures change only on notes and taps) |
-| 18 | Save / reload | Save project, reload | layers, instruments, knobs, theme and favourites come back |
+| 1 | It loads | Plugin browser → Sonix on a new track | MAIN page, CONCERT GRAND on the LCD, plays at once |
+| 2 | PRESET list | MPC's PRESET button / menu for the track | 128 presets by name; picking one changes the sound and the LCD |
+| 3 | Instant presets | Pick presets while playing pads | each one plays right away, no "Loading" pause (after the first few seconds) |
+| 4 | ◀ ▶ on the LCD | Tap the arrows | previous / next preset, across categories, wraps around |
+| 5 | Categories | Tap STRINGS, GUITAR, BASS ... | jumps to that category's first preset; that button lights |
+| 6 | PRESET list stays open | Open MPC's PRESET list and play pads | the list doesn't close while the waveform moves |
+| 7 | Waveform | Play, soft and hard | the LCD wave moves smoothly while notes sound, taller when louder, flat when silent |
+| 8 | FAV / LIST | ★ FAV on a few presets, then ★ LIST on, then ◀ ▶ | a star after the name; ◀ ▶ only visit the favourites |
+| 9 | Edited | Turn CUTOFF | LCD top line says EDITED; the bottom line shows CUTOFF and its value for a moment |
+| 10 | Q-Links, MAIN | Q-Link button through the four columns | FILTER, AMP ENVELOPE, LFO, FX & OUTPUT: four knobs each, outlined on screen |
+| 11 | LAYERS page | MPC's LAYERS tab | four strips; ◀ ▶ change a layer's sound, ON / SOLO work, the LEDs light while a layer sounds |
+| 12 | Q-Links, LAYERS | Turn them | each column is one layer: LEVEL, PAN, OCTAVE, FINE |
+| 13 | SETTINGS page | Tap THEME buttons | the whole plugin changes colorway at once |
+| 14 | Tuning | A4 REF 432 / 440, TRANSPOSE, BEND | pitch moves; A4 and transpose show on the MAIN LCD |
+| 15 | Playing | POLYPHONY 4, VELOCITY curve SOFT / HARD | at most 4 notes; soft pads louder on SOFT |
+| 16 | Mod wheel | MOD WHEEL VIBRATO / FILTER, move the wheel (or a CC1 from a controller) | vibrato, or the filter opens |
+| 17 | Animation | ANIMATION OFF / LOW / SMOOTH | no wave / a slower wave / the smooth wave |
+| 18 | CPU | A 4-layer preset (e.g. Pad Stack, Epic Octaves), busy chords | no crackles; note the CPU bar in the header |
+| 19 | Screen load | Play busy parts with the page open | the screen stays responsive |
+| 20 | Save / reload | Save the project, reload | the preset, your edits, layers, settings and favourites come back |
+| 21 | Text size | Look at the three pages | names and values easy to read without looking oversized |
 
-Tell me what passed, what didn't, and anything that looked or sounded off (text that doesn't fit, a button that
-does nothing, an instrument too loud or quiet). Those notes decide the next round.
+Tell me what passed, what didn't, and anything that looked or sounded off (a preset too loud or quiet, text that
+doesn't fit, a button that does nothing). Those notes decide the next round.

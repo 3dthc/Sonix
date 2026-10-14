@@ -4,7 +4,7 @@
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": false,
  "zones": [
   {
@@ -14,9 +14,9 @@
    "hikey": 37,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 111161
+   "bytes": 39416
   },
   {
    "file": "fm_epiano_039_Ds2_v1.flac",
@@ -25,9 +25,9 @@
    "hikey": 40,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 117491
+   "bytes": 41802
   },
   {
    "file": "fm_epiano_042_Fs2_v1.flac",
@@ -36,9 +36,9 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 122547
+   "bytes": 42621
   },
   {
    "file": "fm_epiano_045_A2_v1.flac",
@@ -47,9 +47,9 @@
    "hikey": 46,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 126811
+   "bytes": 43115
   },
   {
    "file": "fm_epiano_048_C3_v1.flac",
@@ -58,9 +58,9 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 130779
+   "bytes": 43069
   },
   {
    "file": "fm_epiano_051_Ds3_v1.flac",
@@ -69,9 +69,9 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 133973
+   "bytes": 43935
   },
   {
    "file": "fm_epiano_054_Fs3_v1.flac",
@@ -80,9 +80,9 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 135848
+   "bytes": 43610
   },
   {
    "file": "fm_epiano_057_A3_v1.flac",
@@ -91,9 +91,9 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 125086
+   "bytes": 42870
   },
   {
    "file": "fm_epiano_060_C4_v1.flac",
@@ -102,9 +102,9 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 142178
+   "bytes": 44714
   },
   {
    "file": "fm_epiano_063_Ds4_v1.flac",
@@ -113,9 +113,9 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 132125
+   "bytes": 48114
   },
   {
    "file": "fm_epiano_066_Fs4_v1.flac",
@@ -124,9 +124,9 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 149005
+   "bytes": 51936
   },
   {
    "file": "fm_epiano_069_A4_v1.flac",
@@ -135,9 +135,9 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 141694
+   "bytes": 47257
   },
   {
    "file": "fm_epiano_072_C5_v1.flac",
@@ -146,9 +146,9 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 170106
+   "bytes": 49981
   },
   {
    "file": "fm_epiano_075_Ds5_v1.flac",
@@ -157,9 +157,9 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 150869
+   "bytes": 46580
   },
   {
    "file": "fm_epiano_078_Fs5_v1.flac",
@@ -168,9 +168,9 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 179999
+   "bytes": 47179
   },
   {
    "file": "fm_epiano_081_A5_v1.flac",
@@ -179,9 +179,9 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 164769
+   "bytes": 49947
   },
   {
    "file": "fm_epiano_084_C6_v1.flac",
@@ -190,9 +190,9 @@
    "hikey": 85,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 181158
+   "bytes": 47388
   },
   {
    "file": "fm_epiano_087_Ds6_v1.flac",
@@ -201,9 +201,9 @@
    "hikey": 88,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 172406
+   "bytes": 42781
   },
   {
    "file": "fm_epiano_090_Fs6_v1.flac",
@@ -212,9 +212,9 @@
    "hikey": 91,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 183143
+   "bytes": 45036
   },
   {
    "file": "fm_epiano_093_A6_v1.flac",
@@ -223,9 +223,9 @@
    "hikey": 94,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 181206
+   "bytes": 51111
   },
   {
    "file": "fm_epiano_096_C7_v1.flac",
@@ -234,9 +234,9 @@
    "hikey": 108,
    "lovel": 1,
    "hivel": 80,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 188087
+   "bytes": 57483
   },
   {
    "file": "fm_epiano_036_C2_v2.flac",
@@ -245,9 +245,9 @@
    "hikey": 37,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 111748
+   "bytes": 39593
   },
   {
    "file": "fm_epiano_039_Ds2_v2.flac",
@@ -256,9 +256,9 @@
    "hikey": 40,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 118812
+   "bytes": 41596
   },
   {
    "file": "fm_epiano_042_Fs2_v2.flac",
@@ -267,9 +267,9 @@
    "hikey": 43,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 123934
+   "bytes": 42585
   },
   {
    "file": "fm_epiano_045_A2_v2.flac",
@@ -278,9 +278,9 @@
    "hikey": 46,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 128427
+   "bytes": 43371
   },
   {
    "file": "fm_epiano_048_C3_v2.flac",
@@ -289,9 +289,9 @@
    "hikey": 49,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 132677
+   "bytes": 42800
   },
   {
    "file": "fm_epiano_051_Ds3_v2.flac",
@@ -300,9 +300,9 @@
    "hikey": 52,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 136248
+   "bytes": 44110
   },
   {
    "file": "fm_epiano_054_Fs3_v2.flac",
@@ -311,9 +311,9 @@
    "hikey": 55,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 138575
+   "bytes": 44186
   },
   {
    "file": "fm_epiano_057_A3_v2.flac",
@@ -322,9 +322,9 @@
    "hikey": 58,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 128582
+   "bytes": 43666
   },
   {
    "file": "fm_epiano_060_C4_v2.flac",
@@ -333,9 +333,9 @@
    "hikey": 61,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 145229
+   "bytes": 45940
   },
   {
    "file": "fm_epiano_063_Ds4_v2.flac",
@@ -344,9 +344,9 @@
    "hikey": 64,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 136741
+   "bytes": 49621
   },
   {
    "file": "fm_epiano_066_Fs4_v2.flac",
@@ -355,9 +355,9 @@
    "hikey": 67,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 153102
+   "bytes": 53948
   },
   {
    "file": "fm_epiano_069_A4_v2.flac",
@@ -366,9 +366,9 @@
    "hikey": 70,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 147597
+   "bytes": 48466
   },
   {
    "file": "fm_epiano_072_C5_v2.flac",
@@ -377,9 +377,9 @@
    "hikey": 73,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 173744
+   "bytes": 50030
   },
   {
    "file": "fm_epiano_075_Ds5_v2.flac",
@@ -388,9 +388,9 @@
    "hikey": 76,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 156601
+   "bytes": 49526
   },
   {
    "file": "fm_epiano_078_Fs5_v2.flac",
@@ -399,9 +399,9 @@
    "hikey": 79,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 184889
+   "bytes": 50838
   },
   {
    "file": "fm_epiano_081_A5_v2.flac",
@@ -410,9 +410,9 @@
    "hikey": 82,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 173282
+   "bytes": 52161
   },
   {
    "file": "fm_epiano_084_C6_v2.flac",
@@ -421,9 +421,9 @@
    "hikey": 85,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 189885
+   "bytes": 52267
   },
   {
    "file": "fm_epiano_087_Ds6_v2.flac",
@@ -432,9 +432,9 @@
    "hikey": 88,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 183460
+   "bytes": 47872
   },
   {
    "file": "fm_epiano_090_Fs6_v2.flac",
@@ -443,9 +443,9 @@
    "hikey": 91,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 195971
+   "bytes": 49901
   },
   {
    "file": "fm_epiano_093_A6_v2.flac",
@@ -454,9 +454,9 @@
    "hikey": 94,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 195271
+   "bytes": 56112
   },
   {
    "file": "fm_epiano_096_C7_v2.flac",
@@ -465,10 +465,10 @@
    "hikey": 108,
    "lovel": 81,
    "hivel": 127,
-   "frames": 198450,
+   "frames": 96000,
    "orig": "rendered",
-   "bytes": 196392
+   "bytes": 62219
   }
  ],
- "total_bytes": 6391608
+ "total_bytes": 1980753
 }

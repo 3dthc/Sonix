@@ -6,7 +6,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MPC_VST="${MPC_VST:-$HERE/../mpc-vst-plugins}"
-VERSION="${1:-0.2.0}"
+VERSION="${1:-0.3.0}"
 B="$HERE/vst/build"
 
 bash "$HERE/vst/build.sh"
@@ -19,7 +19,7 @@ python3 "$MPC_VST/tools/release.py" \
   --version "$VERSION" \
   --repo 3dthc/Sonix --id sonix \
   --extra "$HERE/engine:engine" \
-  --about "A ROMpler: pianos, keys, pads, strings, brass, choirs, leads, plucks, bass, bells, synth chords and FX from CC0 / CC BY recordings and original renders. Four layers, filter, LFO, chorus, delay, reverb, three colorways." \
+  --about "A ROMpler with 128 presets and 45 instruments: pianos, keys, guitars, strings, brass, choirs, pads, synths, leads, plucks, bass and bells, from CC0 / CC BY recordings and original renders. Four layers, filter, LFO, chorus, delay, reverb, three colorways." \
   -o "$HERE/dist"
 
 echo

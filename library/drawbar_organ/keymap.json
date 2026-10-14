@@ -4,7 +4,7 @@
  "source": "sonix",
  "license": "Sonix project (original synthesis)",
  "credit": "Rendered by the Sonix render generator",
- "samplerate": 44100,
+ "samplerate": 32000,
  "loop": true,
  "zones": [
   {
@@ -14,12 +14,12 @@
    "hikey": 37,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 84700,
-   "loop_start": 78628,
-   "loop_end": 119070,
-   "loop_score": 0.985
+   "bytes": 47130,
+   "loop_start": 38037,
+   "loop_end": 57600,
+   "loop_score": 0.994
   },
   {
    "file": "drawbar_organ_039_Ds2_v1.flac",
@@ -28,12 +28,12 @@
    "hikey": 40,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 87527,
-   "loop_start": 78261,
-   "loop_end": 119070,
-   "loop_score": 0.977
+   "bytes": 48808,
+   "loop_start": 37860,
+   "loop_end": 57600,
+   "loop_score": 0.991
   },
   {
    "file": "drawbar_organ_042_Fs2_v1.flac",
@@ -42,12 +42,12 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 93468,
-   "loop_start": 79035,
-   "loop_end": 119070,
-   "loop_score": 0.957
+   "bytes": 51522,
+   "loop_start": 38234,
+   "loop_end": 57600,
+   "loop_score": 0.987
   },
   {
    "file": "drawbar_organ_045_A2_v1.flac",
@@ -56,12 +56,12 @@
    "hikey": 46,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 92995,
-   "loop_start": 78991,
-   "loop_end": 119070,
-   "loop_score": 0.92
+   "bytes": 54895,
+   "loop_start": 37825,
+   "loop_end": 57600,
+   "loop_score": 0.98
   },
   {
    "file": "drawbar_organ_048_C3_v1.flac",
@@ -70,12 +70,12 @@
    "hikey": 49,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 94744,
-   "loop_start": 78628,
-   "loop_end": 119070,
-   "loop_score": 0.878
+   "bytes": 56613,
+   "loop_start": 38037,
+   "loop_end": 57600,
+   "loop_score": 0.966
   },
   {
    "file": "drawbar_organ_051_Ds3_v1.flac",
@@ -84,12 +84,12 @@
    "hikey": 52,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 98226,
-   "loop_start": 78829,
-   "loop_end": 119070,
-   "loop_score": 0.856
+   "bytes": 58487,
+   "loop_start": 37860,
+   "loop_end": 57600,
+   "loop_score": 0.936
   },
   {
    "file": "drawbar_organ_054_Fs3_v1.flac",
@@ -98,12 +98,12 @@
    "hikey": 55,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 100333,
-   "loop_start": 79034,
-   "loop_end": 119070,
-   "loop_score": 0.75
+   "bytes": 61063,
+   "loop_start": 38234,
+   "loop_end": 57600,
+   "loop_score": 0.889
   },
   {
    "file": "drawbar_organ_057_A3_v1.flac",
@@ -112,12 +112,12 @@
    "hikey": 58,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 99637,
-   "loop_start": 78983,
-   "loop_end": 119070,
-   "loop_score": 0.573
+   "bytes": 66098,
+   "loop_start": 38116,
+   "loop_end": 57600,
+   "loop_score": 0.864
   },
   {
    "file": "drawbar_organ_060_C4_v1.flac",
@@ -126,12 +126,12 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 108193,
-   "loop_start": 78957,
-   "loop_end": 119070,
-   "loop_score": 0.466
+   "bytes": 73565,
+   "loop_start": 38037,
+   "loop_end": 57600,
+   "loop_score": 0.811
   },
   {
    "file": "drawbar_organ_063_Ds4_v1.flac",
@@ -140,12 +140,12 @@
    "hikey": 64,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 121235,
-   "loop_start": 79042,
-   "loop_end": 119070,
-   "loop_score": 0.604
+   "bytes": 78003,
+   "loop_start": 38069,
+   "loop_end": 57600,
+   "loop_score": 0.63
   },
   {
    "file": "drawbar_organ_066_Fs4_v1.flac",
@@ -154,12 +154,12 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 127610,
-   "loop_start": 54671,
-   "loop_end": 119070,
-   "loop_score": 0.658
+   "bytes": 83824,
+   "loop_start": 38239,
+   "loop_end": 57600,
+   "loop_score": 0.485
   },
   {
    "file": "drawbar_organ_069_A4_v1.flac",
@@ -168,12 +168,12 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 136034,
-   "loop_start": 46481,
-   "loop_end": 119070,
-   "loop_score": 0.531
+   "bytes": 92779,
+   "loop_start": 38113,
+   "loop_end": 57600,
+   "loop_score": 0.448
   },
   {
    "file": "drawbar_organ_072_C5_v1.flac",
@@ -182,12 +182,12 @@
    "hikey": 73,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 155342,
-   "loop_start": 62053,
-   "loop_end": 119070,
-   "loop_score": 0.514
+   "bytes": 102825,
+   "loop_start": 34216,
+   "loop_end": 57600,
+   "loop_score": 0.618
   },
   {
    "file": "drawbar_organ_075_Ds5_v1.flac",
@@ -196,12 +196,12 @@
    "hikey": 76,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 168208,
-   "loop_start": 79042,
-   "loop_end": 119070,
-   "loop_score": 0.837
+   "bytes": 111410,
+   "loop_start": 22565,
+   "loop_end": 57600,
+   "loop_score": 0.68
   },
   {
    "file": "drawbar_organ_078_Fs5_v1.flac",
@@ -210,12 +210,12 @@
    "hikey": 79,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 175115,
-   "loop_start": 55623,
-   "loop_end": 119070,
-   "loop_score": 0.98
+   "bytes": 113288,
+   "loop_start": 22427,
+   "loop_end": 57600,
+   "loop_score": 0.426
   },
   {
    "file": "drawbar_organ_081_A5_v1.flac",
@@ -224,12 +224,12 @@
    "hikey": 82,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 199555,
-   "loop_start": 48209,
-   "loop_end": 119070,
-   "loop_score": 0.638
+   "bytes": 122801,
+   "loop_start": 38148,
+   "loop_end": 57600,
+   "loop_score": 0.48
   },
   {
    "file": "drawbar_organ_084_C6_v1.flac",
@@ -238,12 +238,12 @@
    "hikey": 85,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 228669,
-   "loop_start": 59062,
-   "loop_end": 119070,
-   "loop_score": 0.857
+   "bytes": 128774,
+   "loop_start": 34216,
+   "loop_end": 57600,
+   "loop_score": 0.946
   },
   {
    "file": "drawbar_organ_087_Ds6_v1.flac",
@@ -252,12 +252,12 @@
    "hikey": 88,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 236740,
-   "loop_start": 67051,
-   "loop_end": 119070,
-   "loop_score": 0.669
+   "bytes": 140796,
+   "loop_start": 22514,
+   "loop_end": 57600,
+   "loop_score": 0.888
   },
   {
    "file": "drawbar_organ_090_Fs6_v1.flac",
@@ -266,12 +266,12 @@
    "hikey": 91,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 260600,
-   "loop_start": 55206,
-   "loop_end": 119070,
-   "loop_score": 0.95
+   "bytes": 163452,
+   "loop_start": 27567,
+   "loop_end": 57600,
+   "loop_score": 0.759
   },
   {
    "file": "drawbar_organ_093_A6_v1.flac",
@@ -280,12 +280,12 @@
    "hikey": 94,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 297478,
-   "loop_start": 47658,
-   "loop_end": 119070,
-   "loop_score": 0.998
+   "bytes": 183770,
+   "loop_start": 31273,
+   "loop_end": 57600,
+   "loop_score": 0.811
   },
   {
    "file": "drawbar_organ_096_C7_v1.flac",
@@ -294,13 +294,13 @@
    "hikey": 108,
    "lovel": 1,
    "hivel": 127,
-   "frames": 119070,
+   "frames": 57600,
    "orig": "rendered",
-   "bytes": 344033,
-   "loop_start": 58725,
-   "loop_end": 119070,
-   "loop_score": 0.999
+   "bytes": 187554,
+   "loop_start": 34216,
+   "loop_end": 57600,
+   "loop_score": 0.849
   }
  ],
- "total_bytes": 3310442
+ "total_bytes": 2027457
 }

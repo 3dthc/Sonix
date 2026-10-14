@@ -262,3 +262,168 @@ def downlifter(m, rng, secs=3.0):
     tone = supersaw(pitch, n, 5, 25, rng) * 0.35
     env = np.exp(-t / (secs / 3)) * (1 - np.exp(-t / 0.01))
     return (sweep + tone) * env[:, None]
+
+
+# ---------------------------------------------------------------- batch 3 (v0.3): guitars, basses, pads, leads
+
+def _onepole_lp(x, fc):
+    a = np.exp(-2 * np.pi * fc / SR)
+    return lfilter([1 - a], [1, -a], x, axis=0)
+
+
+def ks_string(f, n, vel, t60, rng, pick=0.18, bright=0.6):
+    """Plucked string (Karplus-Strong): a filtered noise pick in a whole-sample delay loop with an averaging loss
+    filter. Returns (signal, cents): the loop's delay is N + 0.5 samples, so the pitch is off by up to a few cents,
+    which the zone's tuning corrects."""
+    N = max(2, int(round(SR / f - 0.5)))
+    cents = 1200 * np.log2(SR / (N + 0.5) / f)
+    exc = rng.uniform(-1, 1, N)
+    exc = _onepole_lp(exc, 800 + 9000 * bright * (0.4 + 0.6 * vel))
+    exc = exc - np.roll(exc, max(1, int(pick * N)))            # pluck position: a comb on the pick
+    e = np.zeros(n)
+    e[:N] = exc
+    g = 0.001 ** (1 / (f * t60))
+    a = np.zeros(N + 2)
+    a[0], a[N], a[N + 1] = 1, -0.5 * g, -0.5 * g
+    y = lfilter([1], a, e)
+    return y / (np.max(np.abs(y)) + 1e-9), cents
+
+
+def clean_electric(m, vel, rng, secs=4.5):
+    """Clean electric guitar: plucked string, bridge-ish pickup comb, a little amp warmth."""
+    f = mtof(m)
+    n = int(secs * SR)
+    t60 = float(np.clip(6.0 - (m - 40) * 0.09, 1.6, 6.0))
+    y, cents = ks_string(f, n, vel, t60, rng, pick=0.14, bright=0.7)
+    N = SR / f
+    y = y - 0.55 * np.roll(y, int(0.11 * N))                   # pickup position
+    y = highpass(lowpass(y, 4200 + 2500 * vel, 2), 75)
+    y = np.tanh(1.6 * y / (np.max(np.abs(y)) + 1e-9)) / np.tanh(1.6)
+    return fade_in(np.stack([y, y], axis=1), 1), cents
+
+
+def muted_electric(m, vel, rng, secs=1.2):
+    """Palm-muted electric: the same string damped to a short, round thump."""
+    f = mtof(m)
+    n = int(secs * SR)
+    y, cents = ks_string(f, n, vel, 0.22, rng, pick=0.2, bright=0.45)
+    y = highpass(lowpass(y, 1800 + 1500 * vel, 2), 70)
+    y = np.tanh(1.8 * y / (np.max(np.abs(y)) + 1e-9)) / np.tanh(1.8)
+    t = np.arange(n) / SR
+    y *= np.exp(-t / 0.35)
+    return fade_in(np.stack([y, y], axis=1), 1), cents
+
+
+def analog_bass(m, vel, rng, secs=2.0):
+    """Saw plus pulse through a low-pass that snaps shut: a classic mono-synth bass."""
+    f = mtof(m)
+    n = int(secs * SR)
+    t = np.arange(n) / SR
+    x = saw(f, n, rng.uniform()) + 0.6 * (saw(f, n, 0.0) - saw(f, n, 0.5))
+    x = np.stack([x, x], axis=1)
+    x = _ramp_filter(x, 900 + 3500 * vel + 4 * f, 110 + 1.5 * f, 0.28)
+    x = np.tanh(1.5 * x) / np.tanh(1.5)
+    return x * (np.exp(-t / 1.4) * (1 - np.exp(-t / 0.002)))[:, None]
+
+
+def fm_bass(m, vel, rng, secs=1.6):
+    f = mtof(m)
+    n = int(secs * SR)
+    t = np.arange(n) / SR
+    idx = 0.5 + (1.0 + 3.0 * vel) * np.exp(-t / 0.12)
+    x = np.sin(2 * np.pi * f * t + idx * np.sin(2 * np.pi * f * t))
+    x *= np.exp(-t / 1.2) * (1 - np.exp(-t / 0.0015))
+    return np.stack([x, x], axis=1)
+
+
+def _pulse(f, n, duty, phase0=0.0):
+    """Band-limited pulse as the difference of two saws; duty may be an array (PWM)."""
+    fv = np.broadcast_to(np.asarray(f, dtype=np.float64), (n,))
+    dt = fv / SR
+    t1 = (phase0 + np.cumsum(dt)) % 1.0
+    t2 = (t1 + duty) % 1.0
+    s1 = 2 * t1 - 1 - _polyblep(t1, dt)
+    s2 = 2 * t2 - 1 - _polyblep(t2, dt)
+    return 0.5 * (s1 - s2)
+
+
+def square_lead(m, rng, secs=3.5):
+    f = mtof(m)
+    n = int(secs * SR)
+    l = _pulse(f * 2 ** (-6 / 1200), n, 0.5, rng.uniform()) + 0.7 * _pulse(f * 2 ** (5 / 1200), n, 0.42, rng.uniform())
+    r = _pulse(f * 2 ** (6 / 1200), n, 0.5, rng.uniform()) + 0.7 * _pulse(f * 2 ** (-5 / 1200), n, 0.42, rng.uniform())
+    x = lowpass(np.stack([l, r], axis=1), 5200 + 2 * f, 2)
+    return fade_in(highpass(x, 90), 4)
+
+
+def analog_pad(m, rng, secs=4.5):
+    """Three PWM pulses drifting against each other, darkened: a vintage poly pad."""
+    f = mtof(m)
+    n = int(secs * SR)
+    t = np.arange(n) / SR
+    out = np.zeros((n, 2))
+    for i, (c, pan) in enumerate(((-7, 0.2), (0, 0.5), (7, 0.8))):
+        duty = 0.5 + 0.3 * np.sin(2 * np.pi * (0.45 + 0.17 * i) * t + rng.uniform(0, 6.28))
+        s = _pulse(f * 2 ** (c / 1200) * vibrato(n, rng.uniform(0.1, 0.3), 2, rng), n, duty, rng.uniform())
+        out[:, 0] += s * np.cos(pan * np.pi / 2)
+        out[:, 1] += s * np.sin(pan * np.pi / 2)
+    out = lowpass(out, 1400 + 2.2 * f, 2)
+    return fade_in(highpass(out, 50), 60)
+
+
+def glass_pad(m, rng, secs=4.5):
+    """Clear, bell-tinged pad: soft partials with slow beating pairs and a faint high shimmer."""
+    f = mtof(m)
+    n = int(secs * SR)
+    t = np.arange(n) / SR
+    parts = [(1, 1.0), (2, 0.45), (3.0, 0.22), (4.0, 0.12), (5.04, 0.08), (8.0, 0.03)]
+    out = np.zeros((n, 2))
+    for ch in range(2):
+        for ratio, lvl in parts:
+            fh = f * ratio
+            if fh > SR * 0.4:
+                continue
+            beat = 0.6 + 0.35 * rng.uniform()
+            out[:, ch] += lvl * (np.sin(2 * np.pi * fh * t + rng.uniform(0, 6.28)) +
+                                 np.sin(2 * np.pi * (fh + beat) * t + rng.uniform(0, 6.28))) * 0.5
+    return fade_in(out / 1.6, 80)
+
+
+def air_pad(m, rng, secs=4.5):
+    """Breathy pad: noise through narrow resonators on the harmonic series, over a soft sine."""
+    f = mtof(m)
+    n = int(secs * SR)
+    t = np.arange(n) / SR
+    out = np.zeros((n, 2))
+    for ch in range(2):
+        noise = rng.standard_normal(n)
+        for h, lvl in ((1, 1.0), (2, 0.6), (3, 0.35), (4, 0.25), (6, 0.12)):
+            fh = f * h
+            if fh > SR * 0.4:
+                continue
+            out[:, ch] += lvl * resonator(noise, fh, 6 + fh * 0.004) * 6
+        out[:, ch] += 0.35 * np.sin(2 * np.pi * f * t + ch)
+    out = highpass(out, 80)
+    return fade_in(out / (np.max(np.abs(out)) + 1e-9), 120)
+
+
+def synth_strings(m, rng, secs=4.5):
+    """String machine: a detuned saw ensemble per side, mellowed."""
+    f = mtof(m)
+    n = int(secs * SR)
+    out = np.zeros((n, 2))
+    for ch in range(2):
+        for c in (-11, -4, 3, 10):
+            out[:, ch] += saw(f * 2 ** ((c + rng.uniform(-2, 2)) / 1200) * vibrato(n, rng.uniform(4.5, 6.5), 4, rng), n, rng.uniform())
+    out = lowpass(out / 4, 2400 + 1.8 * f, 2)
+    return fade_in(highpass(out, 70), 80)
+
+
+def dub_chord(m, rng, secs=1.5):
+    """Minor-ninth chord through a closing low-pass: the dub-techno stab."""
+    f = mtof(m)
+    n = int(secs * SR)
+    t = np.arange(n) / SR
+    x = sum(supersaw(f * 2 ** (iv / 12), n, 3, 9, rng) for iv in (0, 3, 7, 10, 14)) / 2.0
+    x = _ramp_filter(x, 3200, 380 + f, 0.32)
+    return x * (np.exp(-t / 0.45) * (1 - np.exp(-t / 0.002)))[:, None]

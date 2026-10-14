@@ -14,9 +14,10 @@
    "hikey": 36,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B1_mf1.wav",
-   "bytes": 216391
+   "bytes": 64803,
+   "tune": 17
   },
   {
    "file": "concert_harp_038_D2_v1.flac",
@@ -25,9 +26,10 @@
    "hikey": 39,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D2_mf1.wav",
-   "bytes": 221394
+   "bytes": 67071,
+   "tune": 4
   },
   {
    "file": "concert_harp_041_F2_v1.flac",
@@ -36,9 +38,10 @@
    "hikey": 43,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F2_mf1.wav",
-   "bytes": 223990
+   "bytes": 67330,
+   "tune": 7
   },
   {
    "file": "concert_harp_045_A2_v1.flac",
@@ -47,9 +50,10 @@
    "hikey": 48,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_A2_mf1.wav",
-   "bytes": 225688
+   "bytes": 68980,
+   "tune": 6
   },
   {
    "file": "concert_harp_052_E3_v1.flac",
@@ -58,9 +62,10 @@
    "hikey": 53,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_E3_mf1.wav",
-   "bytes": 227302
+   "bytes": 69400,
+   "tune": 7
   },
   {
    "file": "concert_harp_055_G3_v1.flac",
@@ -69,9 +74,10 @@
    "hikey": 57,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_G3_mf1.wav",
-   "bytes": 228385
+   "bytes": 70300,
+   "tune": 11
   },
   {
    "file": "concert_harp_059_B3_v1.flac",
@@ -80,9 +86,10 @@
    "hikey": 60,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B3_mf1.wav",
-   "bytes": 225721
+   "bytes": 68063,
+   "tune": 13
   },
   {
    "file": "concert_harp_062_D4_v1.flac",
@@ -91,9 +98,10 @@
    "hikey": 63,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D4_mf1.wav",
-   "bytes": 228051
+   "bytes": 70517,
+   "tune": 13
   },
   {
    "file": "concert_harp_065_F4_v1.flac",
@@ -102,9 +110,10 @@
    "hikey": 67,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F4_mf1.wav",
-   "bytes": 223884
+   "bytes": 68152,
+   "tune": 1
   },
   {
    "file": "concert_harp_069_A4_v1.flac",
@@ -113,9 +122,10 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_A4_mf1.wav",
-   "bytes": 227063
+   "bytes": 69155,
+   "tune": 9
   },
   {
    "file": "concert_harp_072_C5_v1.flac",
@@ -124,9 +134,10 @@
    "hikey": 74,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_C5_mf1.wav",
-   "bytes": 223612
+   "bytes": 67361,
+   "tune": 12
   },
   {
    "file": "concert_harp_076_E5_v1.flac",
@@ -135,9 +146,10 @@
    "hikey": 77,
    "lovel": 1,
    "hivel": 64,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_E5_mf1.wav",
-   "bytes": 226182
+   "bytes": 69928,
+   "tune": 11
   },
   {
    "file": "concert_harp_079_G5_v1.flac",
@@ -146,9 +158,10 @@
    "hikey": 81,
    "lovel": 1,
    "hivel": 64,
-   "frames": 262115,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_G5_mf1.wav",
-   "bytes": 214861
+   "bytes": 67606,
+   "tune": 5
   },
   {
    "file": "concert_harp_083_B5_v1.flac",
@@ -157,9 +170,10 @@
    "hikey": 84,
    "lovel": 1,
    "hivel": 64,
-   "frames": 194736,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B5_mf1.wav",
-   "bytes": 163334
+   "bytes": 66636,
+   "tune": 8
   },
   {
    "file": "concert_harp_086_D6_v1.flac",
@@ -168,9 +182,10 @@
    "hikey": 87,
    "lovel": 1,
    "hivel": 64,
-   "frames": 171703,
+   "frames": 117674,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D6_mf1.wav",
-   "bytes": 141734
+   "bytes": 51477,
+   "tune": 7
   },
   {
    "file": "concert_harp_089_F6_v1.flac",
@@ -179,9 +194,10 @@
    "hikey": 91,
    "lovel": 1,
    "hivel": 64,
-   "frames": 102976,
+   "frames": 102960,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F6_mf1.wav",
-   "bytes": 88160
+   "bytes": 44142,
+   "tune": 6
   },
   {
    "file": "concert_harp_093_A6_v1.flac",
@@ -190,9 +206,10 @@
    "hikey": 94,
    "lovel": 1,
    "hivel": 64,
-   "frames": 159039,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_A6_mf1.wav",
-   "bytes": 129377
+   "bytes": 63424,
+   "tune": 19
   },
   {
    "file": "concert_harp_095_B6_v1.flac",
@@ -201,9 +218,10 @@
    "hikey": 107,
    "lovel": 1,
    "hivel": 64,
-   "frames": 120953,
+   "frames": 120948,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B6_mf1.wav",
-   "bytes": 97278
+   "bytes": 49516,
+   "tune": 11
   },
   {
    "file": "concert_harp_028_E1_v2.flac",
@@ -212,9 +230,10 @@
    "hikey": 29,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_E1_f1.wav",
-   "bytes": 231566
+   "bytes": 69252,
+   "tune": 17
   },
   {
    "file": "concert_harp_031_G1_v2.flac",
@@ -223,9 +242,10 @@
    "hikey": 33,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_G1_f1.wav",
-   "bytes": 229748
+   "bytes": 70233,
+   "tune": 26
   },
   {
    "file": "concert_harp_035_B1_v2.flac",
@@ -234,9 +254,10 @@
    "hikey": 36,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B1_f1.wav",
-   "bytes": 229796
+   "bytes": 69321,
+   "tune": 12
   },
   {
    "file": "concert_harp_038_D2_v2.flac",
@@ -245,9 +266,10 @@
    "hikey": 39,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D2_f1.wav",
-   "bytes": 238254
+   "bytes": 72666,
+   "tune": 0
   },
   {
    "file": "concert_harp_041_F2_v2.flac",
@@ -256,9 +278,10 @@
    "hikey": 43,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F2_f1.wav",
-   "bytes": 240284
+   "bytes": 72460,
+   "tune": 4
   },
   {
    "file": "concert_harp_045_A2_v2.flac",
@@ -267,9 +290,10 @@
    "hikey": 48,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_A2_f1.wav",
-   "bytes": 230514
+   "bytes": 70360,
+   "tune": -5
   },
   {
    "file": "concert_harp_052_E3_v2.flac",
@@ -278,9 +302,10 @@
    "hikey": 53,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_E3_f1.wav",
-   "bytes": 235293
+   "bytes": 72694,
+   "tune": 1
   },
   {
    "file": "concert_harp_055_G3_v2.flac",
@@ -289,9 +314,10 @@
    "hikey": 57,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_G3_f1.wav",
-   "bytes": 234647
+   "bytes": 72850,
+   "tune": 8
   },
   {
    "file": "concert_harp_059_B3_v2.flac",
@@ -300,9 +326,10 @@
    "hikey": 60,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B3_f1.wav",
-   "bytes": 230854
+   "bytes": 70828,
+   "tune": 12
   },
   {
    "file": "concert_harp_062_D4_v2.flac",
@@ -311,9 +338,10 @@
    "hikey": 63,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D4_f1.wav",
-   "bytes": 236439
+   "bytes": 74374,
+   "tune": 14
   },
   {
    "file": "concert_harp_065_F4_v2.flac",
@@ -322,9 +350,10 @@
    "hikey": 67,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F4_f1.wav",
-   "bytes": 230404
+   "bytes": 71940,
+   "tune": 1
   },
   {
    "file": "concert_harp_069_A4_v2.flac",
@@ -333,9 +362,10 @@
    "hikey": 70,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_A4_f1.wav",
-   "bytes": 234723
+   "bytes": 73656,
+   "tune": 8
   },
   {
    "file": "concert_harp_072_C5_v2.flac",
@@ -344,9 +374,10 @@
    "hikey": 74,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_C5_f1.wav",
-   "bytes": 231785
+   "bytes": 71898,
+   "tune": 13
   },
   {
    "file": "concert_harp_076_E5_v2.flac",
@@ -355,9 +386,10 @@
    "hikey": 77,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_E5_f1.wav",
-   "bytes": 231076
+   "bytes": 71844,
+   "tune": 11
   },
   {
    "file": "concert_harp_079_G5_v2.flac",
@@ -366,9 +398,10 @@
    "hikey": 81,
    "lovel": 65,
    "hivel": 127,
-   "frames": 234597,
+   "frames": 154350,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_G5_f1.wav",
-   "bytes": 200730
+   "bytes": 69729,
+   "tune": 7
   },
   {
    "file": "concert_harp_083_B5_v2.flac",
@@ -377,9 +410,10 @@
    "hikey": 84,
    "lovel": 65,
    "hivel": 127,
-   "frames": 184581,
+   "frames": 144920,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B5_f1.wav",
-   "bytes": 162153
+   "bytes": 65284,
+   "tune": 14
   },
   {
    "file": "concert_harp_086_D6_v2.flac",
@@ -388,9 +422,10 @@
    "hikey": 87,
    "lovel": 65,
    "hivel": 127,
-   "frames": 264600,
+   "frames": 94135,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D6_f1.wav",
-   "bytes": 211980
+   "bytes": 44620,
+   "tune": 12
   },
   {
    "file": "concert_harp_089_F6_v2.flac",
@@ -399,9 +434,10 @@
    "hikey": 91,
    "lovel": 65,
    "hivel": 127,
-   "frames": 193016,
+   "frames": 123723,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F6_f1.wav",
-   "bytes": 168729
+   "bytes": 57921,
+   "tune": 13
   },
   {
    "file": "concert_harp_093_A6_v2.flac",
@@ -410,9 +446,10 @@
    "hikey": 94,
    "lovel": 65,
    "hivel": 127,
-   "frames": 135374,
+   "frames": 111508,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_A6_f1.wav",
-   "bytes": 114876
+   "bytes": 49030,
+   "tune": 20
   },
   {
    "file": "concert_harp_095_B6_v2.flac",
@@ -421,9 +458,10 @@
    "hikey": 96,
    "lovel": 65,
    "hivel": 127,
-   "frames": 137121,
+   "frames": 46884,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_B6_f1.wav",
-   "bytes": 115772
+   "bytes": 23580,
+   "tune": 16
   },
   {
    "file": "concert_harp_098_D7_v2.flac",
@@ -432,9 +470,10 @@
    "hikey": 99,
    "lovel": 65,
    "hivel": 127,
-   "frames": 123937,
+   "frames": 116785,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_D7_f1.wav",
-   "bytes": 103722
+   "bytes": 49578,
+   "tune": 8
   },
   {
    "file": "concert_harp_101_F7_v2.flac",
@@ -443,10 +482,11 @@
    "hikey": 113,
    "lovel": 65,
    "hivel": 127,
-   "frames": 81505,
+   "frames": 37787,
    "orig": "raw/VCSL/Chordophones/Composite Chordophones/Concert Harp/KSHarp_F7_f1.wav",
-   "bytes": 70285
+   "bytes": 18923,
+   "tune": 31
   }
  ],
- "total_bytes": 7946037
+ "total_bytes": 2546902
 }

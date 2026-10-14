@@ -29,13 +29,18 @@ int main(int argc, char **argv) {
     void *s = E->create(argv[1]);
     int bad = 0;
     const int B = 128;
+    E->set_param(s, "layer_a", "1");
+    E->set_param(s, "layer_b", "0"); E->set_param(s, "layer_c", "0"); E->set_param(s, "layer_d", "0");
+    E->set_param(s, "lfo_amp", "0"); E->set_param(s, "lfo_pitch", "0"); E->set_param(s, "lfo_filter", "0");
+    E->set_param(s, "cutoff", "1"); E->set_param(s, "env_amt", "0.5"); E->set_param(s, "attack", "0");
+    E->set_param(s, "sustain", "1");
     for (int inst = 0; inst < NINST; inst++) {
         char v[16];
         snprintf(v, sizeof v, "%d", inst);
         E->set_param(s, "inst_a", v);
         E->set_param(s, "release", "0.3");
         int16_t tmp[256];
-        for (int w = 0; w < 3000 && bank_state_of(inst) == BANK_LOADING; w++) { E->render(s, tmp, B); usleep(5000); }
+        for (int w = 0; w < 3000 && bank_state_of(inst) < BANK_READY; w++) { E->render(s, tmp, B); usleep(5000); }
         if (bank_state_of(inst) != BANK_READY) { printf("FAIL %-16s did not load\n", INST_FILE[inst]); bad = 1; continue; }
 
         /* the score, in blocks (one block = 2.9 ms) */

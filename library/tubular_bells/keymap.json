@@ -14,9 +14,9 @@
    "hikey": 61,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_C4_v2_1.wav",
-   "bytes": 303512,
+   "bytes": 103494,
    "tune": 20
   },
   {
@@ -26,9 +26,9 @@
    "hikey": 63,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_D4_v2_1.wav",
-   "bytes": 282992,
+   "bytes": 102606,
    "tune": -3
   },
   {
@@ -38,9 +38,9 @@
    "hikey": 65,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_E4_v2_1.wav",
-   "bytes": 311426,
+   "bytes": 109149,
    "tune": 23
   },
   {
@@ -50,9 +50,9 @@
    "hikey": 68,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_G4_v2_1.wav",
-   "bytes": 302585,
+   "bytes": 108203,
    "tune": 30
   },
   {
@@ -62,9 +62,9 @@
    "hikey": 70,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_A4_v2_1.wav",
-   "bytes": 289964,
+   "bytes": 107511,
    "tune": -3
   },
   {
@@ -74,9 +74,9 @@
    "hikey": 71,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_B4_v2_1.wav",
-   "bytes": 311302,
+   "bytes": 109192,
    "tune": -9
   },
   {
@@ -86,9 +86,9 @@
    "hikey": 74,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_C5_v2_1.wav",
-   "bytes": 276066,
+   "bytes": 97156,
    "tune": -7
   },
   {
@@ -98,9 +98,9 @@
    "hikey": 88,
    "lovel": 1,
    "hivel": 64,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_E5_v2_1.wav",
-   "bytes": 302233,
+   "bytes": 107273,
    "tune": -13
   },
   {
@@ -110,9 +110,9 @@
    "hikey": 62,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_C4_v4_1.wav",
-   "bytes": 346041,
+   "bytes": 122104,
    "tune": 20
   },
   {
@@ -122,9 +122,9 @@
    "hikey": 64,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_E4_v4_1.wav",
-   "bytes": 338032,
+   "bytes": 119415,
    "tune": 23
   },
   {
@@ -134,9 +134,9 @@
    "hikey": 66,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_F4_v4_1.wav",
-   "bytes": 348004,
+   "bytes": 126530,
    "tune": 24
   },
   {
@@ -146,9 +146,9 @@
    "hikey": 68,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_G4_v4_1.wav",
-   "bytes": 351995,
+   "bytes": 127155,
    "tune": 30
   },
   {
@@ -158,9 +158,9 @@
    "hikey": 70,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_A4_v4_1.wav",
-   "bytes": 364600,
+   "bytes": 140486,
    "tune": -3
   },
   {
@@ -170,9 +170,9 @@
    "hikey": 71,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_B4_v4_1.wav",
-   "bytes": 369396,
+   "bytes": 138259,
    "tune": -9
   },
   {
@@ -182,9 +182,9 @@
    "hikey": 73,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_C5_v4_1.wav",
-   "bytes": 364746,
+   "bytes": 133905,
    "tune": -7
   },
   {
@@ -194,9 +194,9 @@
    "hikey": 75,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_D5_v4_1.wav",
-   "bytes": 365391,
+   "bytes": 134244,
    "tune": -8
   },
   {
@@ -206,11 +206,11 @@
    "hikey": 89,
    "lovel": 65,
    "hivel": 127,
-   "frames": 396900,
+   "frames": 264600,
    "orig": "raw/VCSL/Idiophones/Struck Idiophones/Tubular Bells 2/TB_hit_F5_v4_1.wav",
-   "bytes": 336103,
+   "bytes": 120832,
    "tune": 48
   }
  ],
- "total_bytes": 5564388
+ "total_bytes": 2007514
 }
