@@ -1,0 +1,4 @@
+/* Sonix: the faceplate artwork is drawn by tools/make_skin.py; this only quiets what the renderer would add on top. */
+/* The layer cells on the LCD are an option list (edit_layer) whose names MPC's live text already shows: hide the
+   renderer's own segment names so only the cell outline marks the edited layer. */
+.seg-tx { opacity: 0; }

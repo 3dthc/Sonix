@@ -2,11 +2,14 @@
   "name": "Sonix",
   "vendor": "3dthc",
   "uid": "SnX1",
-  "version": 100,
+  "version": 200,
   "so": "sonix.so",
   "params": "params.json",
   "defines": {
-    "MODULE_SUBDIR": "\"engine\""
+    "MODULE_SUBDIR": "\"engine\"",
+    "HAS_DISPLAY_REV": 1,
+    "HAS_LFO_BPM": 1,
+    "PARAM_TEXT_MAX": 40
   },
   "build": {
     "root": "..",
@@ -22,5 +25,6 @@
       "-lpthread"
     ]
   },
-  "layout": "layout.conf"
+  "layout": "layout.conf",
+  "art": "html"
 }
