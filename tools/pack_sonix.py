@@ -48,7 +48,9 @@ ORDER = [
     ("riser", "Riser"), ("downlifter", "Downlifter"),
 ]
 
-REF_DB = -20.0      # every instrument is trimmed so its typical note attack sits near this loudness
+REF_DB = -20.0      # every instrument is trimmed so its typical note attack sits near this loudness,
+PEAK_MAX = 0.4      # unless that would push a single hard-played note's peak above this (a 4-note chord then stays
+                    # clear of the output limiter: plucked and struck sounds have a high peak for their loudness)
 
 
 # ------------------------------------------------------------------ codec (from Fretty's tools/pack_samples.py)
@@ -128,7 +130,7 @@ def attack_db(audio):
 def pack(name):
     k = json.load(open(os.path.join(LIB, name, "keymap.json")))
     assert k["samplerate"] == 44100, name
-    samples, zones, levels = [], [], []
+    samples, zones, levels, peaks = [], [], [], []
     mono = True
     for z in k["zones"]:
         a, sr = sf.read(os.path.join(LIB, name, z["file"]), dtype="int16", always_2d=True)
@@ -145,8 +147,11 @@ def pack(name):
         zones.append((z["lokey"], z["hikey"], z["root"], z["lovel"], z["hivel"], int(z.get("tune", 0)), idx))
         if z["hivel"] >= 100 or z["lovel"] == 1 and z["hivel"] == 127:
             levels.append(attack_db(a))
+            peaks.append(np.abs(a.astype(np.int32)).max() / 32768)
     # loudness trim: typical attack of the top velocity layer to REF_DB
     gain = float(np.clip(10 ** ((REF_DB - np.median(levels)) / 20), 0.25, 8.0)) if levels else 1.0
+    if peaks:
+        gain = min(gain, PEAK_MAX / np.percentile(peaks, 90))
 
     data = bytearray()
     ents = []
