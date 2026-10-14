@@ -1,0 +1,23 @@
+{
+ "name": "riser",
+ "category": "FX",
+ "source": "sonix",
+ "license": "Sonix project (original synthesis)",
+ "credit": "Rendered by the Sonix render generator",
+ "samplerate": 44100,
+ "loop": false,
+ "zones": [
+  {
+   "file": "riser_060_C4_v1.flac",
+   "root": 60,
+   "lokey": 48,
+   "hikey": 72,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 176400,
+   "orig": "rendered",
+   "bytes": 402527
+  }
+ ],
+ "total_bytes": 402527
+}

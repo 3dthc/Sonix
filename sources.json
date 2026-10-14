@@ -1,0 +1,50 @@
+{
+  "vsco2ce": {
+    "name": "VSCO 2 Community Edition",
+    "author": "Versilian Studios (Sam Gossner)",
+    "url": "https://github.com/sgossner/VSCO-2-CE",
+    "license": "CC0-1.0",
+    "attribution_required": false,
+    "credit": "VSCO 2 Community Edition by Versilian Studios (CC0)"
+  },
+  "vcsl": {
+    "name": "Versilian Community Sample Library",
+    "author": "Versilian Studios (Sam Gossner)",
+    "url": "https://github.com/sgossner/VCSL",
+    "license": "CC0-1.0",
+    "attribution_required": false,
+    "credit": "VCSL by Versilian Studios (CC0)"
+  },
+  "vcsl_organ": {
+    "name": "VCSL Pipe Organ",
+    "author": "Simon Dalzell (Ivy Audio), via Versilian Studios",
+    "url": "https://github.com/sgossner/VCSL",
+    "license": "CC0-1.0 (VCSL); Info.txt grants the right to redistribute",
+    "attribution_required": false,
+    "credit": "Pipe organ sampled by Simon Dalzell of Ivy Audio, from VCSL by Versilian Studios (credit encouraged)"
+  },
+  "salamander": {
+    "name": "Salamander Grand Piano V3",
+    "author": "Alexander Holm",
+    "url": "https://github.com/sfzinstruments/SalamanderGrandPiano",
+    "license": "CC-BY-3.0",
+    "attribution_required": true,
+    "credit": "Salamander Grand Piano by Alexander Holm (CC BY 3.0). Derived from the SFZ instrument at github.com/sfzinstruments/SalamanderGrandPiano; trimmed, resampled and remapped for Sonix."
+  },
+  "metaopensound": {
+    "name": "Meta Open Sound",
+    "author": "Meta (facebookincubator)",
+    "url": "https://github.com/facebookincubator/Meta-open-sound",
+    "license": "CC0-1.0",
+    "attribution_required": false,
+    "credit": "Meta Open Sound (CC0)"
+  },
+  "sonix": {
+    "name": "Sonix original renders",
+    "author": "Sonix project",
+    "url": "",
+    "license": "Sonix project (original synthesis)",
+    "attribution_required": false,
+    "credit": "Rendered by the Sonix render generator"
+  }
+}

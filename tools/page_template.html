@@ -1,0 +1,102 @@
+<title>Sonix Demo Pack</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Share+Tech+Mono&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one column of instrument strips grouped by the panel's categories, each a small rack unit with an LCD readout and a player */
+:root {
+  --bg: #e7e9ec;
+  --panel: #f4f5f7;
+  --edge: #c3c8cf;
+  --ink: #16191d;
+  --muted: #4a515b;
+  --lcd-bg: #0b1a28;
+  --lcd: #8fdcff;
+  --lcd-dim: #6aa6c4;
+  --accent: #1f7fb8;
+  --bar: #d3d7dc;
+  --display: "Michroma", "Eurostile", "Arial Black", sans-serif;
+  --body: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --mono: "Share Tech Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121418; --panel: #1b1e24; --edge: #2c313a; --ink: #e6e9ee; --muted: #9aa3b1;
+    --lcd-bg: #06121f; --lcd: #8fdcff; --lcd-dim: #5f99b8; --accent: #4cc3ff; --bar: #262b33;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121418; --panel: #1b1e24; --edge: #2c313a; --ink: #e6e9ee; --muted: #9aa3b1;
+  --lcd-bg: #06121f; --lcd: #8fdcff; --lcd-dim: #5f99b8; --accent: #4cc3ff; --bar: #262b33;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 48px;
+}
+.wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+header { display: flex; flex-direction: column; gap: 10px; }
+.logo { font-family: var(--display); font-style: italic; letter-spacing: 0.32em; font-size: clamp(26px, 6vw, 38px); margin: 0; text-wrap: balance; }
+.logo span { color: var(--accent); }
+.lead { margin: 0; max-width: 62ch; }
+.budget { display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
+.budget-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track { height: 10px; border-radius: 5px; background: var(--bar); position: relative; overflow: hidden; }
+.fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
+.target { position: absolute; top: 0; bottom: 0; border-left: 2px dashed var(--muted); }
+nav { font-family: var(--mono); font-size: 14px; color: var(--muted); line-height: 1.9; }
+nav a { color: var(--accent); text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+h2 { font-family: var(--display); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin: 10px 0 0; scroll-margin-top: 16px; }
+.list { display: flex; flex-direction: column; gap: 14px; }
+.unit {
+  background: var(--panel); border: 1px solid var(--edge); border-radius: 12px;
+  padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 14px; align-items: center;
+}
+.lcd {
+  background: var(--lcd-bg); color: var(--lcd); border-radius: 6px; padding: 10px 14px;
+  font-family: var(--mono); display: flex; flex-direction: column; gap: 2px; min-width: 0;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.55); text-shadow: 0 0 8px rgba(120,210,255,0.35);
+}
+.lcd .top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--lcd-dim); letter-spacing: 0.08em; }
+.lcd .name { font-size: 22px; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lcd .spec { font-size: 13px; color: var(--lcd-dim); font-variant-numeric: tabular-nums; }
+.side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.src { font-size: 15px; color: var(--muted); margin: 0; }
+.src strong { color: var(--ink); font-weight: 600; }
+audio { width: 100%; }
+.notes { background: var(--panel); border: 1px solid var(--edge); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.notes ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 68ch; }
+a:focus-visible, audio:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 620px) { .unit { grid-template-columns: minmax(0, 1fr); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1 class="logo">SONI<span>X</span></h1>
+    <p class="lead">Audition clips for the Sonix library, grouped by the panel's categories. Each instrument plays through a stand-in for the Sonix engine (key and velocity zones, repitching, loops, envelope) with a light reverb, mostly on the same I–vi–IV–V progression in C at 92 BPM. Clips marked NEW are from the second batch.</p>
+    <div class="budget" aria-label="Library size so far">
+      <div class="budget-row"><span>{{COUNT}} INSTRUMENTS</span><span>{{TOTAL}} MB of a 300–500 MB budget</span></div>
+      <div class="track"><div class="fill" style="width: {{FILL}}%"></div><div class="target" style="left: 60%"></div></div>
+      <div class="budget-row"><span>0</span><span>300 MB</span><span>500 MB</span></div>
+    </div>
+    <nav aria-label="Categories">{{NAV}}</nav>
+  </header>
+
+  <section class="list" aria-label="Instruments">
+{{UNITS}}
+  </section>
+
+  <section class="notes" aria-label="Listening notes">
+    <h2>What to listen for</h2>
+    <ul>
+      <li>Whether each sound feels expensive or cheap, and which ones you want more of.</li>
+      <li>Acoustic clips (pianos, harp, mallets) sit a few dB quieter than the synths because they keep their full dynamics.</li>
+      <li>The real plugin adds the filter, LFO, chorus and delay on top. These clips are dry samples plus reverb.</li>
+      <li>Every recorded set is mapped by measured pitch, not by its file names. Several libraries name notes an octave or two away from where they sound.</li>
+      <li>The kalimba and tubular bells are retuned per note to equal temperament so they play in key with everything else.</li>
+    </ul>
+  </section>
+</div>

@@ -1,0 +1,23 @@
+{
+ "name": "downlifter",
+ "category": "FX",
+ "source": "sonix",
+ "license": "Sonix project (original synthesis)",
+ "credit": "Rendered by the Sonix render generator",
+ "samplerate": 44100,
+ "loop": false,
+ "zones": [
+  {
+   "file": "downlifter_060_C4_v1.flac",
+   "root": 60,
+   "lokey": 48,
+   "hikey": 72,
+   "lovel": 1,
+   "hivel": 127,
+   "frames": 132300,
+   "orig": "rendered",
+   "bytes": 288849
+  }
+ ],
+ "total_bytes": 288849
+}

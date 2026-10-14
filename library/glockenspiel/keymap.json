@@ -1,0 +1,210 @@
+{
+ "name": "glockenspiel",
+ "category": "BELLS",
+ "source": "vcsl",
+ "license": "CC0-1.0",
+ "credit": "VCSL by Versilian Studios (CC0)",
+ "samplerate": 44100,
+ "loop": false,
+ "zones": [
+  {
+   "file": "glockenspiel_079_G5_v1.flac",
+   "root": 79,
+   "lokey": 67,
+   "hikey": 81,
+   "lovel": 1,
+   "hivel": 42,
+   "frames": 176729,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_soft_G4_01.wav",
+   "bytes": 223240
+  },
+  {
+   "file": "glockenspiel_084_C6_v1.flac",
+   "root": 84,
+   "lokey": 82,
+   "hikey": 87,
+   "lovel": 1,
+   "hivel": 42,
+   "frames": 177290,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_soft_C5_02.wav",
+   "bytes": 252832
+  },
+  {
+   "file": "glockenspiel_091_G6_v1.flac",
+   "root": 91,
+   "lokey": 88,
+   "hikey": 93,
+   "lovel": 1,
+   "hivel": 42,
+   "frames": 176729,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_soft_G5_01.wav",
+   "bytes": 195702
+  },
+  {
+   "file": "glockenspiel_096_C7_v1.flac",
+   "root": 96,
+   "lokey": 94,
+   "hikey": 99,
+   "lovel": 1,
+   "hivel": 42,
+   "frames": 176705,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_soft_C6_01.wav",
+   "bytes": 215351
+  },
+  {
+   "file": "glockenspiel_103_G7_v1.flac",
+   "root": 103,
+   "lokey": 100,
+   "hikey": 105,
+   "lovel": 1,
+   "hivel": 42,
+   "frames": 146479,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_soft_G6_01.wav",
+   "bytes": 161293
+  },
+  {
+   "file": "glockenspiel_108_C8_v1.flac",
+   "root": 108,
+   "lokey": 106,
+   "hikey": 120,
+   "lovel": 1,
+   "hivel": 42,
+   "frames": 176729,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_soft_C7_03.wav",
+   "bytes": 152447
+  },
+  {
+   "file": "glockenspiel_079_G5_v2.flac",
+   "root": 79,
+   "lokey": 67,
+   "hikey": 81,
+   "lovel": 43,
+   "hivel": 85,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_medium_G4_01.wav",
+   "bytes": 274643
+  },
+  {
+   "file": "glockenspiel_084_C6_v2.flac",
+   "root": 84,
+   "lokey": 82,
+   "hikey": 87,
+   "lovel": 43,
+   "hivel": 85,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_medium_C5_01.wav",
+   "bytes": 283162
+  },
+  {
+   "file": "glockenspiel_091_G6_v2.flac",
+   "root": 91,
+   "lokey": 88,
+   "hikey": 93,
+   "lovel": 43,
+   "hivel": 85,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_medium_G5_01.wav",
+   "bytes": 242125
+  },
+  {
+   "file": "glockenspiel_096_C7_v2.flac",
+   "root": 96,
+   "lokey": 94,
+   "hikey": 99,
+   "lovel": 43,
+   "hivel": 85,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_medium_C6_01.wav",
+   "bytes": 229463
+  },
+  {
+   "file": "glockenspiel_103_G7_v2.flac",
+   "root": 103,
+   "lokey": 100,
+   "hikey": 105,
+   "lovel": 43,
+   "hivel": 85,
+   "frames": 171240,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_medium_G6_01.wav",
+   "bytes": 188119
+  },
+  {
+   "file": "glockenspiel_108_C8_v2.flac",
+   "root": 108,
+   "lokey": 106,
+   "hikey": 120,
+   "lovel": 43,
+   "hivel": 85,
+   "frames": 115678,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_medium_C7_01.wav",
+   "bytes": 96811
+  },
+  {
+   "file": "glockenspiel_079_G5_v3.flac",
+   "root": 79,
+   "lokey": 67,
+   "hikey": 81,
+   "lovel": 86,
+   "hivel": 127,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_loud_G4_01.wav",
+   "bytes": 326253
+  },
+  {
+   "file": "glockenspiel_084_C6_v3.flac",
+   "root": 84,
+   "lokey": 82,
+   "hikey": 87,
+   "lovel": 86,
+   "hivel": 127,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_loud_C5_01.wav",
+   "bytes": 334482
+  },
+  {
+   "file": "glockenspiel_091_G6_v3.flac",
+   "root": 91,
+   "lokey": 88,
+   "hikey": 93,
+   "lovel": 86,
+   "hivel": 127,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_loud_G5_01.wav",
+   "bytes": 306238
+  },
+  {
+   "file": "glockenspiel_096_C7_v3.flac",
+   "root": 96,
+   "lokey": 94,
+   "hikey": 100,
+   "lovel": 86,
+   "hivel": 127,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_loud_C6_01.wav",
+   "bytes": 293367
+  },
+  {
+   "file": "glockenspiel_104_Gs7_v3.flac",
+   "root": 104,
+   "lokey": 101,
+   "hikey": 106,
+   "lovel": 86,
+   "hivel": 127,
+   "frames": 220500,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_loud_G#6_01.wav",
+   "bytes": 288823
+  },
+  {
+   "file": "glockenspiel_108_C8_v3.flac",
+   "root": 108,
+   "lokey": 107,
+   "hikey": 120,
+   "lovel": 86,
+   "hivel": 127,
+   "frames": 116166,
+   "orig": "raw/VCSL/Idiophones/Struck Idiophones/Glockenspiel/glock_loud_C7_01.wav",
+   "bytes": 157311
+  }
+ ],
+ "total_bytes": 4221662
+}

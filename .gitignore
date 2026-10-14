@@ -1,0 +1,9 @@
+# Upstream sample sources (cloned by tools/fetch_sources.sh) and everything built from them
+raw/
+library/**/*.flac
+clips/
+engine/*.snx
+vst/build/
+dist/
+__pycache__/
+*.pyc
