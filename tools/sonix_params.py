@@ -18,6 +18,7 @@ from pack_sonix import ORDER, CATEGORIES  # noqa: E402
 
 INSTRUMENTS = [d for _, d, _ in ORDER]
 LAYERS = "abcd"
+LIST_ROWS = 12                     # the LCD's preset list: 2 columns x 6 rows (every category fits)
 DELAY_TIMES = ["1/16", "1/8T", "1/8", "1/8.", "1/4T", "1/4", "1/4.", "1/2"]
 
 
@@ -44,7 +45,8 @@ def spec():
     P += [momentary("cat_" + c.lower(), "Category " + c.title()) for c in CATEGORIES]
     P += [momentary("prev", "Previous Preset"), momentary("next", "Next Preset"),
           option("fav", "Favourite", ["Off", "On"], "Off", preset=False),
-          option("fav_only", "Favourites Only", ["Off", "On"], "Off", preset=False)]
+          option("fav_only", "Favourites Only", ["Off", "On"], "Off", preset=False),
+          option("browser", "Preset List", ["Off", "On"], "Off", preset=False)]
     P += [knob("cutoff", "Cutoff", 1.0, fmt="CUTOFF"), knob("resonance", "Resonance", 0.0),
           knob("env_amt", "Env Amount", 0.5, fmt="BIPOLAR"), knob("key_track", "Key Track", 0.0),
           knob("attack", "Attack", 0.0, fmt="ATTACK"), knob("decay", "Decay", 0.5, fmt="TIME"),
@@ -80,7 +82,9 @@ def spec():
           option("anim", "Animation", ["Off", "Low", "Smooth"], "Smooth", preset=False),
           option("mod_wheel", "Mod Wheel", ["Vibrato", "Filter", "Off"], "Vibrato", preset=False),
           option("vel_curve", "Velocity Curve", ["Soft", "Normal", "Hard"], "Normal", preset=False)]
-    P += [display("category", "Category", len(CATEGORIES) - 1), display("wave", "Waveform", 32), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
+    P += [option("look", "Look", ["Midnight", "Midnight List", "Platinum", "Platinum List", "Studio", "Studio List"],
+                 "Midnight", preset=False, fmt="LOOK"),
+          display("category", "Category", len(CATEGORIES) - 1), display("wave", "Waveform", 32), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
           display("cpu", "CPU", 10)]
     P += [display("act_" + l, "Layer %s Active" % l.upper(), 1) for l in LAYERS]
     P += [display(k, n, 1, "string") for k, n in (
@@ -89,6 +93,7 @@ def spec():
         ("lcd_line", "LCD Line"))]
     P += [display("lcat_" + l, "Layer %s Category" % l.upper(), 1, "string") for l in LAYERS]
     P += [display("lname_" + l, "Layer %s Name" % l.upper(), 1, "string") for l in LAYERS]
+    P += [display("row_%d" % (i + 1), "List Row %d" % (i + 1), 1, "string") for i in range(LIST_ROWS)]
     P += [display("fav_%d" % i, "Favourites %d" % (i + 1), 8191) for i in range(10)]
     return P
 
@@ -104,7 +109,7 @@ def to_json(P):
         elif p["kind"] == "option":
             q.update(options=p["options"], default=p["default"])
             if p["key"] == "preset":
-                q["qlink_ticks"] = 3
+                q["dynamic_display"] = True          # the LCD shows it as "NAME  *" (upper case, favourite mark)
         elif p["kind"] == "momentary":
             q["momentary"] = True
             if p["step_of"]:
@@ -153,6 +158,7 @@ def to_header(P):
             int(bool(p.get("preset"))), p["key"]))
     L.append("typedef struct { int kind, fmt; float lo, hi, def; int whole, in_preset; } pinfo_t;")
     L.append("static const pinfo_t PINFO[NP] = {\n" + "\n".join(rows) + "\n};")
+    L.append("#define LIST_ROWS %d" % LIST_ROWS)
     L.append("#define NDELAY_TIMES %d" % len(DELAY_TIMES))
     L.append("static const float DELAY_BEATS[NDELAY_TIMES] = { 0.25f, 1.0f / 3, 0.5f, 0.75f, 2.0f / 3, 1.0f, 1.5f, 2.0f };")
     return "\n".join(L) + "\n"

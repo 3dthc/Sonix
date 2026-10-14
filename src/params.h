@@ -18,6 +18,7 @@ enum {
     P_NEXT,
     P_FAV,
     P_FAV_ONLY,
+    P_BROWSER,
     P_CUTOFF,
     P_RESONANCE,
     P_ENV_AMT,
@@ -89,6 +90,7 @@ enum {
     P_ANIM,
     P_MOD_WHEEL,
     P_VEL_CURVE,
+    P_LOOK,
     P_CATEGORY,
     P_WAVE,
     P_MIDI_LED,
@@ -114,6 +116,18 @@ enum {
     P_LNAME_B,
     P_LNAME_C,
     P_LNAME_D,
+    P_ROW_1,
+    P_ROW_2,
+    P_ROW_3,
+    P_ROW_4,
+    P_ROW_5,
+    P_ROW_6,
+    P_ROW_7,
+    P_ROW_8,
+    P_ROW_9,
+    P_ROW_10,
+    P_ROW_11,
+    P_ROW_12,
     P_FAV_0,
     P_FAV_1,
     P_FAV_2,
@@ -145,6 +159,7 @@ static const char *const PKEY[NP] = {
     "next",
     "fav",
     "fav_only",
+    "browser",
     "cutoff",
     "resonance",
     "env_amt",
@@ -216,6 +231,7 @@ static const char *const PKEY[NP] = {
     "anim",
     "mod_wheel",
     "vel_curve",
+    "look",
     "category",
     "wave",
     "midi_led",
@@ -241,6 +257,18 @@ static const char *const PKEY[NP] = {
     "lname_b",
     "lname_c",
     "lname_d",
+    "row_1",
+    "row_2",
+    "row_3",
+    "row_4",
+    "row_5",
+    "row_6",
+    "row_7",
+    "row_8",
+    "row_9",
+    "row_10",
+    "row_11",
+    "row_12",
     "fav_0",
     "fav_1",
     "fav_2",
@@ -271,6 +299,7 @@ static const char *const PNAME[NP] = {
     "NEXT PRESET",
     "FAVOURITE",
     "FAVOURITES ONLY",
+    "PRESET LIST",
     "CUTOFF",
     "RESONANCE",
     "ENV AMOUNT",
@@ -342,6 +371,7 @@ static const char *const PNAME[NP] = {
     "ANIMATION",
     "MOD WHEEL",
     "VELOCITY CURVE",
+    "LOOK",
     "CATEGORY",
     "WAVEFORM",
     "MIDI LED",
@@ -367,6 +397,18 @@ static const char *const PNAME[NP] = {
     "LAYER B NAME",
     "LAYER C NAME",
     "LAYER D NAME",
+    "LIST ROW 1",
+    "LIST ROW 2",
+    "LIST ROW 3",
+    "LIST ROW 4",
+    "LIST ROW 5",
+    "LIST ROW 6",
+    "LIST ROW 7",
+    "LIST ROW 8",
+    "LIST ROW 9",
+    "LIST ROW 10",
+    "LIST ROW 11",
+    "LIST ROW 12",
     "FAVOURITES 1",
     "FAVOURITES 2",
     "FAVOURITES 3",
@@ -379,7 +421,7 @@ static const char *const PNAME[NP] = {
     "FAVOURITES 10",
 };
 enum { K_KNOB, K_OPTION, K_MOMENTARY, K_DISPLAY, K_TEXT };
-enum { F_ATTACK, F_BIPOLAR, F_CENTS, F_CUTOFF, F_HZINT, F_INT, F_LEVEL, F_LFO, F_NONE, F_OCT, F_OPT, F_PAN, F_PCT, F_PREDELAY, F_SEMI, F_TIME, F_TONE, F_VIB, F_VOL };
+enum { F_ATTACK, F_BIPOLAR, F_CENTS, F_CUTOFF, F_HZINT, F_INT, F_LEVEL, F_LFO, F_LOOK, F_NONE, F_OCT, F_OPT, F_PAN, F_PCT, F_PREDELAY, F_SEMI, F_TIME, F_TONE, F_VIB, F_VOL };
 typedef struct { int kind, fmt; float lo, hi, def; int whole, in_preset; } pinfo_t;
 static const pinfo_t PINFO[NP] = {
     { K_KNOB, F_VOL, 0.0f, 1.0f, 0.8f, 0, 0 },  /* volume */
@@ -400,6 +442,7 @@ static const pinfo_t PINFO[NP] = {
     { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* next */
     { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* fav */
     { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* fav_only */
+    { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* browser */
     { K_KNOB, F_CUTOFF, 0.0f, 1.0f, 1.0f, 0, 1 },  /* cutoff */
     { K_KNOB, F_PCT, 0.0f, 1.0f, 0.0f, 0, 1 },  /* resonance */
     { K_KNOB, F_BIPOLAR, 0.0f, 1.0f, 0.5f, 0, 1 },  /* env_amt */
@@ -471,6 +514,7 @@ static const pinfo_t PINFO[NP] = {
     { K_OPTION, F_OPT, 0.0f, 2.0f, 2.0f, 1, 0 },  /* anim */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 0.0f, 1, 0 },  /* mod_wheel */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 1.0f, 1, 0 },  /* vel_curve */
+    { K_OPTION, F_LOOK, 0.0f, 5.0f, 0.0f, 1, 0 },  /* look */
     { K_DISPLAY, F_NONE, 0.0f, 11.0f, 0.0f, 0, 0 },  /* category */
     { K_DISPLAY, F_NONE, 0.0f, 32.0f, 0.0f, 0, 0 },  /* wave */
     { K_DISPLAY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* midi_led */
@@ -496,6 +540,18 @@ static const pinfo_t PINFO[NP] = {
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_b */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_c */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_d */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_1 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_2 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_3 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_4 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_5 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_6 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_7 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_8 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_9 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_10 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_11 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_12 */
     { K_DISPLAY, F_NONE, 0.0f, 8191.0f, 0.0f, 0, 0 },  /* fav_0 */
     { K_DISPLAY, F_NONE, 0.0f, 8191.0f, 0.0f, 0, 0 },  /* fav_1 */
     { K_DISPLAY, F_NONE, 0.0f, 8191.0f, 0.0f, 0, 0 },  /* fav_2 */
@@ -507,5 +563,6 @@ static const pinfo_t PINFO[NP] = {
     { K_DISPLAY, F_NONE, 0.0f, 8191.0f, 0.0f, 0, 0 },  /* fav_8 */
     { K_DISPLAY, F_NONE, 0.0f, 8191.0f, 0.0f, 0, 0 },  /* fav_9 */
 };
+#define LIST_ROWS 12
 #define NDELAY_TIMES 8
 static const float DELAY_BEATS[NDELAY_TIMES] = { 0.25f, 1.0f / 3, 0.5f, 0.75f, 2.0f / 3, 1.0f, 1.5f, 2.0f };

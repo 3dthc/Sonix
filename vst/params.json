@@ -143,7 +143,7 @@
         "Dream Vibes"
       ],
       "default": "Concert Grand",
-      "qlink_ticks": 3
+      "dynamic_display": true
     },
     {
       "key": "cat_piano",
@@ -227,6 +227,15 @@
     {
       "key": "fav_only",
       "name": "Favourites Only",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "browser",
+      "name": "Preset List",
       "options": [
         "Off",
         "On"
@@ -1006,6 +1015,19 @@
       "default": "Normal"
     },
     {
+      "key": "look",
+      "name": "Look",
+      "options": [
+        "Midnight",
+        "Midnight List",
+        "Platinum",
+        "Platinum List",
+        "Studio",
+        "Studio List"
+      ],
+      "default": "Midnight"
+    },
+    {
       "key": "category",
       "name": "Category",
       "min": 0,
@@ -1200,6 +1222,102 @@
     {
       "key": "lname_d",
       "name": "Layer D Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_1",
+      "name": "List Row 1",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_2",
+      "name": "List Row 2",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_3",
+      "name": "List Row 3",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_4",
+      "name": "List Row 4",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_5",
+      "name": "List Row 5",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_6",
+      "name": "List Row 6",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_7",
+      "name": "List Row 7",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_8",
+      "name": "List Row 8",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_9",
+      "name": "List Row 9",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_10",
+      "name": "List Row 10",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_11",
+      "name": "List Row 11",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "row_12",
+      "name": "List Row 12",
       "min": 0,
       "max": 1,
       "default": 0,

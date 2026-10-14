@@ -47,7 +47,7 @@ LAYERS = "abcd"
 BTN_W, BTN_H, BTN_GAP = 108, 47, 8                          # a button picture is BTN_W x (BTN_H + 4): the drop shadow
 KNOB_R = 36
 LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 17, 21, 16, 12
-LCD_PX = dict(top=17, name=36, cell=17, line=18, lcat=17, lname=25)
+LCD_PX = dict(top=17, name=36, cell=17, line=18, lcat=17, lname=25, list=17)
 
 # ---- the chassis shared by MAIN and SETTINGS: a 2 x 2 knob panel in each corner, the centre column between
 W, H = 1280, 628
@@ -73,6 +73,8 @@ SETTINGS_SECTIONS = [
     (RX, SIDE_Y, "DELAY", [("delay_time", "TIME"), ("delay_fb", "FEEDBACK"), ("delay_tone", "TONE"), ("delay_width", "WIDTH")]),
     (RX, BOT_Y, "REVERB", [("rev_size", "SIZE"), ("rev_damp", "DAMPING"), ("rev_predelay", "PRE-DELAY"), ("rev_width", "WIDTH")]),
 ]
+# MAIN's Q-Links: the four sections' knobs, but the 16th (VOLUME, which MPC's track has too) browses presets
+MAIN_QLINKS = [k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks][:15] + ["preset"]
 LAYER_KNOBS = [("level", "LEVEL"), ("pan", "PAN"), ("octave", "OCTAVE"), ("fine", "FINE")]
 SYSTEM_ROWS = [  # (key, label, caption, options)
     ("theme", "THEME", "faceplate colours", ["MIDNIGHT", "PLATINUM", "STUDIO"]),
@@ -94,6 +96,8 @@ LCD_NAME = (SX + 8 + BTN_W + 8, SY + 50, SW - 2 * (8 + BTN_W + 8), BTN_H + 4)
 LCD_WAVE = (SX + 16, SY + 112, SW - 32, 76)                  # two meters side by side (MPC's strip width limit)
 WAVE_FRAMES = 33                                             # 0 idle, then 4 levels x 8 phases
 CELL_Y, CELL_H, CELL_W, CELL_GAP = SY + 198, 40, 156, 10
+LIST_BOX = (SX + 16, SY + 108, SW - 32, 194)                 # the preset list (2 x 6 rows) in place of the waveform view
+LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP = 2, 6, 29, 4
 LCD_LINE = (SX + 18, SY + 248, SW - 36, 28)
 LFO_LED = (SX + 30, SY + 296)                                # an LED on the LCD's foot, lit while the LFO runs
 BROWSE = (CX0, 394, CW, 226)
@@ -142,15 +146,16 @@ def page_main():
            dict(t="readout", key="lcd_ref", box=LCD_REF, size=LCD_PX["top"], ink="dim", align="right", weight="normal"),
            dict(t="rule", x=SX + 18, y=LCD_RULE_Y, w=SW - 36),
            dict(t="lcdarrow", key="prev", box=LCD_PREV, dir=-1), dict(t="lcdarrow", key="next", box=LCD_NEXT, dir=1),
-           dict(t="readout", key="lcd_name", box=LCD_NAME, size=LCD_PX["name"], ink="ink", align="center", weight="bold"),
-           dict(t="wave", box=LCD_WAVE)]
+           dict(t="presetname", key="preset", box=LCD_NAME, size=LCD_PX["name"]),
+           dict(t="wave", box=LCD_WAVE, view=0)]
     for i, l in enumerate(LAYERS):
         x = SX + 16 + i * (CELL_W + CELL_GAP)
-        it.append(dict(t="cell", x=x, y=CELL_Y, w=CELL_W, h=CELL_H, letter=l.upper()))
+        it.append(dict(t="cell", x=x, y=CELL_Y, w=CELL_W, h=CELL_H, letter=l.upper(), view=0))
         it.append(dict(t="readout", key="lcd_" + l, box=(x + 30, CELL_Y, CELL_W - 36, CELL_H), size=LCD_PX["cell"],
-                       ink="ink", align="left", weight="normal"))
-    it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="normal"),
-           dict(t="lcdled", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1], label="LFO"),
+                       ink="ink", align="left", weight="normal", view=0))
+    it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="normal", view=0),
+           dict(t="lcdled", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1], label="LFO", view=0),
+           dict(t="list", key="row", box=LIST_BOX, view=1),
            dict(t="panel", x=BROWSE[0], y=BROWSE[1], w=BROWSE[2], h=BROWSE[3], title="BROWSE"),
            dict(t="catgrid", x=GRID_X, y=GRID_Y)]
     for i, (kind, key, label) in enumerate(ROW3):
@@ -194,6 +199,11 @@ def page_settings():
 
 PAGES = [("MAIN", page_main), ("LAYERS", page_layers), ("SETTINGS", page_settings)]
 
+
+def in_view(items, view):
+    """MAIN's items for one LCD view (0: waveform and layers, 1: the preset list)."""
+    return [it for it in items if it.get("view", view) == view]
+
 # ---- what the mockups show
 MOCK = {
     "MAIN": dict(
@@ -201,11 +211,18 @@ MOCK = {
                    attack=(0.08, "4 MS"), decay=(0.46, "820 MS"), sustain=(0.78, "78 %"), release=(0.4, "1.20 S"),
                    lfo_rate=(0.35, "3.1 HZ"), lfo_filter=(0.0, "0 %"), lfo_pitch=(0.12, "12 CT"), lfo_amp=(0.0, "0 %"),
                    chorus=(0.3, "30 %"), delay=(0.18, "18 %"), reverb=(0.42, "42 %"), volume=(0.8, "-1.9 DB")),
-        text=dict(lcd_top="PIANO   ·   003 / 128", lcd_ref="A4  440 HZ", lcd_name="VELVET GRAND",
+        text=dict(lcd_top="PIANO   ·   002 / 128", lcd_ref="A4  440 HZ", preset="VELVET GRAND  ★",
                   lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENS", lcd_d="—",
                   lcd_line="Soft grand over a slow pad and wide strings"),
         on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, fav=1, fav_only=0, lfo_led=1),
         category=0, wave=(2, 3)),
+    "MAIN_LIST": dict(
+        text=dict(lcd_top="STRINGS   ·   034 / 128", lcd_ref="A4  440 HZ", preset="SLOW STRINGS"),
+        # tile order (left to right, top down) of a list that runs down the left column first
+        rows=["033   STRING ENSEMBLE", "039   SYNTH STRINGS", "034   SLOW STRINGS", "040   STRINGS & BRASS",
+              "035   SOLO VIOLIN", "041   EPIC OCTAVES", "036   PIZZICATO  ★", "042   PIZZ & SPIC",
+              "037   TREMOLO STRINGS", "043   MACHINE STRINGS", "038   SPICCATO", ""], rowLit=2,
+        on=dict(layer_a=1, layer_b=0, layer_c=0, layer_d=0, fav=0, fav_only=0), category=3),
     "LAYERS": dict(
         knobs=dict(level_a=(0.86, "-1.3 DB"), pan_a=(0.5, "C"), octave_a=(0.5, "0"), fine_a=(0.5, "0 CT"),
                    level_b=(0.62, "-6.9 DB"), pan_b=(0.38, "L 24"), octave_b=(0.5, "0"), fine_b=(0.54, "+8 CT"),
@@ -346,6 +363,17 @@ function lcdFrame(t, bezel, screen, r) {
   ctx.strokeStyle = 'rgba(0,0,0,0.75)'; ctx.lineWidth = 6; ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3; rr(sx - 3, sy - 3, sw + 6, sh + 6, r + 2); ctx.stroke();
   ctx.restore();
 }
+function listTiles(it) {
+  const [x, y, w] = it.box, tw = Math.floor((w - (C.LIST_COLS - 1) * C.LIST_GAP) / C.LIST_COLS), out = [];
+  for (let i = 0; i < C.LIST_COLS * C.LIST_ROWS; i++)
+    out.push([x + (i % C.LIST_COLS) * (tw + C.LIST_GAP), y + Math.floor(i / C.LIST_COLS) * (C.LIST_TH + C.LIST_GAP), tw, C.LIST_TH]);
+  return out;
+}
+function rowLit(t, x, y, w, h) {
+  ctx.save(); rr(x + 1, y + 1, w - 2, h - 2, 4); ctx.fillStyle = t.lcdText; ctx.globalAlpha = 0.14; ctx.fill(); ctx.restore();
+  ctx.save(); ctx.shadowColor = t.lcdGlow; ctx.shadowBlur = 8; rr(x + 1, y + 1, w - 2, h - 2, 4); ctx.strokeStyle = t.lcdText; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
+}
+function rowOn(th, w, h) { setup(w, h); rowLit(T[th], 0, 0, w, h); return out(); }
 function glare(screen, r) {
   const [sx, sy, sw, sh] = screen;
   ctx.save(); rr(sx, sy, sw, sh, r); ctx.clip();
@@ -408,6 +436,10 @@ function background(th, items) {
       lcdGlyph(t, it.letter, it.x + 14, it.y + it.h / 2 + 6, { size: 15, font: 'Michroma', weight: 400, align: 'center' });
     } else if (it.t === 'lcdled') {
       if (it.label) lcdGlyph(t, it.label, it.cx + 14, it.cy + 5, { size: 13, font: 'Michroma', weight: 400, color: t.lcdDim, glow: null });
+    } else if (it.t === 'list') {
+      listTiles(it).forEach(([x, y, w, h]) => {
+        ctx.save(); rr(x + 0.5, y + 0.5, w - 1, h - 1, 4); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.28; ctx.lineWidth = 1; ctx.stroke(); ctx.restore();
+      });
     } else if (it.t === 'catgrid') {
       // nothing: the grid is a picture; its panel is the BROWSE panel
     } else if (it.t === 'divider') {
@@ -570,6 +602,14 @@ function mockup(th, items, m) {
         const [x, y, w, h] = it.box, ax = it.align === 'left' ? x : it.align === 'right' ? x + w : x + w / 2;
         text(s, ax, y + h / 2 + it.size * 0.36, { size: it.size, font: 'Titillium', weight: it.weight === 'bold' ? 700 : 400,
           color: '#' + (it.ink === 'ink' ? ink[0] : ink[1]), align: it.align });
+      } else if (it.t === 'presetname') {
+        const [x, y, w, h] = it.box;
+        text((m.text || {}).preset || '', x + w / 2, y + h / 2 + it.size * 0.36, { size: it.size, font: 'Titillium', weight: 600, color: '#' + ink[0], align: 'center' });
+      } else if (it.t === 'list' && m.rows) {
+        listTiles(it).forEach(([x, y, w, h], i) => {
+          if (i === m.rowLit) rowLit(t, x, y, w, h);
+          if (m.rows[i]) text(m.rows[i], x + 12, y + h / 2 + C.LIST_PX * 0.36, { size: C.LIST_PX, font: 'Titillium', weight: 600, color: '#' + ink[0] });
+        });
       } else if (it.t === 'button' || it.t === 'toggle') {
         btnFace(t, it.x, it.y, C.BTN_W, C.BTN_H, (m.on || {})[it.key] ? 1 : 0, it.label);
       } else if (it.t === 'catgrid') {
@@ -594,7 +634,7 @@ function mockup(th, items, m) {
     res(out());
   });
 }
-window.API = { background, button, blank, gridStrip, pressOverlay, arrowLit, knobStrip, waveStrip, ledStrip, cpuStrip, mockup };
+window.API = { background, button, blank, gridStrip, pressOverlay, arrowLit, knobStrip, waveStrip, ledStrip, cpuStrip, rowOn, mockup };
 </script></body></html>"""
 
 
@@ -615,7 +655,7 @@ ABOUT_LINES = [
 def open_page(p, with_mpc_fonts):
     consts = dict(VERSION=VERSION, TITLE_PX=TITLE_PX, LABEL_PX=LABEL_PX, VALUE_PX=VALUE_PX, BUTTON_PX=BUTTON_PX,
                   KNOB_R=KNOB_R, BTN_W=BTN_W, BTN_H=BTN_H, BTN_GAP=BTN_GAP, CATS=CATS, THEMES=THEMES,
-                  WAVE_FRAMES=WAVE_FRAMES, led=HEADER_LED, cpu=CPU_BAR, logoX=LOGO_X, LCD_INK=LCD_INK, KNOB_INK=KNOB_INK, ABOUT=ABOUT_LINES)
+                  WAVE_FRAMES=WAVE_FRAMES, LIST_COLS=LIST_COLS, LIST_ROWS=LIST_ROWS, LIST_TH=LIST_TH, LIST_GAP=LIST_GAP, LIST_PX=LCD_PX["list"], led=HEADER_LED, cpu=CPU_BAR, logoX=LOGO_X, LCD_INK=LCD_INK, KNOB_INK=KNOB_INK, ABOUT=ABOUT_LINES)
     page = (PAGE.replace("CONST_JSON", json.dumps(consts))
             .replace("F_MICHROMA", font_url(os.path.join(FONTS, "Michroma-Regular.ttf")))
             .replace("F_BARLOW_BOLD", font_url(os.path.join(FONTS, "BarlowSemiCondensed-Bold.ttf")))
@@ -636,9 +676,11 @@ def mockups(outdir):
     os.makedirs(outdir, exist_ok=True)
     with sync_playwright() as p:
         b, pg = open_page(p, True)
-        for name, fn in PAGES:
+        pages = [("MAIN", in_view(page_main(), 0)), ("MAIN_LIST", in_view(page_main(), 1)),
+                 ("LAYERS", page_layers()), ("SETTINGS", page_settings())]
+        for name, items in pages:
             for th in THEMES:
-                url = pg.evaluate("API.mockup(%s, %s, %s)" % (json.dumps(th), json.dumps(fn()), json.dumps(MOCK[name])))
+                url = pg.evaluate("API.mockup(%s, %s, %s)" % (json.dumps(th), json.dumps(items), json.dumps(dict({"knobs": MOCK["MAIN"]["knobs"]}, **MOCK[name]))))
                 save(url, os.path.join(outdir, "%s_%s.png" % (name.lower(), th)))
         b.close()
 
@@ -653,7 +695,13 @@ def export_art():
         for th in THEMES:
             d = os.path.join(ART, th)
             for name, items in pages:
-                save(ev("background", th, items), os.path.join(d, "bg_%s.png" % name.lower()))
+                if name == "MAIN":
+                    save(ev("background", th, in_view(items, 0)), os.path.join(d, "bg_main.png"))
+                    save(ev("background", th, in_view(items, 1)), os.path.join(d, "bg_main_list.png"))
+                else:
+                    save(ev("background", th, items), os.path.join(d, "bg_%s.png" % name.lower()))
+            tw = (LIST_BOX[2] - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS
+            save(ev("rowOn", th, tw, LIST_TH), os.path.join(d, "row_on.png"))
             save(ev("knobStrip", th, 128, KNOB_R), os.path.join(d, "knob.png"))
             save(ev("gridStrip", th, CATS, 6, BTN_W, BTN_H, BTN_GAP, 10), os.path.join(d, "cats.png"))
             save(ev("pressOverlay", th, BTN_W, BTN_H), os.path.join(d, "press.png"))
@@ -672,6 +720,8 @@ def export_art():
             save(ev("cpuStrip", th, CPU_BAR[2], CPU_BAR[3]), os.path.join(d, "cpu.png"))
         save(ev("blank", BTN_W, BTN_H + 4), os.path.join(ART, "clear_btn.png"))
         save(ev("blank", BTN_W + BTN_GAP, BTN_H + 4), os.path.join(ART, "clear_seg.png"))
+        save(ev("blank", 20, 20 * 128), os.path.join(ART, "clear_knob.png"))
+        save(ev("blank", (LIST_BOX[2] - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS, LIST_TH), os.path.join(ART, "clear_row.png"))
         b.close()
 
 
@@ -681,7 +731,7 @@ def write_layout():
          "art_css=skin.css",
          "theme_bg=16181c", "theme_ink=e4e7ec", "theme_ink_dim=98a1af", "theme_accent=4cc3ff", "theme_accent_hi=4cc3ff",
          "theme_lcd=06121f", "theme_line=2e323a", "theme_box=06121f",
-         "qlinks_track = " + ",".join(k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks)]
+         "qlinks_track = " + ",".join(MAIN_QLINKS)]
     T = list(enumerate(THEMES))
 
     def header(n, th):
@@ -712,39 +762,54 @@ def write_layout():
     def lcdled(it, n, th):
         L.append("meter cx=%d cy=%d w=18 h=18 key=%s strip=art/%s/lcdled.png frames=2 when=theme:%d" % (it["cx"], it["cy"] + Y, it["key"], th, n))
 
-    # ---- MAIN
+    # ---- MAIN: per theme, two LCD views (the waveform and layers, or the preset list), each one "look" option
     L.append("[tab MAIN]")
-    items = page_main()
     for n, th in T:
-        L.append("art file=art/%s/bg_main.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
-    for n, th in T:
-        header(n, th)
-        wx, wy, ww, wh = LCD_WAVE
-        for half, nm in ((0, "wave_l"), (1, "wave_r")):
-            L.append("meter cx=%d cy=%d w=%d h=%d key=wave strip=art/%s/%s.png frames=%d when=theme:%d" % (
-                wx + ww // 4 + half * ww // 2, wy + wh // 2 + Y, ww // 2, wh, th, nm, WAVE_FRAMES, n))
-        gw, gh = 6 * BTN_W + 5 * BTN_GAP, 2 * (BTN_H + 10) - 10 + 4
-        L.append("meter cx=%d cy=%d w=%d h=%d key=category strip=art/%s/cats.png frames=%d when=theme:%d" % (
-            GRID_X + gw // 2, GRID_Y + gh // 2 + Y, gw, gh, th, len(CATS), n))
-        for it in items:
-            if it["t"] == "readout":
-                readout(it, n, th)
-            elif it["t"] == "lcdled":
-                lcdled(it, n, th)
-            elif it["t"] == "lcdarrow":
-                x, y, w, h = it["box"]
-                L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/arrow_%s.png when=theme:%d' % (
-                    x + w // 2, y + h // 2 + Y, w, h, it["key"], th, it["key"], n))
-            elif it["t"] in ("toggle", "button"):
-                pic_button(it["t"], it["key"], it["key"], it["x"], it["y"], n, th)
-            elif it["t"] == "knob":
-                knob(it, n, th)
-        for i, key in enumerate(CAT_KEYS):
-            cx = GRID_X + (i % 6) * (BTN_W + BTN_GAP) + BTN_W // 2
-            cy = GRID_Y + (i // 6) * (BTN_H + 10) + (BTN_H + 4) // 2 + Y
-            L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/press.png when=theme:%d' % (
-                cx, cy, BTN_W, BTN_H + 4, key, th, n))
-    L.append('qlinks "MAIN" = ' + ",".join(k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks))
+        for view in (0, 1):
+            look = n * 2 + view
+            start = len(L)
+            items = in_view(page_main(), view)
+            L.append("art file=art/%s/bg_main%s.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (
+                th, "_list" if view else "", Y, n))
+            header(n, th)
+            if not view:
+                wx, wy, ww, wh = LCD_WAVE
+                for half, nm in ((0, "wave_l"), (1, "wave_r")):
+                    L.append("meter cx=%d cy=%d w=%d h=%d key=wave strip=art/%s/%s.png frames=%d when=theme:%d" % (
+                        wx + ww // 4 + half * ww // 2, wy + wh // 2 + Y, ww // 2, wh, th, nm, WAVE_FRAMES, n))
+            gw, gh = 6 * BTN_W + 5 * BTN_GAP, 2 * (BTN_H + 10) - 10 + 4
+            L.append("meter cx=%d cy=%d w=%d h=%d key=category strip=art/%s/cats.png frames=%d when=theme:%d" % (
+                GRID_X + gw // 2, GRID_Y + gh // 2 + Y, gw, gh, th, len(CATS), n))
+            for it in items:
+                if it["t"] == "readout":
+                    readout(it, n, th)
+                elif it["t"] == "lcdled":
+                    lcdled(it, n, th)
+                elif it["t"] == "lcdarrow":
+                    x, y, w, h = it["box"]
+                    L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/arrow_%s.png when=theme:%d' % (
+                        x + w // 2, y + h // 2 + Y, w, h, it["key"], th, it["key"], n))
+                elif it["t"] == "presetname":
+                    # the preset name is a knob on the preset list: touch it, then the data wheel (or a drag) browses
+                    x, y, w, h = it["box"]
+                    L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=preset ink=%s strip=art/clear_knob.png frames=128 when=theme:%d' % (
+                        x + w // 2 - 12, y + h // 2 + Y, w, h, it["size"], LCD_INK[th][0], n))
+                elif it["t"] == "list":
+                    x, y, w, h = it["box"]
+                    L.append('list x=%d y=%d w=%d h=%d key=row cols=%d rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left img=art/clear_row.png img_on=art/%s/row_on.png when=theme:%d' % (
+                        x, y + Y, w, h, LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP, LCD_PX["list"], LCD_INK[th][0], th, n))
+                elif it["t"] in ("toggle", "button"):
+                    pic_button(it["t"], it["key"], it["key"], it["x"], it["y"], n, th)
+                elif it["t"] == "knob":
+                    knob(it, n, th)
+            for i, key in enumerate(CAT_KEYS):
+                cx = GRID_X + (i % 6) * (BTN_W + BTN_GAP) + BTN_W // 2
+                cy = GRID_Y + (i // 6) * (BTN_H + 10) + (BTN_H + 4) // 2 + Y
+                L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/press.png when=theme:%d' % (
+                    cx, cy, BTN_W, BTN_H + 4, key, th, n))
+            for k in range(start, len(L)):
+                L[k] = L[k].replace("when=theme:%d" % n, "when=look:%d" % look)
+    L.append('qlinks "MAIN" = ' + ",".join(MAIN_QLINKS))
 
     # ---- LAYERS
     L.append("[tab LAYERS]")
@@ -795,7 +860,7 @@ def main():
     import shutil
     for th in THEMES:                                  # start clean: the v0.2 pictures are not used any more
         shutil.rmtree(os.path.join(ART, th), ignore_errors=True)
-    for f in ("clear_btn.png", "clear_cell.png", "clear_seg.png"):
+    for f in ("clear_btn.png", "clear_cell.png", "clear_seg.png", "clear_knob.png", "clear_row.png"):
         if os.path.exists(os.path.join(ART, f)):
             os.remove(os.path.join(ART, f))
     export_art()

@@ -317,6 +317,7 @@ typedef struct {
     double midi_t, wave_t, cpu_t, quiet_t;
     double cpu_acc; int cpu_n;
     float level;                     /* output level the waveform follows */
+    int view_cat;                    /* the category the LCD's preset list shows */
     int wave_ph;
     int layer_busy[NLAYER];
 } inst_t;
@@ -357,16 +358,31 @@ static int any_fav(const inst_t *s, int cat) {
     return 0;
 }
 
+/* the MAIN page's look: theme x (waveform view | preset list), one option so each picture needs one when= */
+static void sync_view(inst_t *s) {
+    int br = s->p[P_BROWSER] > 0.5f;
+    int look = ival(s, P_THEME, 0, 2) * 2 + br;
+    int cat = br ? s->view_cat : PRESET_CAT[cur_preset(s)];
+    if (look != (int)s->p[P_LOOK] || cat != (int)s->p[P_CATEGORY]) { s->p[P_LOOK] = (float)look; s->p[P_CATEGORY] = (float)cat; s->rev++; }
+}
+/* the n-th (0-based) preset of the listed category, or -1 */
+static int list_preset(const inst_t *s, int n) {
+    for (int i = 0, k = 0; i < NPRESET; i++)
+        if (PRESET_CAT[i] == s->view_cat && k++ == n) return i;
+    return -1;
+}
+
 static void apply_preset(inst_t *s, int pr) {
     if (pr < 0) pr = 0;
     if (pr >= NPRESET) pr = NPRESET - 1;
     for (int k = 0; k < NPRESET_KEYS; k++) if (preset_key_index[k] >= 0) s->p[preset_key_index[k]] = PRESET_VAL[pr][k];
     for (int l = 0; l < NLAYER; l++) s->p[LP(P_SOLO_A, l)] = 0;
     s->p[P_PRESET] = (float)pr;
-    s->p[P_CATEGORY] = (float)PRESET_CAT[pr];
     s->p[P_FAV] = (float)fav_get(s, pr);
+    s->view_cat = PRESET_CAT[pr];                 /* an open list follows the preset into its category */
     s->touch_shown = 0;
     want_banks(s);
+    sync_view(s);
     s->rev++;
 }
 static int edited(const inst_t *s) {
@@ -385,10 +401,12 @@ static void step_preset(inst_t *s, int dir) {
         if (!only || fav_get(s, i)) { apply_preset(s, i); return; }
     }
 }
-static void jump_category(inst_t *s, int cat) {
-    int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, cat);
-    for (int i = 0; i < NPRESET; i++)
-        if (PRESET_CAT[i] == cat && (!only || fav_get(s, i))) { apply_preset(s, i); return; }
+/* a category button opens the LCD's list of its presets (the sound stays until a row is picked); the lit one again
+ * closes the list */
+static void category_pressed(inst_t *s, int cat) {
+    if (s->p[P_BROWSER] > 0.5f && s->view_cat == cat) s->p[P_BROWSER] = 0;
+    else { s->p[P_BROWSER] = 1; s->view_cat = cat; }
+    sync_view(s);
 }
 
 static const zone_t *find_zone(const bank_t *b, int key, int vel) {
@@ -601,6 +619,7 @@ static void *eng_create(const char *data_dir) {
     }
     banks_attach(data_dir);
     apply_preset(s, 0);
+    sync_view(s);
     /* the first preset plays the moment Sonix opens: wait (up to 2 s) for its sounds, which the loader takes first */
     for (int w = 0; w < 400 && need_loading(s); w++) usleep(5000);
     return s;
@@ -622,7 +641,7 @@ static void eng_midi(void *inst, const uint8_t *msg, int len) {
 
 static int is_computed(int i) {      /* the engine's own displays: never set from outside */
     if (PINFO[i].kind == K_TEXT) return 1;
-    return i == P_CATEGORY || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
+    return i == P_CATEGORY || i == P_LOOK || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
            (i >= P_ACT_A && i <= P_ACT_D);
 }
 
@@ -630,9 +649,14 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     inst_t *s = inst;
     if (!strcmp(key, "lfo_bpm")) { float b = (float)atof(val); if (b > 20 && b < 400) s->bpm = b; return; }
     int i = find_key(key);
-    if (i < 0 || is_computed(i)) return;
     float x = (float)atof(val);
     if (x != x) return;
+    if (i >= P_ROW_1 && i < P_ROW_1 + LIST_ROWS) {    /* a list row tapped: load its preset (0 is the old row's echo) */
+        int pr = list_preset(s, i - P_ROW_1);
+        if (x > 0.5f && pr >= 0 && pr != cur_preset(s)) apply_preset(s, pr);
+        return;
+    }
+    if (i < 0 || is_computed(i)) return;
     if (PINFO[i].kind == K_MOMENTARY) {
         int press = x > 0.5f && s->prev_mom[i] <= 0.5f;
         s->prev_mom[i] = x;
@@ -640,7 +664,7 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
         if (!press) return;
         if (i == P_PREV) step_preset(s, -1);
         else if (i == P_NEXT) step_preset(s, 1);
-        else if (i >= P_CAT_PIANO && i < P_CAT_PIANO + NCAT) jump_category(s, i - P_CAT_PIANO);
+        else if (i >= P_CAT_PIANO && i < P_CAT_PIANO + NCAT) category_pressed(s, i - P_CAT_PIANO);
         return;
     }
     if (x < PINFO[i].lo) x = PINFO[i].lo;
@@ -649,6 +673,7 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     if (i == P_PRESET) { if ((int)x != cur_preset(s)) apply_preset(s, (int)x); return; }
     if (i == P_FAV) { fav_set(s, cur_preset(s), x > 0.5f); s->p[P_FAV] = x > 0.5f; s->rev++; return; }
     s->p[i] = x;
+    if (i == P_BROWSER || i == P_THEME) { if (i == P_BROWSER) s->view_cat = PRESET_CAT[cur_preset(s)]; sync_view(s); return; }
     if (i >= P_FAV_0 && i <= P_FAV_9) { s->p[P_FAV] = (float)fav_get(s, cur_preset(s)); s->rev++; return; }
     if (i >= P_LAYER_A && i <= P_SOLO_D) want_banks(s);
     if (PINFO[i].kind == K_KNOB && i != P_VOLUME) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
@@ -754,6 +779,19 @@ static int eng_get_param(void *inst, const char *key, char *buf, int n) {
     inst_t *s = inst;
     if (n <= 0) return 0;
     if (!strcmp(key, "display_rev")) return snprintf(buf, n, "%d", s->rev);
+    if (!strcmp(key, "preset_display")) {
+        char name[64];
+        upcase(name, PRESET_NAME[cur_preset(s)], sizeof name);
+        return snprintf(buf, n, "%s%s", name, fav_get(s, cur_preset(s)) ? "  \xe2\x98\x85" : "");
+    }
+    if (!strncmp(key, "row_", 4)) {                   /* the preset list: "003  VELVET GRAND *", lit = the current one */
+        int r = atoi(key + 4) - 1, pr = r >= 0 && r < LIST_ROWS ? list_preset(s, r) : -1;
+        if (strstr(key, "_on")) return snprintf(buf, n, "%d", pr >= 0 && pr == cur_preset(s));
+        if (pr < 0) return snprintf(buf, n, " ");
+        char name[64];
+        upcase(name, PRESET_NAME[pr], sizeof name);
+        return snprintf(buf, n, "%03d   %s%s", pr + 1, name, fav_get(s, pr) ? "  \xe2\x98\x85" : "");
+    }
     int i = find_key(key);
     if (i >= 0 && PINFO[i].kind == K_TEXT) return lcd_text(s, i, buf, n);
     if (i >= 0) return snprintf(buf, n, "%g", s->p[i]);

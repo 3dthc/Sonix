@@ -85,8 +85,22 @@ int main(int argc, char **argv) {
     CHECK(getf("layer_b") == 1 && !strcmp(gets("lcd_b"), "WARM PAD"), "its layer B is the warm pad (\"%s\")", gets("lcd_b"));
     press("prev"); press("prev");
     CHECK(getf("preset") == NPRESET - 1 && getf("category") == NCAT - 1, "PREV wraps to the last preset (%g, \"%s\")", getf("preset"), gets("lcd_name"));
+    int before = (int)getf("preset");
     press("cat_strings");
-    CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE") && getf("category") == 3, "STRINGS -> its first preset (\"%s\")", gets("lcd_name"));
+    CHECK(getf("browser") == 1 && getf("look") == 1 && getf("category") == 3 && (int)getf("preset") == before,
+          "STRINGS opens its preset list on the LCD, the sound stays (look %g)", getf("look"));
+    CHECK(strstr(gets("row_1"), "STRING ENSEMBLE") && strstr(gets("row_2"), "SLOW STRINGS") && !strcmp(gets("row_12"), " "),
+          "the list rows (\"%s\", \"%s\")", gets("row_1"), gets("row_2"));
+    set("row_1", "1");
+    CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE") && getf("row_1_on") == 1 && getf("row_2_on") == 0,
+          "tapping a row loads it and lights it (\"%s\")", gets("lcd_name"));
+    set("row_1", "0");
+    CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE"), "the old row's echo (0) changes nothing");
+    press("next");
+    CHECK(getf("row_2_on") == 1 && !strcmp(gets("preset_display"), "SLOW STRINGS"), "NEXT moves the lit row (\"%s\")", gets("preset_display"));
+    press("prev");
+    press("cat_strings");
+    CHECK(getf("browser") == 0 && getf("look") == 0, "the lit category again closes the list");
     note(1, 60, 100); double st = run(0.5); note(0, 60, 0); run(1.5);
     CHECK(st > 0.003, "and it plays at once (%.1f dB)", db(st));
     int up = find_preset("Upright Ballad");
