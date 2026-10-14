@@ -5,17 +5,17 @@ sustaining, and stays light on the CPU. The screen is a plain test page (Volume,
 the real Sonix faceplate comes in a later milestone.
 
 ## 1. Build (Ubuntu in WSL)
-1. On the repo's GitHub page, open **Releases → v0.1.0** and download `sonix-engine-v0.1.0.zip` (the packed
-   instruments, about 210 MB) into your Windows **Downloads** folder.
-2. Start Docker Desktop, then paste this into Ubuntu (it clones the repo the first time; GitHub asks you to sign in
-   because the repo is private):
+Start Docker Desktop, then paste this into Ubuntu (it clones the repo the first time; GitHub asks you to sign in
+because the repo is private):
 
 ```sh
 cd ~ && { [ -d Sonix ] || git clone https://github.com/3dthc/Sonix.git; } && cd Sonix && git pull && bash install.sh
 ```
 
-`install.sh` unpacks the instruments into `engine/`, checks Docker and the toolchain (`~/mpc-vst-plugins`, cloned if
-missing), builds, and copies `Sonix-0.1.0-mpc-armv7.zip` into your Windows Downloads. Expected near the end:
+`install.sh` checks Docker and the toolchain (`~/mpc-vst-plugins`, cloned if missing), then builds the 28
+instruments from their open sources the first time (it downloads the sample sets from GitHub, about 2 GB, and runs
+the same pipeline that made the demo clips; allow 10-20 minutes), then builds the plugin and copies
+`Sonix-0.1.0-mpc-armv7.zip` into your Windows Downloads. Later runs skip the instruments. Expected near the end:
 - `exported: VSTPluginMain`
 - `highest glibc: GLIBC_2.x` (2.31 or lower is ideal)
 - `dist/Sonix-0.1.0-mpc-armv7.zip`, about 210 MB
