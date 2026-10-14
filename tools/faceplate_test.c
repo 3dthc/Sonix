@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
     set("row_1", "0");
     CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE"), "the old row's echo (0) changes nothing");
     press("next");
-    CHECK(getf("row_2_on") == 1 && !strcmp(gets("preset_display"), "SLOW STRINGS"), "NEXT moves the lit row (\"%s\")", gets("preset_display"));
+    CHECK(getf("row_2_on") == 1 && !strcmp(gets("lcd_name"), "SLOW STRINGS"), "NEXT moves the lit row (\"%s\")", gets("lcd_name"));
     press("prev");
     press("cat_strings");
     CHECK(getf("browser") == 0 && getf("look") == 0, "the lit category again closes the list");

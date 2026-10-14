@@ -211,13 +211,13 @@ MOCK = {
                    attack=(0.08, "4 MS"), decay=(0.46, "820 MS"), sustain=(0.78, "78 %"), release=(0.4, "1.20 S"),
                    lfo_rate=(0.35, "3.1 HZ"), lfo_filter=(0.0, "0 %"), lfo_pitch=(0.12, "12 CT"), lfo_amp=(0.0, "0 %"),
                    chorus=(0.3, "30 %"), delay=(0.18, "18 %"), reverb=(0.42, "42 %"), volume=(0.8, "-1.9 DB")),
-        text=dict(lcd_top="PIANO   ·   002 / 128", lcd_ref="A4  440 HZ", preset="VELVET GRAND  ★",
+        text=dict(lcd_top="PIANO   ·   002 / 128   ·   ★", lcd_ref="A4  440 HZ", preset="Velvet Grand",
                   lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENS", lcd_d="—",
                   lcd_line="Soft grand over a slow pad and wide strings"),
         on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, fav=1, fav_only=0, lfo_led=1),
         category=0, wave=(2, 3)),
     "MAIN_LIST": dict(
-        text=dict(lcd_top="STRINGS   ·   034 / 128", lcd_ref="A4  440 HZ", preset="SLOW STRINGS"),
+        text=dict(lcd_top="STRINGS   ·   034 / 128", lcd_ref="A4  440 HZ", preset="Slow Strings"),
         # tile order (left to right, top down) of a list that runs down the left column first
         rows=["033   STRING ENSEMBLE", "039   SYNTH STRINGS", "034   SLOW STRINGS", "040   STRINGS & BRASS",
               "035   SOLO VIOLIN", "041   EPIC OCTAVES", "036   PIZZICATO  ★", "042   PIZZ & SPIC",

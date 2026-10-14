@@ -753,7 +753,8 @@ static int lcd_text(inst_t *s, int i, char *buf, int n) {
     }
     switch (i) {
     case P_LCD_TOP:
-        return snprintf(buf, n, "%s" DOT "%03d / %d%s", CAT_NAME[PRESET_CAT[pr]], pr + 1, NPRESET, edited(s) ? DOT "EDITED" : "");
+        return snprintf(buf, n, "%s" DOT "%03d / %d%s%s", CAT_NAME[PRESET_CAT[pr]], pr + 1, NPRESET,
+                        fav_get(s, pr) ? DOT "\xe2\x98\x85" : "", edited(s) ? DOT "EDITED" : "");
     case P_LCD_REF: {
         int tr = ival(s, P_TRANSPOSE, -24, 24);
         if (tr) return snprintf(buf, n, "TRANSPOSE %+d" DOT "A4  %d HZ", tr, ival(s, P_A4_REF, 400, 480));

@@ -109,7 +109,7 @@ def to_json(P):
         elif p["kind"] == "option":
             q.update(options=p["options"], default=p["default"])
             if p["key"] == "preset":
-                q["dynamic_display"] = True          # the LCD shows it as "NAME  *" (upper case, favourite mark)
+                q["qlink_ticks"] = 2                 # two data-wheel clicks or Q-Link events per preset
         elif p["kind"] == "momentary":
             q["momentary"] = True
             if p["step_of"]:
