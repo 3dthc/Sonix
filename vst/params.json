@@ -10,7 +10,7 @@
       "dynamic_display": true
     },
     {
-      "key": "instrument",
+      "key": "browse",
       "name": "Instrument",
       "options": [
         "Grand Piano",
@@ -45,6 +45,217 @@
       "default": "Grand Piano"
     },
     {
+      "key": "edit_layer",
+      "name": "Edit Layer",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "default": "A"
+    },
+    {
+      "key": "layer_a",
+      "name": "Layer A",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "On"
+    },
+    {
+      "key": "layer_b",
+      "name": "Layer B",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "layer_c",
+      "name": "Layer C",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "layer_d",
+      "name": "Layer D",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "inst_a",
+      "name": "Layer A Instrument",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Warm Pad",
+        "String Ensemble",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Aah Choir",
+        "Ooh Choir",
+        "Supersaw Lead",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells",
+        "Trance Chords",
+        "Riser",
+        "Downlifter"
+      ],
+      "default": "Grand Piano"
+    },
+    {
+      "key": "inst_b",
+      "name": "Layer B Instrument",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Warm Pad",
+        "String Ensemble",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Aah Choir",
+        "Ooh Choir",
+        "Supersaw Lead",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells",
+        "Trance Chords",
+        "Riser",
+        "Downlifter"
+      ],
+      "default": "Warm Pad"
+    },
+    {
+      "key": "inst_c",
+      "name": "Layer C Instrument",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Warm Pad",
+        "String Ensemble",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Aah Choir",
+        "Ooh Choir",
+        "Supersaw Lead",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells",
+        "Trance Chords",
+        "Riser",
+        "Downlifter"
+      ],
+      "default": "String Ensemble"
+    },
+    {
+      "key": "inst_d",
+      "name": "Layer D Instrument",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Warm Pad",
+        "String Ensemble",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Aah Choir",
+        "Ooh Choir",
+        "Supersaw Lead",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells",
+        "Trance Chords",
+        "Riser",
+        "Downlifter"
+      ],
+      "default": "Aah Choir"
+    },
+    {
+      "key": "cutoff",
+      "name": "Cutoff",
+      "min": 0,
+      "max": 1,
+      "default": 1.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "resonance",
+      "name": "Resonance",
+      "min": 0,
+      "max": 1,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "env_amt",
+      "name": "Env Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
       "key": "attack",
       "name": "Attack",
       "min": 0,
@@ -77,13 +288,53 @@
       "dynamic_display": true
     },
     {
+      "key": "lfo_rate",
+      "name": "LFO Rate",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo_depth",
+      "name": "LFO Depth",
+      "min": 0,
+      "max": 1,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "chorus",
+      "name": "Chorus",
+      "min": 0,
+      "max": 1,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "delay",
+      "name": "Delay",
+      "min": 0,
+      "max": 1,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "reverb",
+      "name": "Reverb",
+      "min": 0,
+      "max": 1,
+      "default": 0.15,
+      "dynamic_display": true
+    },
+    {
       "key": "tune",
       "name": "Tune",
       "min": -24,
       "max": 24,
       "default": 0,
-      "display": "int",
-      "dynamic_display": true
+      "dynamic_display": true,
+      "display": "int"
     },
     {
       "key": "a4_ref",
@@ -91,8 +342,232 @@
       "min": 400,
       "max": 480,
       "default": 440,
-      "display": "int",
-      "dynamic_display": true
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "theme",
+      "name": "Theme",
+      "options": [
+        "Midnight",
+        "Platinum",
+        "Studio Grey"
+      ],
+      "default": "Midnight"
+    },
+    {
+      "key": "fav",
+      "name": "Favorite",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "prev",
+      "name": "Previous",
+      "momentary": true
+    },
+    {
+      "key": "next",
+      "name": "Next",
+      "momentary": true
+    },
+    {
+      "key": "theme_next",
+      "name": "Next Theme",
+      "momentary": true,
+      "step_of": "theme",
+      "step_delta": 1
+    },
+    {
+      "key": "cat_piano",
+      "name": "Category Piano",
+      "momentary": true
+    },
+    {
+      "key": "cat_keys",
+      "name": "Category Keys",
+      "momentary": true
+    },
+    {
+      "key": "cat_pad",
+      "name": "Category Pad",
+      "momentary": true
+    },
+    {
+      "key": "cat_strings",
+      "name": "Category Strings",
+      "momentary": true
+    },
+    {
+      "key": "cat_brass",
+      "name": "Category Brass",
+      "momentary": true
+    },
+    {
+      "key": "cat_choir",
+      "name": "Category Choir",
+      "momentary": true
+    },
+    {
+      "key": "cat_lead",
+      "name": "Category Lead",
+      "momentary": true
+    },
+    {
+      "key": "cat_pluck",
+      "name": "Category Pluck",
+      "momentary": true
+    },
+    {
+      "key": "cat_bass",
+      "name": "Category Bass",
+      "momentary": true
+    },
+    {
+      "key": "cat_bells",
+      "name": "Category Bells",
+      "momentary": true
+    },
+    {
+      "key": "cat_synth",
+      "name": "Category Synth",
+      "momentary": true
+    },
+    {
+      "key": "cat_fx",
+      "name": "Category Fx",
+      "momentary": true
+    },
+    {
+      "key": "category",
+      "name": "Category",
+      "min": 0,
+      "max": 11,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "wave",
+      "name": "Waveform",
+      "min": 0,
+      "max": 8,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "midi_led",
+      "name": "MIDI LED",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "lfo_led",
+      "name": "LFO LED",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "cpu",
+      "name": "CPU",
+      "min": 0,
+      "max": 10,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "load_state",
+      "name": "Loading",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "lcd_name",
+      "name": "LCD Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_cat",
+      "name": "LCD Category",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_top",
+      "name": "LCD Top",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_a",
+      "name": "LCD Layer A",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_b",
+      "name": "LCD Layer B",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_c",
+      "name": "LCD Layer C",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_d",
+      "name": "LCD Layer D",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lcd_line",
+      "name": "LCD Readout",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "fav_lo",
+      "name": "Favorites 1",
+      "min": 0,
+      "max": 16383,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fav_hi",
+      "name": "Favorites 2",
+      "min": 0,
+      "max": 16383,
+      "default": 0,
+      "display": "int"
     }
   ]
 }

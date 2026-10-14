@@ -60,3 +60,6 @@ static const char *INST_NAME[NINST] = {
     "Riser",
     "Downlifter",
 };
+#define NCAT 12
+static const char *CAT_NAME[NCAT] = { "PIANO", "KEYS", "PAD", "STRINGS", "BRASS", "CHOIR", "LEAD", "PLUCK", "BASS", "BELLS", "SYNTH", "FX" };
+static const unsigned char INST_CAT[NINST] = { 0, 0, 1, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6, 7, 7, 7, 7, 7, 8, 9, 9, 9, 9, 9, 10, 11, 11 };
