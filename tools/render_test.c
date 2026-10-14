@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     for (int inst = 0; inst < NINST; inst++) {
         char v[16];
         snprintf(v, sizeof v, "%d", inst);
-        E->set_param(s, "instrument", v);
+        E->set_param(s, "inst_a", v);
         E->set_param(s, "release", "0.3");
         int16_t tmp[256];
         for (int w = 0; w < 3000 && bank_state_of(inst) == BANK_LOADING; w++) { E->render(s, tmp, B); usleep(5000); }
