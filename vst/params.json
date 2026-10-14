@@ -2,6 +2,14 @@
   "name": "Sonix",
   "params": [
     {
+      "key": "volume",
+      "name": "Volume",
+      "min": 0,
+      "max": 1,
+      "default": 0.8,
+      "dynamic_display": true
+    },
+    {
       "key": "instrument",
       "name": "Instrument",
       "options": [
@@ -84,14 +92,6 @@
       "max": 480,
       "default": 440,
       "display": "int",
-      "dynamic_display": true
-    },
-    {
-      "key": "volume",
-      "name": "Volume",
-      "min": 0,
-      "max": 1,
-      "default": 0.8,
       "dynamic_display": true
     }
   ]
