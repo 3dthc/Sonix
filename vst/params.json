@@ -1,0 +1,98 @@
+{
+  "name": "Sonix",
+  "params": [
+    {
+      "key": "instrument",
+      "name": "Instrument",
+      "options": [
+        "Grand Piano",
+        "Upright Piano",
+        "FM E-Piano",
+        "Clavisynth",
+        "Harpsichord",
+        "Drawbar Organ",
+        "Pipe Organ",
+        "Warm Pad",
+        "String Ensemble",
+        "Orchestral Brass",
+        "Synth Brass",
+        "Aah Choir",
+        "Ooh Choir",
+        "Supersaw Lead",
+        "Nylon Guitar",
+        "Steel Guitar",
+        "Concert Harp",
+        "Kalimba",
+        "Synth Pluck",
+        "Sub Bass",
+        "Vibraphone",
+        "Marimba",
+        "Glockenspiel",
+        "Tubular Bells",
+        "FM Bells",
+        "Trance Chords",
+        "Riser",
+        "Downlifter"
+      ],
+      "default": "Grand Piano"
+    },
+    {
+      "key": "attack",
+      "name": "Attack",
+      "min": 0,
+      "max": 1,
+      "default": 0.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "decay",
+      "name": "Decay",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "sustain",
+      "name": "Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1.0,
+      "dynamic_display": true
+    },
+    {
+      "key": "release",
+      "name": "Release",
+      "min": 0,
+      "max": 1,
+      "default": 0.35,
+      "dynamic_display": true
+    },
+    {
+      "key": "tune",
+      "name": "Tune",
+      "min": -24,
+      "max": 24,
+      "default": 0,
+      "display": "int",
+      "dynamic_display": true
+    },
+    {
+      "key": "a4_ref",
+      "name": "A4 Ref",
+      "min": 400,
+      "max": 480,
+      "default": 440,
+      "display": "int",
+      "dynamic_display": true
+    },
+    {
+      "key": "volume",
+      "name": "Volume",
+      "min": 0,
+      "max": 1,
+      "default": 0.8,
+      "dynamic_display": true
+    }
+  ]
+}

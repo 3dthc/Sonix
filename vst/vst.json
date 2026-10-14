@@ -1,0 +1,25 @@
+{
+  "name": "Sonix",
+  "vendor": "3dthc",
+  "uid": "SnX1",
+  "version": 100,
+  "so": "sonix.so",
+  "params": "params.json",
+  "defines": {
+    "MODULE_SUBDIR": "\"engine\""
+  },
+  "build": {
+    "root": "..",
+    "sources": [
+      "src/engine.c"
+    ],
+    "cflags": [
+      "-O2",
+      "-ffast-math"
+    ],
+    "libs": [
+      "-lm",
+      "-lpthread"
+    ]
+  }
+}
