@@ -98,6 +98,12 @@ WAVE_FRAMES = 33                                             # 0 idle, then 4 le
 CELL_Y, CELL_H, CELL_W, CELL_GAP = SY + 178, 44, (SW - 32 - 8) // 2, 8   # the four layers, 2 x 2
 LIST_BOX = (SX + 16, SY + 104, SW - 32, 206)                 # the preset list (2 x 6 rows) in place of the waveform view
 LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP = 2, 6, 31, 4
+
+
+def list_tw(n):
+    """Row width for theme n. The skin builder names a list's row pictures by size, so each colorway's list is 2 px
+    narrower than the one before: its own pictures, invisible on screen."""
+    return (LIST_BOX[2] - 2 * n - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS
 LCD_LINE = (SX + 18, SY + 276, SW - 36, 32)
 LFO_LED = (RX + SIDE_W - 26, SIDE_Y + 15)                    # an LED by the LFO panel's title, lit while the LFO runs
 BROWSE = (CX0, 394, CW, 226)
@@ -269,7 +275,7 @@ const T = {
     panel1:'#262a32', panel2:'#1a1d22', panelEdge:'#0b0c0f', bevelHi:'rgba(255,255,255,0.09)', drop:'rgba(0,0,0,0.55)',
     text:'#e4e7ec', muted:'#a3acba', engrave:[0,-1,'rgba(0,0,0,0.75)'], logo:'#eef1f5', logoGlow:'rgba(76,195,255,0.6)',
     led:'#4cc3ff', ledOff:'#1d2732', ledGlow:'rgba(76,195,255,0.7)',
-    bezel1:'#0b0c0f', bezel2:'#22252c', lcd:'#06121f', lcdText:'#9fe4ff', lcdDim:'#7cc2e6', rowFill:0.26, lcdFaint:'rgba(143,220,255,0.10)', lcdGlow:'rgba(120,210,255,0.5)',
+    bezel1:'#0b0c0f', bezel2:'#22252c', lcd:'#06121f', lcdText:'#9fe4ff', lcdDim:'#7cc2e6', rowFill:0.2, lcdFaint:'rgba(143,220,255,0.10)', lcdGlow:'rgba(120,210,255,0.5)',
     knobHi:'#5a616d', knobLo:'#0a0b0d', knobEdge:'#050607', capHi:'#454a54', capLo:'#16181c', ridge:'rgba(255,255,255,0.10)', knobLine:'#eef1f5',
     btnTop:'#3b404a', btnBot:'#22252b', btnOnTop:'#16293c', btnOnBot:'#0e1b28', btnEdge:'#0b0c0f', btnShadow:'#07080a', btnText:'#d9dde4',
     btnEngrave:[0,-1,'rgba(0,0,0,0.75)'], screw:['#70767f','#2a2d33'], well:'rgba(0,0,0,0.16)', name:'MIDNIGHT' },
@@ -277,7 +283,7 @@ const T = {
     panel1:'#e4e7eb', panel2:'#c7cbd1', panelEdge:'#9aa0a7', bevelHi:'rgba(255,255,255,0.9)', drop:'rgba(0,0,0,0.22)',
     text:'#16191d', muted:'#3d444e', engrave:[0,1,'rgba(255,255,255,0.8)'], logo:'#16191d', logoGlow:'rgba(255,154,31,0.4)',
     led:'#ff9a1f', ledOff:'#9f9b93', ledGlow:'rgba(255,154,31,0.7)',
-    bezel1:'#7c8188', bezel2:'#c3c7cd', lcd:'#1a1206', lcdText:'#ffbe5c', lcdDim:'#e6a24f', rowFill:0.26, lcdFaint:'rgba(255,182,72,0.10)', lcdGlow:'rgba(255,170,60,0.5)',
+    bezel1:'#7c8188', bezel2:'#c3c7cd', lcd:'#1a1206', lcdText:'#ffbe5c', lcdDim:'#e6a24f', rowFill:0.2, lcdFaint:'rgba(255,182,72,0.10)', lcdGlow:'rgba(255,170,60,0.5)',
     knobHi:'#7c828c', knobLo:'#121417', knobEdge:'#0c0d0f', capHi:'#686e77', capLo:'#1e2125', ridge:'rgba(255,255,255,0.13)', knobLine:'#f4f4f4',
     btnTop:'#fbfbfc', btnBot:'#cdd1d6', btnOnTop:'#fff5e6', btnOnBot:'#efd2ad', btnEdge:'#939880', btnShadow:'#858a91', btnText:'#1f2328',
     btnEngrave:[0,1,'rgba(255,255,255,0.85)'], screw:['#ffffff','#999da4'], well:'rgba(0,0,0,0.08)', name:'PLATINUM' },
@@ -285,7 +291,7 @@ const T = {
     panel1:'#b8bbbf', panel2:'#9ea1a5', panelEdge:'#7a7d82', bevelHi:'rgba(255,255,255,0.6)', drop:'rgba(0,0,0,0.26)',
     text:'#121417', muted:'#262a2f', engrave:[0,1,'rgba(255,255,255,0.5)'], logo:'#121417', logoGlow:'rgba(255,61,46,0.3)',
     led:'#ff3d2e', ledOff:'#74777b', ledGlow:'rgba(255,61,46,0.65)',
-    bezel1:'#222427', bezel2:'#4b4e52', lcd:'#a8bc86', lcdText:'#16200c', lcdDim:'#3a4826', rowFill:0.85, rowTint:'#d6e6b8', lcdFaint:'rgba(22,32,12,0.08)', lcdGlow:'rgba(0,0,0,0)',
+    bezel1:'#222427', bezel2:'#4b4e52', lcd:'#a8bc86', lcdText:'#16200c', lcdDim:'#3a4826', rowFill:0.45, rowTint:'#eef6dc', lcdFaint:'rgba(22,32,12,0.08)', lcdGlow:'rgba(0,0,0,0)',
     knobHi:'#6e747d', knobLo:'#101113', knobEdge:'#0a0b0c', capHi:'#5b6068', capLo:'#1a1c1f', ridge:'rgba(255,255,255,0.11)', knobLine:'#f0f0f0',
     btnTop:'#eceef0', btnBot:'#b7babe', btnOnTop:'#fff1ef', btnOnBot:'#efc6c0', btnEdge:'#73767b', btnShadow:'#62656a', btnText:'#15171a',
     btnEngrave:[0,1,'rgba(255,255,255,0.6)'], screw:['#e7e8ea','#7c7f84'], well:'rgba(0,0,0,0.10)', name:'STUDIO GREY' },
@@ -352,16 +358,16 @@ function logo(t, lx, ly, size) {
   text('SONIX', lx, ly, { size: size, font: 'Michroma', weight: 400, italic: 1, spacing: 10 * s, color: t.logo, glow: t.logoGlow, glowBlur: 10 * s });
 }
 // a recessed LCD: bezel, screen, vignette, inner shadow (glass glare is drawn last, over the content)
-function lcdFrame(t, bezel, screen, r) {
+function lcdFrame(t, bezel, screen, r, smooth) {   // smooth: the list view's glass (no scan lines, a faint vignette)
   const [bx, by, bw, bh] = bezel, [sx, sy, sw, sh] = screen;
   rr(bx, by, bw, bh, r + 8); ctx.fillStyle = lin(by, by + bh, [t.bezel1, t.bezel2]); ctx.fill();
   ctx.save(); rr(bx, by, bw, bh, r + 8); ctx.clip(); ctx.strokeStyle = 'rgba(0,0,0,0.8)'; ctx.lineWidth = 4; ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2; rr(bx - 2, by - 2, bw + 4, bh + 4, r + 10); ctx.stroke(); ctx.restore();
   rr(sx, sy, sw, sh, r); ctx.fillStyle = t.lcd; ctx.fill();
   ctx.save(); rr(sx, sy, sw, sh, r); ctx.clip();
   const vg = ctx.createRadialGradient(sx + sw / 2, sy + sh / 2, sh * 0.3, sx + sw / 2, sy + sh / 2, sw * 0.7);
-  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.45)'); ctx.fillStyle = vg; ctx.fillRect(sx, sy, sw, sh);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, smooth ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.45)'); ctx.fillStyle = vg; ctx.fillRect(sx, sy, sw, sh);
   // a fine pixel grid: the LCD's dot matrix
-  ctx.fillStyle = t.lcdFaint; for (let y = sy + 2; y < sy + sh; y += 3) ctx.fillRect(sx, y, sw, 1);
+  if (!smooth) { ctx.fillStyle = t.lcdFaint; for (let y = sy + 2; y < sy + sh; y += 3) ctx.fillRect(sx, y, sw, 1); }
   ctx.strokeStyle = 'rgba(0,0,0,0.75)'; ctx.lineWidth = 6; ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3; rr(sx - 3, sy - 3, sw + 6, sh + 6, r + 2); ctx.stroke();
   ctx.restore();
 }
@@ -380,7 +386,7 @@ function rowLit(t, x, y, w, h) {   // the selected preset: a tinted bar, a brigh
 function rowOff(th, w, h) { const t = T[th]; setup(w, h); ctx.fillStyle = t.lcd; ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = t.lcdFaint; for (let y = 2; y < h; y += 3) ctx.fillRect(0, y, w, 1);
   rr(0.5, 0.5, w - 1, h - 1, 4); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.3; ctx.stroke(); return out(); }
-function rowOn(th, w, h) { const t = T[th]; setup(w, h); ctx.fillStyle = t.lcd; ctx.fillRect(0, 0, w, h); rowLit(t, 0, 0, w, h); return out(); }
+function rowOn(th, w, h) { const t = T[th]; setup(w, h); rowLit(t, 0, 0, w, h); return out(); }
 function glare(screen, r) {
   const [sx, sy, sw, sh] = screen;
   ctx.save(); rr(sx, sy, sw, sh, r); ctx.clip();
@@ -426,7 +432,8 @@ function background(th, items) {
       ctx.beginPath(); ctx.arc(it.cx, it.cy + 2, C.KNOB_R + 1, 0, 2 * Math.PI); ctx.fillStyle = t.well; ctx.fill();
     } else if (it.t === 'lcd' || it.t === 'minilcd' || it.t === 'about') {
       const r = it.t === 'minilcd' ? 4 : 6;
-      lcdFrame(t, it.bezel, it.screen, r); glares.push([it.screen, r]);
+      const smooth = items.some(q => q.t === 'list');
+      lcdFrame(t, it.bezel, it.screen, r, smooth && it.t === 'lcd'); if (!(smooth && it.t === 'lcd')) glares.push([it.screen, r]);
       if (it.t === 'about') aboutScreen(t, it.screen);
     } else if (it.t === 'rule') {
       ctx.save(); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(it.x, it.y + 0.5); ctx.lineTo(it.x + it.w, it.y + 0.5); ctx.stroke(); ctx.restore();
@@ -446,9 +453,7 @@ function background(th, items) {
     } else if (it.t === 'lcdled') {
       if (it.label) lcdGlyph(t, it.label, it.cx + 14, it.cy + 6, { size: 15, font: 'Michroma', weight: 400, color: t.lcdDim, glow: null });
     } else if (it.t === 'list') {
-      listTiles(it).forEach(([x, y, w, h]) => {
-        ctx.save(); rr(x + 0.5, y + 0.5, w - 1, h - 1, 4); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.28; ctx.lineWidth = 1; ctx.stroke(); ctx.restore();
-      });
+      // nothing: idle rows are clear, straight on the LCD glass
     } else if (it.t === 'catgrid') {
       // nothing: the grid is a picture; its panel is the BROWSE panel
     } else if (it.t === 'divider') {
@@ -709,9 +714,20 @@ def export_art():
                     save(ev("background", th, in_view(items, 1)), os.path.join(d, "bg_main_list.png"))
                 else:
                     save(ev("background", th, items), os.path.join(d, "bg_%s.png" % name.lower()))
-            tw = (LIST_BOX[2] - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS
-            save(ev("rowOn", th, tw, LIST_TH), os.path.join(d, "row_on.png"))
-            save(ev("rowOff", th, tw, LIST_TH), os.path.join(d, "row_off.png"))
+            # list rows: the skin builder flattens row pictures onto a solid colour, so a "clear" row is cut from this
+            # colorway's own LCD (a middle row of the list view), and the lit row is that cut plus the highlight
+            from PIL import Image
+            tw = list_tw(THEMES.index(th))
+            bgl = Image.open(os.path.join(d, "bg_main_list.png")).convert("RGBA")
+            x0, y0 = LIST_BOX[0], LIST_BOX[1] + 2 * (LIST_TH + LIST_GAP)
+            glass = bgl.crop((x0, y0, x0 + tw, y0 + LIST_TH))
+            glass.save(os.path.join(d, "row_off.png"))
+            save(ev("rowOn", th, tw, LIST_TH), os.path.join(d, "row_on_overlay.png"))
+            lit = glass.copy()
+            ov = Image.open(os.path.join(d, "row_on_overlay.png")).convert("RGBA")
+            lit.alpha_composite(ov)
+            lit.save(os.path.join(d, "row_on.png"))
+            os.remove(os.path.join(d, "row_on_overlay.png"))
             save(ev("knobStrip", th, 128, KNOB_R), os.path.join(d, "knob.png"))
             save(ev("gridStrip", th, CATS, 6, BTN_W, BTN_H, BTN_GAP, 10), os.path.join(d, "cats.png"))
             save(ev("pressOverlay", th, BTN_W, BTN_H), os.path.join(d, "press.png"))
@@ -808,8 +824,8 @@ def write_layout():
                         x + w // 2 - 12, y + h // 2 + Y, w, h, it["size"], LCD_INK[th][0], n))
                 elif it["t"] == "list":
                     x, y, w, h = it["box"]
-                    L.append('list x=%d y=%d w=%d h=%d key=row cols=%d rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 color=%s img=art/%s/row_off.png img_on=art/%s/row_on.png when=theme:%d' % (
-                        x, y + Y, w, h, LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP, LCD_PX["list"], LCD_INK[th][0], LCD_BG[th], th, th, n))
+                    L.append('list x=%d y=%d w=%d h=%d key=row cols=%d rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 img=art/%s/row_off.png img_on=art/%s/row_on.png when=theme:%d' % (
+                        x, y + Y, w - 2 * n, h, LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP, LCD_PX["list"], LCD_INK[th][0], th, th, n))
                 elif it["t"] in ("toggle", "button"):
                     pic_button(it["t"], it["key"], it["key"], it["x"], it["y"], n, th)
                 elif it["t"] == "knob":
