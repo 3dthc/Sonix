@@ -23,7 +23,7 @@ python3 "$MPC_VST/tools/release.py" \
   --skin "$B/skin/3dthc - VST - Sonix" \
   --entry "$B/pluginlist-entry.xml" \
   --version "$VERSION" \
-  --repo 3dthc/Sonix --id sonix \
+  --repo 3dthc/Sonix --id sonix --license MIT \
   --extra "$HERE/engine:engine" \
   --about "A ROMpler with 128 presets and 45 instruments: pianos, keys, guitars, strings, brass, choirs, pads, synths, leads, plucks, bass and bells, from CC0 / CC BY recordings and original renders. Four layers, filter, LFO, chorus, delay, reverb, eleven colorways." \
   -o "$HERE/dist"
