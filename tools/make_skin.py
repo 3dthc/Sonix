@@ -207,9 +207,9 @@ THEME_TABLE = {
                   "#140e05", "#ffd27a", "#dba855", ("#f3e1b6", "#cfb17a"), ("#fff2d2", "#ebcc8e"), muted="#4d3b1c"),
     "green": theme("GREEN", True, ("#21402f", "#14281d", "#0d1b13"), ("#1f382a", "#13251b"), "#4dff9a",
                    "#05140b", "#8fffc2", "#62d597", ("#2e4c3b", "#1b3125"), ("#173d29", "#0c2819"), muted="#a6ccb5"),
-    "camo": theme("CAMO", True, ("#4d4632", "#3a3424", "#29241a"), ("#463f2c", "#332d20"), "#d9a95b",
-                  "#0f0c07", "#ebcb8c", "#bb9862", ("#3b3024", "#1d1813"), ("#5a4126", "#36260f"), muted="#dccdaa",
-                  camo=["#4f5a2c", "#6e4a2a", "#17130f", "#8c7650", "#3d2a1a"]),
+    "camo": theme("CAMO", True, ("#4a4232", "#3a3326", "#2a251c"), ("#24201a", "#18150f"), "#d9a95b",
+                  "#0f0c07", "#ebcb8c", "#bb9862", ("#3b3024", "#1d1813"), ("#5a4126", "#36260f"), muted="#e2d6b8",
+                  camo=["#7d6f4f", "#4f3826", "#35482b", "#1a1814"]),
     "red": theme("METALLIC RED", True, ("#8e1d24", "#601116", "#470a0f"), ("#7c1a21", "#531016"), "#ffd0d4",
                  "#170406", "#ff9aa0", "#dd6c73", ("#a5272f", "#701720"), ("#5c0f15", "#3f0a0e"), muted="#ecb6b9"),
     "silver": theme("SILVER", False, ("#f5f6f8", "#dadde1", "#c5c9ce"), ("#edeff2", "#d4d7dc"), "#3d8bff",
@@ -406,27 +406,39 @@ function noise(x, y, w, h, amt, seed) {
   }
   ctx.putImageData(img, x, y);
 }
-function camo(t, x, y, w, h, seed, alpha) {      // soft overlapping blobs in the colorway's camo colours
-  let a = seed | 0;
-  const rnd = () => { a = a + 0x6D2B79F5 | 0; let q = Math.imul(a ^ a >>> 15, 1 | a); q = q + Math.imul(q ^ q >>> 7, 61 | q) ^ q; return ((q ^ q >>> 14) >>> 0) / 4294967296; };
-  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.globalAlpha = alpha;
-  const n = Math.round(w * h / 2600);
-  for (let i = 0; i < n; i++) {
-    ctx.fillStyle = t.camo[Math.floor(rnd() * t.camo.length)];
-    const cx = x + rnd() * w, cy = y + rnd() * h, r = 18 + rnd() * 40;
-    ctx.beginPath();
-    for (let k = 0; k <= 10; k++) { const ang = k / 10 * 2 * Math.PI, rr2 = r * (0.65 + 0.5 * rnd()); const px = cx + Math.cos(ang) * rr2 * 1.5, py = cy + Math.sin(ang) * rr2;
-      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
-    ctx.closePath(); ctx.fill();
+function camo(t, x, y, w, h, seed, alpha) {      // classic woodland: crisp, rounded, wide blobs from thresholded smooth noise
+  const H = (i, j, s) => { let q = Math.imul(i, 374761393) + Math.imul(j, 668265263) + Math.imul(s, 2147483647) | 0;
+    q = Math.imul(q ^ q >>> 13, 1274126177); return ((q ^ q >>> 16) >>> 0) / 4294967296; };
+  const vn = (X, Y, s) => { const i = Math.floor(X), j = Math.floor(Y), fx = X - i, fy = Y - j;
+    const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+    const a0 = H(i, j, s), a1 = H(i + 1, j, s), b0 = H(i, j + 1, s), b1 = H(i + 1, j + 1, s);
+    return (a0 + (a1 - a0) * u) * (1 - v) + (b0 + (b1 - b0) * u) * v; };
+  const fbm = (X, Y, s) => { const wx = X + 0.9 * vn(X * 0.7, Y * 0.7, s + 7), wy = Y + 0.9 * vn(X * 0.7 + 5, Y * 0.7, s + 13);   // a warp for rounded, lobed shapes
+    return 0.66 * vn(wx, wy, s) + 0.34 * vn(wx * 2.3, wy * 2.3, s + 99); };
+  const hex = c => [1, 3, 5].map(k => parseInt(c.substr(k, 2), 16));
+  const [base, brown, green, black] = t.camo.map(hex);
+  const L = [[brown, 0.5, 92, 58, 1], [green, 0.53, 86, 54, 2], [black, 0.56, 74, 46, 3]];   // colour, cut, x/y scale, seed
+  const off = document.createElement('canvas'); off.width = w; off.height = h;
+  const oc = off.getContext('2d'), img = oc.createImageData(w, h), d = img.data;
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    const X = x + i, Y = y + j; let c = base;
+    for (const [col, cut, sx, sy, sd] of L) {
+      const n = fbm(X / sx, Y / sy, sd + seed * 0);
+      if (n > cut) { const e = Math.min(1, (n - cut) / 0.012);        // a 1-px soft edge
+        c = e >= 1 ? col : [0, 1, 2].map(k => c[k] + (col[k] - c[k]) * e); }
+    }
+    const k = (j * w + i) * 4;
+    d[k] = c[0]; d[k + 1] = c[1]; d[k + 2] = c[2]; d[k + 3] = 255;
   }
-  ctx.restore();
+  oc.putImageData(img, 0, 0);
+  ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(off, x, y); ctx.restore();   // drawImage respects the caller's clip
 }
 function panel(t, x, y, w, h, title) {
   ctx.save();
   ctx.shadowColor = t.drop; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
   rr(x, y, w, h, 12); ctx.fillStyle = lin(y, y + h, [t.panel1, t.panel2]); ctx.fill();
   ctx.restore();
-  if (t.camo) { ctx.save(); rr(x, y, w, h, 12); ctx.clip(); camo(t, x, y, w, h, x * 7 + y, 0.8); ctx.restore(); }
+  if (t.camo) { ctx.save(); rr(x, y, w, h, 12); ctx.clip(); camo(t, x, y, w, h, 0, 0.78); ctx.restore(); }
   rr(x + 0.5, y + 0.5, w - 1, h - 1, 12); ctx.strokeStyle = t.panelEdge; ctx.lineWidth = 1; ctx.stroke();
   ctx.save(); ctx.strokeStyle = t.bevelHi; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(x + 12, y + 1.5); ctx.lineTo(x + w - 12, y + 1.5); ctx.stroke(); ctx.restore();
@@ -519,7 +531,7 @@ function arrowBox(t, x, y, w, h, dir, lit) {
 function chassis(t, th) {
   setup(1280, 628);
   ctx.fillStyle = lin(0, 628, [t.bg1, t.bg2, t.bg3]); ctx.fillRect(0, 0, 1280, 628);
-  if (t.camo) camo(t, 0, 0, 1280, 628, 11, 0.9);
+  if (t.camo) camo(t, 0, 0, 1280, 628, 0, 1);
   noise(0, 0, 1280, 628, th === 'midnight' ? 7 : 9, 7);
   ctx.fillStyle = t.edgeHi; ctx.fillRect(0, 0, 1280, 1);
   const ly = 36;
