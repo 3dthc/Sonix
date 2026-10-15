@@ -207,9 +207,9 @@ THEME_TABLE = {
                   "#140e05", "#ffd27a", "#dba855", ("#f3e1b6", "#cfb17a"), ("#fff2d2", "#ebcc8e"), muted="#4d3b1c"),
     "green": theme("GREEN", True, ("#21402f", "#14281d", "#0d1b13"), ("#1f382a", "#13251b"), "#4dff9a",
                    "#05140b", "#8fffc2", "#62d597", ("#2e4c3b", "#1b3125"), ("#173d29", "#0c2819"), muted="#a6ccb5"),
-    "camo": theme("CAMO", True, ("#5e5d3c", "#48472d", "#3b3a25"), ("#5c5b3b", "#46452c"), "#b6ff3b",
-                  "#0e1109", "#bdf56c", "#8dbf4e", ("#6c6b49", "#4e4d33"), ("#3e4b25", "#2a3418"), muted="#d8d1b0",
-                  camo=["#3b3a24", "#6f6b45", "#2a2a1b", "#8a7f55"]),
+    "camo": theme("CAMO", True, ("#4d4632", "#3a3424", "#29241a"), ("#463f2c", "#332d20"), "#d9a95b",
+                  "#0f0c07", "#ebcb8c", "#bb9862", ("#3b3024", "#1d1813"), ("#5a4126", "#36260f"), muted="#dccdaa",
+                  camo=["#4f5a2c", "#6e4a2a", "#17130f", "#8c7650", "#3d2a1a"]),
     "red": theme("METALLIC RED", True, ("#8e1d24", "#601116", "#470a0f"), ("#7c1a21", "#531016"), "#ffd0d4",
                  "#170406", "#ff9aa0", "#dd6c73", ("#a5272f", "#701720"), ("#5c0f15", "#3f0a0e"), muted="#ecb6b9"),
     "silver": theme("SILVER", False, ("#f5f6f8", "#dadde1", "#c5c9ce"), ("#edeff2", "#d4d7dc"), "#3d8bff",
@@ -413,7 +413,7 @@ function camo(t, x, y, w, h, seed, alpha) {      // soft overlapping blobs in th
   const n = Math.round(w * h / 2600);
   for (let i = 0; i < n; i++) {
     ctx.fillStyle = t.camo[Math.floor(rnd() * t.camo.length)];
-    const cx = x + rnd() * w, cy = y + rnd() * h, r = 14 + rnd() * 34;
+    const cx = x + rnd() * w, cy = y + rnd() * h, r = 18 + rnd() * 40;
     ctx.beginPath();
     for (let k = 0; k <= 10; k++) { const ang = k / 10 * 2 * Math.PI, rr2 = r * (0.65 + 0.5 * rnd()); const px = cx + Math.cos(ang) * rr2 * 1.5, py = cy + Math.sin(ang) * rr2;
       if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
@@ -426,7 +426,7 @@ function panel(t, x, y, w, h, title) {
   ctx.shadowColor = t.drop; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
   rr(x, y, w, h, 12); ctx.fillStyle = lin(y, y + h, [t.panel1, t.panel2]); ctx.fill();
   ctx.restore();
-  if (t.camo) { ctx.save(); rr(x, y, w, h, 12); ctx.clip(); camo(t, x, y, w, h, x * 7 + y, 0.55); ctx.restore(); }
+  if (t.camo) { ctx.save(); rr(x, y, w, h, 12); ctx.clip(); camo(t, x, y, w, h, x * 7 + y, 0.8); ctx.restore(); }
   rr(x + 0.5, y + 0.5, w - 1, h - 1, 12); ctx.strokeStyle = t.panelEdge; ctx.lineWidth = 1; ctx.stroke();
   ctx.save(); ctx.strokeStyle = t.bevelHi; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(x + 12, y + 1.5); ctx.lineTo(x + w - 12, y + 1.5); ctx.stroke(); ctx.restore();
@@ -519,7 +519,7 @@ function arrowBox(t, x, y, w, h, dir, lit) {
 function chassis(t, th) {
   setup(1280, 628);
   ctx.fillStyle = lin(0, 628, [t.bg1, t.bg2, t.bg3]); ctx.fillRect(0, 0, 1280, 628);
-  if (t.camo) camo(t, 0, 0, 1280, 628, 11, 0.7);
+  if (t.camo) camo(t, 0, 0, 1280, 628, 11, 0.9);
   noise(0, 0, 1280, 628, th === 'midnight' ? 7 : 9, 7);
   ctx.fillStyle = t.edgeHi; ctx.fillRect(0, 0, 1280, 1);
   const ly = 36;
