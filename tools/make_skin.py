@@ -37,8 +37,8 @@ MPC_FONTS = os.path.join(os.environ.get("MPC_VST", os.path.join(HERE, "..", ".."
 Y_OFF = 86
 VERSION = "0.3.0"
 
-THEMES = ["midnight", "platinum", "studio"]                 # index = the "theme" parameter's option
-THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY"]
+THEMES = ["midnight", "platinum", "studio", "purple", "yellow", "gold", "green", "camo", "red", "silver", "ice"]   # = "theme" options
+THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY", "PURPLE", "YELLOW", "GOLD", "GREEN", "CAMO", "METALLIC RED", "SILVER", "ICE BLUE"]
 CATS = ["PIANO", "KEYS", "GUITAR", "STRINGS", "BRASS", "CHOIR", "PAD", "SYNTH", "LEAD", "PLUCK", "BASS", "BELLS"]
 CAT_KEYS = ["cat_" + c.lower() for c in CATS]
 LAYERS = "abcd"
@@ -47,7 +47,7 @@ LAYERS = "abcd"
 BTN_W, BTN_H, BTN_GAP = 108, 47, 8                          # a button picture is BTN_W x (BTN_H + 4): the drop shadow
 KNOB_R = 36
 LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 17, 21, 16, 12
-LCD_PX = dict(top=22, name=42, cell=24, line=22, lcat=22, lname=27, list=26)
+LCD_PX = dict(top=22, name=42, cell=28, line=24, lcat=22, lname=27, list=26, bank=25)
 
 # ---- the chassis shared by MAIN and SETTINGS: a 2 x 2 knob panel in each corner, the centre column between
 W, H = 1280, 628
@@ -77,15 +77,15 @@ SETTINGS_SECTIONS = [
 MAIN_QLINKS = [k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks][:15] + ["browse"]
 LAYER_KNOBS = [("level", "LEVEL"), ("pan", "PAN"), ("octave", "OCTAVE"), ("fine", "FINE")]
 SYSTEM_ROWS = [  # (key, label, caption, options)
-    ("theme", "THEME", "faceplate colours", ["MIDNIGHT", "PLATINUM", "STUDIO"]),
     ("anim", "ANIMATION", "LCD waveform", ["OFF", "LOW", "SMOOTH"]),
     ("mod_wheel", "MOD WHEEL", "what the wheel adds", ["VIBRATO", "FILTER", "OFF"]),
     ("vel_curve", "VELOCITY", "response curve", ["SOFT", "NORMAL", "HARD"]),
 ]
 
-# ---- MAIN's centre: the LCD and the browse panel
-BEZEL = (CX0, TOP_Y, CW, 340)
-SCREEN = (CX0 + 12, TOP_Y + 12, CW - 24, 316)
+# ---- MAIN's centre: one tall LCD. Two views on it: BROWSE (Nexus-style: banks on the left, that bank's patches on the
+# right) and LAYERS (the waveform, the four layers, the preset's description); a tab strip at its foot switches them.
+BEZEL = (CX0, TOP_Y, CW, 574)
+SCREEN = (CX0 + 12, TOP_Y + 12, CW - 24, 550)
 SX, SY, SW = SCREEN[0], SCREEN[1], SCREEN[2]
 LCD_TOP = (SX + 18, SY + 6, 410, 32)
 LCD_REF = (SX + SW - 18 - 230, SY + 6, 230, 32)
@@ -93,24 +93,30 @@ LCD_RULE_Y = SY + 42
 LCD_PREV = (SX + 8, SY + 50, BTN_W, BTN_H + 4)
 LCD_NEXT = (SX + SW - 8 - BTN_W, SY + 50, BTN_W, BTN_H + 4)
 LCD_NAME = (SX + 8 + BTN_W + 8, SY + 50, SW - 2 * (8 + BTN_W + 8), BTN_H + 4)
-LCD_WAVE = (SX + 16, SY + 106, SW - 32, 64)                  # two meters side by side (MPC's strip width limit)
-WAVE_FRAMES = 33                                             # 0 idle, then 4 levels x 8 phases
-CELL_Y, CELL_H, CELL_W, CELL_GAP = SY + 178, 44, (SW - 32 - 8) // 2, 8   # the four layers, 2 x 2
-LIST_BOX = (SX + 16, SY + 104, SW - 32, 206)                 # the preset list (2 x 6 rows) in place of the waveform view
-LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP = 2, 6, 31, 4
-
-
-def list_tw(n):
-    """Row width for theme n. The skin builder names a list's row pictures by size, so each colorway's list is 2 px
-    narrower than the one before: its own pictures, invisible on screen."""
-    return (LIST_BOX[2] - 2 * n - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS
-LCD_LINE = (SX + 18, SY + 276, SW - 36, 32)
+LCD_RULE2_Y = SY + 108
+AREA_Y = SY + 116                                            # the views' area, down to the tab strip
+LIST_N, LIST_TH, LIST_GAP = 12, 30, 1                        # 12 rows: every bank, and every category's patches
+LIST_H = LIST_N * (LIST_TH + LIST_GAP) - LIST_GAP            # 371
+BANK_BOX = (SX + 10, AREA_Y, 198, LIST_H)
+PATCH_BOX = (SX + 228, AREA_Y, SW - 238, LIST_H)
+DIVIDER_X = SX + 218
+LCD_WAVE = (SX + 16, AREA_Y + 4, SW - 32, 112)               # two meters side by side (MPC's strip width limit)
+WAVE_FRAMES = 17                                             # 0 idle, then 4 levels x 4 phases
+CELL_Y, CELL_H, CELL_W, CELL_GAP = AREA_Y + 130, 62, (SW - 32 - 8) // 2, 8   # the four layers, 2 x 2
+LCD_LINE = (SX + 18, AREA_Y + 280, SW - 36, 40)
+TAB_Y = SY + 493                                             # the tab strip: BROWSE | LAYERS, then FAV and LIST
+VIEWS = ["BROWSE", "LAYERS"]
+TAB_X = SX + 8
+LCD_TOGGLES = [("fav", "★  FAV"), ("fav_only", "★  LIST")]
+TOGGLE_X = SX + SW - 8 - 2 * BTN_W - BTN_GAP
 LFO_LED = (RX + SIDE_W - 26, SIDE_Y + 15)                    # an LED by the LFO panel's title, lit while the LFO runs
-BROWSE = (CX0, 394, CW, 226)
-GRID_X = CX0 + (CW - (6 * BTN_W + 5 * BTN_GAP)) // 2         # 296
-GRID_Y = BROWSE[1] + 32
-ROW3 = [("toggle", "layer_a", "LAYER A"), ("toggle", "layer_b", "LAYER B"), ("toggle", "layer_c", "LAYER C"),
-        ("toggle", "layer_d", "LAYER D"), ("toggle", "fav", "★  FAV"), ("toggle", "fav_only", "★  LIST")]
+
+
+def list_w(box, n):
+    """A list's width for colorway n. The skin builder names a list's row pictures by size, so each colorway's list is
+    2 px narrower than the one before: its own pictures, invisible on screen."""
+    return box[2] - 2 * n
+
 
 # ---- LAYERS: four strips
 STRIP_W, STRIP_PITCH = 310, 318
@@ -131,9 +137,92 @@ LOGO_X = 640 - 116                                           # the header sits o
 HEADER_LED = (CX0 + 22, 22)                                  # MIDI LED centre
 CPU_BAR = (CX1 - 112, 17, 96, 10)
 
-LCD_BG = {"midnight": "06121f", "platinum": "1a1206", "studio": "a8bc86"}   # each colorway's LCD glass
-LCD_INK = {"midnight": ("9fe4ff", "7cc2e6"), "platinum": ("ffbe5c", "e6a24f"), "studio": ("16200c", "3a4826")}
-KNOB_INK = {"midnight": ("e4e7ec", "c3cad5"), "platinum": ("1b1e22", "343a42"), "studio": ("121417", "24282d")}
+
+
+# ---- colorways. The first three are drawn by hand; the rest come from a few base colours each (theme()).
+def rgba(hexc, a):
+    h = hexc.lstrip("#")
+    return "rgba(%d,%d,%d,%g)" % (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), a)
+
+
+def theme(name, dark, bg, panel, accent, lcd, lcd_text, lcd_dim, btn, btn_on, text=None, muted=None, **extra):
+    """A colorway from its base colours. dark: light text on dark metal (else dark text on light metal)."""
+    t = dict(bg1=bg[0], bg2=bg[1], bg3=bg[2], panel1=panel[0], panel2=panel[1],
+             led=accent, ledGlow=rgba(accent, 0.7), logoGlow=rgba(accent, 0.55),
+             lcd=lcd, lcdText=lcd_text, lcdDim=lcd_dim, lcdFaint=rgba(lcd_text, 0.10), lcdGlow=rgba(lcd_text, 0.5), rowFill=0.2,
+             btnTop=btn[0], btnBot=btn[1], btnOnTop=btn_on[0], btnOnBot=btn_on[1], name=name,
+             knobHi="#5a616d", knobLo="#0a0b0d", knobEdge="#050607", capHi="#454a54", capLo="#16181c",
+             ridge="rgba(255,255,255,0.10)", knobLine="#eef1f5")
+    if dark:
+        t.update(edgeHi="rgba(255,255,255,0.08)", panelEdge="#0b0c0f", bevelHi="rgba(255,255,255,0.09)",
+                 drop="rgba(0,0,0,0.55)", text=text or "#eceff3", muted=muted or "#b3bac6",
+                 engrave=[0, -1, "rgba(0,0,0,0.75)"], logo="#f2f4f7", ledOff="rgba(0,0,0,0.45)",
+                 bezel1="#0b0c0f", bezel2="#24262c", btnEdge="#0b0c0f", btnShadow="#07080a", btnText="#eceff3",
+                 btnEngrave=[0, -1, "rgba(0,0,0,0.75)"], screw=["#7a7f88", "#2a2d33"], well="rgba(0,0,0,0.16)")
+    else:
+        t.update(edgeHi="rgba(255,255,255,0.75)", panelEdge="rgba(0,0,0,0.28)", bevelHi="rgba(255,255,255,0.75)",
+                 drop="rgba(0,0,0,0.24)", text=text or "#15171a", muted=muted or "#3a3f46",
+                 engrave=[0, 1, "rgba(255,255,255,0.7)"], logo=text or "#15171a", ledOff="rgba(0,0,0,0.28)",
+                 bezel1="#2a2c30", bezel2="#5a5d62", btnEdge="rgba(0,0,0,0.35)", btnShadow="rgba(0,0,0,0.38)",
+                 btnText="#16181b", btnEngrave=[0, 1, "rgba(255,255,255,0.75)"], screw=["#ffffff", "#8d9198"],
+                 well="rgba(0,0,0,0.09)", knobHi="#7c828c", knobLo="#121417", capHi="#686e77", capLo="#1e2125",
+                 ridge="rgba(255,255,255,0.13)", knobLine="#f4f4f4")
+    t.update(extra)
+    return t
+
+
+THEME_TABLE = {
+    "midnight": dict(bg1='#2b2e35', bg2='#16181c', bg3='#111216', edgeHi='rgba(255,255,255,0.08)',
+        panel1='#262a32', panel2='#1a1d22', panelEdge='#0b0c0f', bevelHi='rgba(255,255,255,0.09)', drop='rgba(0,0,0,0.55)',
+        text='#e4e7ec', muted='#a3acba', engrave=[0, -1, 'rgba(0,0,0,0.75)'], logo='#eef1f5', logoGlow='rgba(76,195,255,0.6)',
+        led='#4cc3ff', ledOff='#1d2732', ledGlow='rgba(76,195,255,0.7)',
+        bezel1='#0b0c0f', bezel2='#22252c', lcd='#06121f', lcdText='#9fe4ff', lcdDim='#7cc2e6', rowFill=0.2,
+        lcdFaint='rgba(143,220,255,0.10)', lcdGlow='rgba(120,210,255,0.5)',
+        knobHi='#5a616d', knobLo='#0a0b0d', knobEdge='#050607', capHi='#454a54', capLo='#16181c', ridge='rgba(255,255,255,0.10)', knobLine='#eef1f5',
+        btnTop='#3b404a', btnBot='#22252b', btnOnTop='#16293c', btnOnBot='#0e1b28', btnEdge='#0b0c0f', btnShadow='#07080a', btnText='#d9dde4',
+        btnEngrave=[0, -1, 'rgba(0,0,0,0.75)'], screw=['#70767f', '#2a2d33'], well='rgba(0,0,0,0.16)', name='MIDNIGHT'),
+    "platinum": dict(bg1='#eef0f3', bg2='#c9cdd2', bg3='#b2b6bc', edgeHi='rgba(255,255,255,0.85)',
+        panel1='#e4e7eb', panel2='#c7cbd1', panelEdge='#9aa0a7', bevelHi='rgba(255,255,255,0.9)', drop='rgba(0,0,0,0.22)',
+        text='#16191d', muted='#3d444e', engrave=[0, 1, 'rgba(255,255,255,0.8)'], logo='#16191d', logoGlow='rgba(255,154,31,0.4)',
+        led='#ff9a1f', ledOff='#9f9b93', ledGlow='rgba(255,154,31,0.7)',
+        bezel1='#7c8188', bezel2='#c3c7cd', lcd='#1a1206', lcdText='#ffbe5c', lcdDim='#e6a24f', rowFill=0.2,
+        lcdFaint='rgba(255,182,72,0.10)', lcdGlow='rgba(255,170,60,0.5)',
+        knobHi='#7c828c', knobLo='#121417', knobEdge='#0c0d0f', capHi='#686e77', capLo='#1e2125', ridge='rgba(255,255,255,0.13)', knobLine='#f4f4f4',
+        btnTop='#fbfbfc', btnBot='#cdd1d6', btnOnTop='#fff5e6', btnOnBot='#efd2ad', btnEdge='#939880', btnShadow='#858a91', btnText='#1f2328',
+        btnEngrave=[0, 1, 'rgba(255,255,255,0.85)'], screw=['#ffffff', '#999da4'], well='rgba(0,0,0,0.08)', name='PLATINUM'),
+    "studio": dict(bg1='#c3c5c8', bg2='#a4a7ab', bg3='#909397', edgeHi='rgba(255,255,255,0.55)',
+        panel1='#b8bbbf', panel2='#9ea1a5', panelEdge='#7a7d82', bevelHi='rgba(255,255,255,0.6)', drop='rgba(0,0,0,0.26)',
+        text='#121417', muted='#262a2f', engrave=[0, 1, 'rgba(255,255,255,0.5)'], logo='#121417', logoGlow='rgba(255,61,46,0.3)',
+        led='#ff3d2e', ledOff='#74777b', ledGlow='rgba(255,61,46,0.65)',
+        bezel1='#222427', bezel2='#4b4e52', lcd='#a8bc86', lcdText='#16200c', lcdDim='#3a4826', rowFill=0.45, rowTint='#eef6dc',
+        lcdFaint='rgba(22,32,12,0.08)', lcdGlow='rgba(0,0,0,0)',
+        knobHi='#6e747d', knobLo='#101113', knobEdge='#0a0b0c', capHi='#5b6068', capLo='#1a1c1f', ridge='rgba(255,255,255,0.11)', knobLine='#f0f0f0',
+        btnTop='#eceef0', btnBot='#b7babe', btnOnTop='#fff1ef', btnOnBot='#efc6c0', btnEdge='#73767b', btnShadow='#62656a', btnText='#15171a',
+        btnEngrave=[0, 1, 'rgba(255,255,255,0.6)'], screw=['#e7e8ea', '#7c7f84'], well='rgba(0,0,0,0.10)', name='STUDIO GREY'),
+    "purple": theme("PURPLE", True, ("#3d2b4f", "#241833", "#1a1126"), ("#35253f", "#22172c"), "#c77dff",
+                    "#120a1c", "#dcb8ff", "#b08ad9", ("#4a3760", "#2b1f3a"), ("#3a2058", "#24123a"), muted="#c1aed6"),
+    "yellow": theme("YELLOW", False, ("#f6dc55", "#e0c02e", "#c9a71c"), ("#f7e06a", "#dfc23a"), "#e0561b",
+                    "#15130a", "#ffd84a", "#d9b33c", ("#fff3b3", "#e8cd5c"), ("#fff7d8", "#f1d880"), muted="#4a4220"),
+    "gold": theme("GOLD", False, ("#e2c993", "#bf9e60", "#a27f44"), ("#dcc188", "#b99757"), "#ff9f2e",
+                  "#140e05", "#ffd27a", "#dba855", ("#f3e1b6", "#cfb17a"), ("#fff2d2", "#ebcc8e"), muted="#4d3b1c"),
+    "green": theme("GREEN", True, ("#21402f", "#14281d", "#0d1b13"), ("#1f382a", "#13251b"), "#4dff9a",
+                   "#05140b", "#8fffc2", "#62d597", ("#2e4c3b", "#1b3125"), ("#173d29", "#0c2819"), muted="#a6ccb5"),
+    "camo": theme("CAMO", True, ("#5e5d3c", "#48472d", "#3b3a25"), ("#5c5b3b", "#46452c"), "#b6ff3b",
+                  "#0e1109", "#bdf56c", "#8dbf4e", ("#6c6b49", "#4e4d33"), ("#3e4b25", "#2a3418"), muted="#d8d1b0",
+                  camo=["#3b3a24", "#6f6b45", "#2a2a1b", "#8a7f55"]),
+    "red": theme("METALLIC RED", True, ("#8e1d24", "#601116", "#470a0f"), ("#7c1a21", "#531016"), "#ffd0d4",
+                 "#170406", "#ff9aa0", "#dd6c73", ("#a5272f", "#701720"), ("#5c0f15", "#3f0a0e"), muted="#ecb6b9"),
+    "silver": theme("SILVER", False, ("#f5f6f8", "#dadde1", "#c5c9ce"), ("#edeff2", "#d4d7dc"), "#3d8bff",
+                    "#0a0f17", "#eaf2ff", "#a3b7d0", ("#ffffff", "#d9dce1"), ("#eef5ff", "#c9dcf7")),
+    "ice": theme("ICE BLUE", False, ("#e6f3fc", "#c6def1", "#accde8"), ("#dbecf8", "#bcd7ed"), "#00b7ff",
+                 "#061420", "#a6f2ff", "#74c9de", ("#f5fbff", "#c9e3f6"), ("#e6f8ff", "#b5e6f7"), text="#0f2233",
+                 muted="#3a5a75"),
+}
+
+LCD_BG = {k: v["lcd"].lstrip("#") for k, v in THEME_TABLE.items()}                       # each colorway's LCD glass
+LCD_INK = {k: (v["lcdText"].lstrip("#"), v["lcdDim"].lstrip("#")) for k, v in THEME_TABLE.items()}
+KNOB_INK = {k: (v["text"].lstrip("#"), v["muted"].lstrip("#")) for k, v in THEME_TABLE.items()}
+KNOB_INK.update(midnight=("e4e7ec", "c3cad5"), platinum=("1b1e22", "343a42"), studio=("121417", "24282d"))
 
 
 def knob_items(sections):
@@ -147,6 +236,7 @@ def knob_items(sections):
 
 
 def page_main():
+    """MAIN's items; view=0 only in BROWSE, view=1 only in LAYERS, no view: both."""
     it = knob_items(MAIN_SECTIONS)
     it.append(dict(t="lcd", bezel=BEZEL, screen=SCREEN))
     it += [dict(t="readout", key="lcd_top", box=LCD_TOP, size=LCD_PX["top"], ink="dim", align="left", weight="semibold"),
@@ -154,20 +244,26 @@ def page_main():
            dict(t="rule", x=SX + 18, y=LCD_RULE_Y, w=SW - 36),
            dict(t="lcdarrow", key="prev", box=LCD_PREV, dir=-1), dict(t="lcdarrow", key="next", box=LCD_NEXT, dir=1),
            dict(t="presetname", key="browse", box=LCD_NAME, size=LCD_PX["name"]),
-           dict(t="wave", box=LCD_WAVE, view=0)]
+           dict(t="rule", x=SX + 18, y=LCD_RULE2_Y, w=SW - 36),
+           # BROWSE
+           dict(t="list", key="bank", box=BANK_BOX, size=LCD_PX["bank"], view=0),
+           dict(t="vrule", x=DIVIDER_X, y=AREA_Y + 4, h=LIST_H - 8, view=0),
+           dict(t="list", key="row", box=PATCH_BOX, size=LCD_PX["list"], view=0),
+           # LAYERS
+           dict(t="wave", box=LCD_WAVE, view=1)]
     for i, l in enumerate(LAYERS):
         x = SX + 16 + (i % 2) * (CELL_W + CELL_GAP)
-        y = CELL_Y + (i // 2) * (CELL_H + 4)
-        it.append(dict(t="cell", x=x, y=y, w=CELL_W, h=CELL_H, letter=l.upper(), view=0))
-        it.append(dict(t="readout", key="lcd_" + l, box=(x + 36, y, CELL_W - 44, CELL_H), size=LCD_PX["cell"],
-                       ink="ink", align="left", weight="semibold", view=0))
-    it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="semibold", view=0),
-           dict(t="led", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1]),
-           dict(t="list", key="row", box=LIST_BOX, view=1),
-           dict(t="panel", x=BROWSE[0], y=BROWSE[1], w=BROWSE[2], h=BROWSE[3], title="BROWSE"),
-           dict(t="catgrid", x=GRID_X, y=GRID_Y)]
-    for i, (kind, key, label) in enumerate(ROW3):
-        it.append(dict(t=kind, key=key, label=label, x=GRID_X + i * (BTN_W + BTN_GAP), y=GRID_Y + 2 * (BTN_H + 10)))
+        y = CELL_Y + (i // 2) * (CELL_H + 8)
+        it.append(dict(t="cell", x=x, y=y, w=CELL_W, h=CELL_H, letter=l.upper(), view=1))
+        it.append(dict(t="readout", key="lcd_" + l, box=(x + 40, y, CELL_W - 48, CELL_H), size=LCD_PX["cell"],
+                       ink="ink", align="left", weight="semibold", view=1))
+        it.append(dict(t="celltoggle", key="layer_" + l, x=x, y=y, w=CELL_W, h=CELL_H, view=1))   # tap: layer on / off
+    it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="semibold", view=1),
+           dict(t="rule", x=SX + 18, y=TAB_Y - 6, w=SW - 36),
+           dict(t="lcdtabs", key="view", x=TAB_X, y=TAB_Y),
+           dict(t="led", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1])]
+    for i, (key, label) in enumerate(LCD_TOGGLES):
+        it.append(dict(t="lcdtoggle", key=key, label=label, x=TOGGLE_X + i * (BTN_W + BTN_GAP), y=TAB_Y))
     return it
 
 
@@ -199,8 +295,17 @@ def page_settings():
     it = knob_items(SETTINGS_SECTIONS)
     it.append(dict(t="about", bezel=ABOUT, screen=(ABOUT[0] + 12, ABOUT[1] + 12, ABOUT[2] - 24, ABOUT[3] - 24)))
     it.append(dict(t="panel", x=SYSTEM[0], y=SYSTEM[1], w=SYSTEM[2], h=SYSTEM[3], title="SYSTEM"))
+    # THEME: its name on a small LCD, stepped with two buttons (eleven colorways don't fit as buttons)
+    y = SYS_ROW_Y0
+    nb = (450, y - 1, SYS_BTN_X + BTN_W - 450, BTN_H + 6)
+    it.append(dict(t="themerow", label="THEME", caption="faceplate colours", lx=CX0 + 26, y=y,
+                   bezel=nb, screen=(nb[0] + 5, nb[1] + 5, nb[2] - 10, nb[3] - 10)))
+    it.append(dict(t="readout", key="theme", box=(nb[0] + 14, nb[1], nb[2] - 28, nb[3]), size=24, ink="ink", align="center",
+                   weight="bold"))
+    it.append(dict(t="button", key="theme_prev", label="◀  PREV", x=SYS_BTN_X + BTN_W + BTN_GAP, y=y))
+    it.append(dict(t="button", key="theme_next", label="NEXT  ▶", x=SYS_BTN_X + 2 * (BTN_W + BTN_GAP), y=y))
     for n, (key, label, cap, opts) in enumerate(SYSTEM_ROWS):
-        y = SYS_ROW_Y0 + n * SYS_ROW_PITCH
+        y = SYS_ROW_Y0 + (n + 1) * SYS_ROW_PITCH
         it.append(dict(t="sysrow", key=key, label=label, caption=cap, opts=opts, x=SYS_BTN_X, y=y, lx=CX0 + 26))
     return it
 
@@ -219,18 +324,18 @@ MOCK = {
                    attack=(0.08, "4 MS"), decay=(0.46, "820 MS"), sustain=(0.78, "78 %"), release=(0.4, "1.20 S"),
                    lfo_rate=(0.35, "3.1 HZ"), lfo_filter=(0.0, "0 %"), lfo_pitch=(0.12, "12 CT"), lfo_amp=(0.0, "0 %"),
                    chorus=(0.3, "30 %"), delay=(0.18, "18 %"), reverb=(0.42, "42 %"), volume=(0.8, "-1.9 DB")),
+        text=dict(lcd_top="STRINGS  ·  034 / 128", lcd_ref="A4  440 HZ", preset="Slow Strings"),
+        lists=dict(bank=dict(rows=["PIANO", "KEYS", "GUITAR", "STRINGS", "BRASS", "CHOIR", "PAD", "SYNTH", "LEAD",
+                                   "PLUCK", "BASS", "BELLS"], lit=3),
+                   row=dict(rows=["33  STRING ENSEMBLE", "34  SLOW STRINGS", "35  SOLO VIOLIN", "36  PIZZICATO  ★",
+                                  "37  TREMOLO STRINGS", "38  SPICCATO", "39  SYNTH STRINGS", "40  STRINGS & BRASS",
+                                  "41  EPIC OCTAVES", "42  PIZZ & SPIC", "43  MACHINE STRINGS", ""], lit=1)),
+        on=dict(fav=0, fav_only=0, lfo_led=1), view=0),
+    "MAIN_LAYERS": dict(
         text=dict(lcd_top="PIANO  ·  002 / 128  ·  ★", lcd_ref="A4  440 HZ", preset="Velvet Grand",
                   lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENSEMBLE", lcd_d="—",
                   lcd_line="Soft grand over a slow pad and wide strings"),
-        on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, fav=1, fav_only=0, lfo_led=1),
-        category=0, wave=(2, 3)),
-    "MAIN_LIST": dict(
-        text=dict(lcd_top="STRINGS  ·  034 / 128", lcd_ref="A4  440 HZ", preset="Slow Strings"),
-        # tile order (left to right, top down) of a list that runs down the left column first
-        rows=["33  STRING ENSEMBLE", "39  SYNTH STRINGS", "34  SLOW STRINGS", "40  STRINGS & BRASS",
-              "35  SOLO VIOLIN", "41  EPIC OCTAVES", "36  PIZZICATO  ★", "42  PIZZ & SPIC",
-              "37  TREMOLO STRINGS", "43  MACHINE STRINGS", "38  SPICCATO", ""], rowLit=2,
-        on=dict(layer_a=1, layer_b=0, layer_c=0, layer_d=0, fav=0, fav_only=0), category=3),
+        on=dict(fav=1, fav_only=0, lfo_led=1), view=1, wave=(2, 1)),
     "LAYERS": dict(
         knobs=dict(level_a=(0.86, "-1.3 DB"), pan_a=(0.5, "C"), octave_a=(0.5, "0"), fine_a=(0.5, "0 CT"),
                    level_b=(0.62, "-6.9 DB"), pan_b=(0.38, "L 24"), octave_b=(0.5, "0"), fine_b=(0.54, "+8 CT"),
@@ -270,32 +375,7 @@ body { margin: 0; background: transparent; } canvas { display: block; }
 <div style="font-family:Titillium;font-weight:700">.</div>
 <script>
 const C = CONST_JSON;
-const T = {
-  midnight: { bg1:'#2b2e35', bg2:'#16181c', bg3:'#111216', edgeHi:'rgba(255,255,255,0.08)',
-    panel1:'#262a32', panel2:'#1a1d22', panelEdge:'#0b0c0f', bevelHi:'rgba(255,255,255,0.09)', drop:'rgba(0,0,0,0.55)',
-    text:'#e4e7ec', muted:'#a3acba', engrave:[0,-1,'rgba(0,0,0,0.75)'], logo:'#eef1f5', logoGlow:'rgba(76,195,255,0.6)',
-    led:'#4cc3ff', ledOff:'#1d2732', ledGlow:'rgba(76,195,255,0.7)',
-    bezel1:'#0b0c0f', bezel2:'#22252c', lcd:'#06121f', lcdText:'#9fe4ff', lcdDim:'#7cc2e6', rowFill:0.2, lcdFaint:'rgba(143,220,255,0.10)', lcdGlow:'rgba(120,210,255,0.5)',
-    knobHi:'#5a616d', knobLo:'#0a0b0d', knobEdge:'#050607', capHi:'#454a54', capLo:'#16181c', ridge:'rgba(255,255,255,0.10)', knobLine:'#eef1f5',
-    btnTop:'#3b404a', btnBot:'#22252b', btnOnTop:'#16293c', btnOnBot:'#0e1b28', btnEdge:'#0b0c0f', btnShadow:'#07080a', btnText:'#d9dde4',
-    btnEngrave:[0,-1,'rgba(0,0,0,0.75)'], screw:['#70767f','#2a2d33'], well:'rgba(0,0,0,0.16)', name:'MIDNIGHT' },
-  platinum: { bg1:'#eef0f3', bg2:'#c9cdd2', bg3:'#b2b6bc', edgeHi:'rgba(255,255,255,0.85)',
-    panel1:'#e4e7eb', panel2:'#c7cbd1', panelEdge:'#9aa0a7', bevelHi:'rgba(255,255,255,0.9)', drop:'rgba(0,0,0,0.22)',
-    text:'#16191d', muted:'#3d444e', engrave:[0,1,'rgba(255,255,255,0.8)'], logo:'#16191d', logoGlow:'rgba(255,154,31,0.4)',
-    led:'#ff9a1f', ledOff:'#9f9b93', ledGlow:'rgba(255,154,31,0.7)',
-    bezel1:'#7c8188', bezel2:'#c3c7cd', lcd:'#1a1206', lcdText:'#ffbe5c', lcdDim:'#e6a24f', rowFill:0.2, lcdFaint:'rgba(255,182,72,0.10)', lcdGlow:'rgba(255,170,60,0.5)',
-    knobHi:'#7c828c', knobLo:'#121417', knobEdge:'#0c0d0f', capHi:'#686e77', capLo:'#1e2125', ridge:'rgba(255,255,255,0.13)', knobLine:'#f4f4f4',
-    btnTop:'#fbfbfc', btnBot:'#cdd1d6', btnOnTop:'#fff5e6', btnOnBot:'#efd2ad', btnEdge:'#939880', btnShadow:'#858a91', btnText:'#1f2328',
-    btnEngrave:[0,1,'rgba(255,255,255,0.85)'], screw:['#ffffff','#999da4'], well:'rgba(0,0,0,0.08)', name:'PLATINUM' },
-  studio: { bg1:'#c3c5c8', bg2:'#a4a7ab', bg3:'#909397', edgeHi:'rgba(255,255,255,0.55)',
-    panel1:'#b8bbbf', panel2:'#9ea1a5', panelEdge:'#7a7d82', bevelHi:'rgba(255,255,255,0.6)', drop:'rgba(0,0,0,0.26)',
-    text:'#121417', muted:'#262a2f', engrave:[0,1,'rgba(255,255,255,0.5)'], logo:'#121417', logoGlow:'rgba(255,61,46,0.3)',
-    led:'#ff3d2e', ledOff:'#74777b', ledGlow:'rgba(255,61,46,0.65)',
-    bezel1:'#222427', bezel2:'#4b4e52', lcd:'#a8bc86', lcdText:'#16200c', lcdDim:'#3a4826', rowFill:0.45, rowTint:'#eef6dc', lcdFaint:'rgba(22,32,12,0.08)', lcdGlow:'rgba(0,0,0,0)',
-    knobHi:'#6e747d', knobLo:'#101113', knobEdge:'#0a0b0c', capHi:'#5b6068', capLo:'#1a1c1f', ridge:'rgba(255,255,255,0.11)', knobLine:'#f0f0f0',
-    btnTop:'#eceef0', btnBot:'#b7babe', btnOnTop:'#fff1ef', btnOnBot:'#efc6c0', btnEdge:'#73767b', btnShadow:'#62656a', btnText:'#15171a',
-    btnEngrave:[0,1,'rgba(255,255,255,0.6)'], screw:['#e7e8ea','#7c7f84'], well:'rgba(0,0,0,0.10)', name:'STUDIO GREY' },
-};
+const T = THEMES_JSON;
 const cv = document.getElementById('c'); let ctx;
 function setup(w, h) { cv.width = w; cv.height = h; ctx = cv.getContext('2d'); ctx.clearRect(0, 0, w, h); }
 function out() { return cv.toDataURL('image/png'); }
@@ -326,11 +406,27 @@ function noise(x, y, w, h, amt, seed) {
   }
   ctx.putImageData(img, x, y);
 }
+function camo(t, x, y, w, h, seed, alpha) {      // soft overlapping blobs in the colorway's camo colours
+  let a = seed | 0;
+  const rnd = () => { a = a + 0x6D2B79F5 | 0; let q = Math.imul(a ^ a >>> 15, 1 | a); q = q + Math.imul(q ^ q >>> 7, 61 | q) ^ q; return ((q ^ q >>> 14) >>> 0) / 4294967296; };
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.globalAlpha = alpha;
+  const n = Math.round(w * h / 2600);
+  for (let i = 0; i < n; i++) {
+    ctx.fillStyle = t.camo[Math.floor(rnd() * t.camo.length)];
+    const cx = x + rnd() * w, cy = y + rnd() * h, r = 14 + rnd() * 34;
+    ctx.beginPath();
+    for (let k = 0; k <= 10; k++) { const ang = k / 10 * 2 * Math.PI, rr2 = r * (0.65 + 0.5 * rnd()); const px = cx + Math.cos(ang) * rr2 * 1.5, py = cy + Math.sin(ang) * rr2;
+      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
 function panel(t, x, y, w, h, title) {
   ctx.save();
   ctx.shadowColor = t.drop; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
   rr(x, y, w, h, 12); ctx.fillStyle = lin(y, y + h, [t.panel1, t.panel2]); ctx.fill();
   ctx.restore();
+  if (t.camo) { ctx.save(); rr(x, y, w, h, 12); ctx.clip(); camo(t, x, y, w, h, x * 7 + y, 0.55); ctx.restore(); }
   rr(x + 0.5, y + 0.5, w - 1, h - 1, 12); ctx.strokeStyle = t.panelEdge; ctx.lineWidth = 1; ctx.stroke();
   ctx.save(); ctx.strokeStyle = t.bevelHi; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(x + 12, y + 1.5); ctx.lineTo(x + w - 12, y + 1.5); ctx.stroke(); ctx.restore();
@@ -372,11 +468,23 @@ function lcdFrame(t, bezel, screen, r, smooth) {   // smooth: the list view's gl
   ctx.restore();
 }
 function listTiles(it) {
-  const [x, y, w] = it.box, tw = Math.floor((w - (C.LIST_COLS - 1) * C.LIST_GAP) / C.LIST_COLS), out = [];
-  for (let i = 0; i < C.LIST_COLS * C.LIST_ROWS; i++)
-    out.push([x + (i % C.LIST_COLS) * (tw + C.LIST_GAP), y + Math.floor(i / C.LIST_COLS) * (C.LIST_TH + C.LIST_GAP), tw, C.LIST_TH]);
+  const [x, y, w] = it.box, out = [];
+  for (let i = 0; i < C.LIST_N; i++) out.push([x, y + i * (C.LIST_TH + C.LIST_GAP), w, C.LIST_TH]);
   return out;
 }
+// a button drawn on the LCD glass: an outline in the screen's dim ink; lit: tinted, framed and marked like a list row
+function lcdBtn(t, x, y, w, h, label, on) {
+  if (on) rowLit(t, x + 2, y + 3, w - 4, h - 6);
+  else { ctx.save(); rr(x + 2.5, y + 3.5, w - 5, h - 7, 6); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.7; ctx.lineWidth = 1.4; ctx.stroke(); ctx.restore(); }
+  text(label, x + w / 2 + (on ? 4 : 0), y + h / 2 + 6, { size: 17, font: 'Barlow', weight: 700, spacing: 1.5, align: 'center',
+    color: on ? t.lcdText : t.lcdDim });
+}
+function tabStrip(th, labels, w, h, gap) {          // one frame per tab lit, side by side
+  const t = T[th], fw = labels.length * w + (labels.length - 1) * gap; setup(fw * labels.length, h);
+  for (let f = 0; f < labels.length; f++) labels.forEach((l, i) => lcdBtn(t, f * fw + i * (w + gap), 0, w, h, l, i === f));
+  return out();
+}
+function lcdToggle(th, w, h, label, on) { setup(w, h); lcdBtn(T[th], 0, 0, w, h, label, on); return out(); }
 function rowLit(t, x, y, w, h) {   // the selected preset: a tinted bar, a bright frame and a solid marker on the left
   ctx.save(); rr(x + 1, y + 1, w - 2, h - 2, 4); ctx.fillStyle = t.rowTint || t.lcdText; ctx.globalAlpha = t.rowFill; ctx.fill(); ctx.restore();
   ctx.save(); ctx.shadowColor = t.lcdGlow; ctx.shadowBlur = 10; rr(x + 1.5, y + 1.5, w - 3, h - 3, 4); ctx.strokeStyle = t.lcdText; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore();
@@ -411,6 +519,7 @@ function arrowBox(t, x, y, w, h, dir, lit) {
 function chassis(t, th) {
   setup(1280, 628);
   ctx.fillStyle = lin(0, 628, [t.bg1, t.bg2, t.bg3]); ctx.fillRect(0, 0, 1280, 628);
+  if (t.camo) camo(t, 0, 0, 1280, 628, 11, 0.7);
   noise(0, 0, 1280, 628, th === 'midnight' ? 7 : 9, 7);
   ctx.fillStyle = t.edgeHi; ctx.fillRect(0, 0, 1280, 1);
   const ly = 36;
@@ -452,6 +561,8 @@ function background(th, items) {
       ctx.beginPath(); ctx.arc(it.cx, it.cy, 8, 0, 2 * Math.PI); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
     } else if (it.t === 'lcdled') {
       if (it.label) lcdGlyph(t, it.label, it.cx + 14, it.cy + 6, { size: 15, font: 'Michroma', weight: 400, color: t.lcdDim, glow: null });
+    } else if (it.t === 'vrule') {
+      ctx.save(); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.45; ctx.beginPath(); ctx.moveTo(it.x + 0.5, it.y); ctx.lineTo(it.x + 0.5, it.y + it.h); ctx.stroke(); ctx.restore();
     } else if (it.t === 'list') {
       // nothing: idle rows are clear, straight on the LCD glass
     } else if (it.t === 'catgrid') {
@@ -459,6 +570,10 @@ function background(th, items) {
     } else if (it.t === 'divider') {
       ctx.save(); ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.moveTo(it.x, it.y + 0.5); ctx.lineTo(it.x + it.w, it.y + 0.5); ctx.stroke();
       ctx.strokeStyle = t.bevelHi; ctx.beginPath(); ctx.moveTo(it.x, it.y + 1.5); ctx.lineTo(it.x + it.w, it.y + 1.5); ctx.stroke(); ctx.restore();
+    } else if (it.t === 'themerow') {
+      text(it.label, it.lx, it.y + 22, { size: C.LABEL_PX + 1, spacing: 1.5, color: t.text, engrave: t.engrave, weight: 700 });
+      text(it.caption, it.lx, it.y + 42, { size: 14, spacing: 0.5, color: t.muted, engrave: t.engrave, weight: 600 });
+      lcdFrame(t, it.bezel, it.screen, 4); glares.push([it.screen, 4]);
     } else if (it.t === 'sysrow') {
       text(it.label, it.lx, it.y + 22, { size: C.LABEL_PX + 1, spacing: 1.5, color: t.text, engrave: t.engrave, weight: 700 });
       text(it.caption, it.lx, it.y + 42, { size: 14, spacing: 0.5, color: t.muted, engrave: t.engrave, weight: 600 });
@@ -550,10 +665,10 @@ function knobStrip(th, frames, r) {
 }
 
 // ---------- LCD pictures ----------
-// the waveform: frame 0 idle (the baked graticule shows), then level a (0..3) x phase p (0..7): 1 + a * 8 + p.
+// the waveform: frame 0 idle (the baked graticule shows), then level a (0..3) x phase p (0..3): 1 + a * 4 + p.
 // A moving trace with a fading afterimage of the previous phase, drawn across the whole width, cut in two halves.
 function waveTrace(t, x0, y0, w, h, a, p, alpha, width) {
-  const A = [0.16, 0.26, 0.36, 0.45][a] * h, ph = p / 8 * 2 * Math.PI;
+  const A = [0.16, 0.26, 0.36, 0.45][a] * h, ph = p / 4 * 2 * Math.PI;
   ctx.save(); ctx.beginPath();
   for (let x = 0; x <= w; x += 2) {
     const q = x / w, env = Math.sin(Math.PI * Math.min(1, q * 1.15)) ** 0.6;
@@ -566,8 +681,8 @@ function waveTrace(t, x0, y0, w, h, a, p, alpha, width) {
 }
 function waveFrame(t, x0, y0, w, h, f) {
   if (f === 0) return;
-  const a = Math.floor((f - 1) / 8), p = (f - 1) % 8;
-  waveTrace(t, x0, y0, w, h, a, (p + 7) % 8, 0.22, 1.6);
+  const a = Math.floor((f - 1) / 4), p = (f - 1) % 4;
+  waveTrace(t, x0, y0, w, h, a, (p + 3) % 4, 0.22, 1.6);
   waveTrace(t, x0, y0, w, h, a, p, 1, 2.2);
 }
 function waveStrip(th, w, h, half) {
@@ -619,17 +734,26 @@ function mockup(th, items, m) {
       } else if (it.t === 'presetname') {
         const [x, y, w, h] = it.box;
         text((m.text || {}).preset || '', x + w / 2, y + h / 2 + it.size * 0.36, { size: it.size, font: 'Titillium', weight: 600, color: '#' + ink[0], align: 'center' });
-      } else if (it.t === 'list' && m.rows) {
+      } else if (it.t === 'list' && m.lists && m.lists[it.key]) {
+        const L = m.lists[it.key];
         listTiles(it).forEach(([x, y, w, h], i) => {
-          if (i === m.rowLit) rowLit(t, x, y, w, h);
-          if (m.rows[i]) text(m.rows[i], x + 12, y + h / 2 + C.LIST_PX * 0.36, { size: C.LIST_PX, font: 'Titillium', weight: 600, color: '#' + ink[0] });
+          if (i === L.lit) rowLit(t, x, y, w, h);
+          if (L.rows[i]) text(L.rows[i], x + 16, y + h / 2 + it.size * 0.36, { size: it.size, font: 'Titillium', weight: 600, color: '#' + ink[0] });
         });
+      } else if (it.t === 'lcdtabs') {
+        C.VIEWS.forEach((l, i) => lcdBtn(t, it.x + i * (C.BTN_W + C.BTN_GAP), it.y, C.BTN_W, C.BTN_H + 4, l, i === (m.view || 0)));
+      } else if (it.t === 'lcdtoggle') {
+        lcdBtn(t, it.x, it.y, C.BTN_W, C.BTN_H + 4, it.label, (m.on || {})[it.key]);
+      } else if (it.t === 'led') {
+        const on = (m.on || {})[it.key];
+        ctx.save(); ctx.beginPath(); ctx.arc(it.cx, it.cy, 7, 0, 2 * Math.PI); ctx.fillStyle = on ? t.led : t.ledOff;
+        if (on) { ctx.shadowColor = t.ledGlow; ctx.shadowBlur = 8; } ctx.fill(); ctx.restore();
       } else if (it.t === 'button' || it.t === 'toggle') {
         btnFace(t, it.x, it.y, C.BTN_W, C.BTN_H, (m.on || {})[it.key] ? 1 : 0, it.label);
       } else if (it.t === 'catgrid') {
         gridFrame(t, it.x, it.y, C.CATS, 6, C.BTN_W, C.BTN_H, C.BTN_GAP, 10, m.category);
       } else if (it.t === 'wave' && m.wave) {
-        const [x, y, w, h] = it.box; waveFrame(t, x, y, w, h, 1 + m.wave[0] * 8 + m.wave[1]);
+        const [x, y, w, h] = it.box; waveFrame(t, x, y, w, h, 1 + m.wave[0] * 4 + m.wave[1]);
       } else if (it.t === 'lcdled') {
         const on = (m.on || {})[it.key];
         ctx.save(); ctx.beginPath(); ctx.arc(it.cx, it.cy, 5, 0, 2 * Math.PI);
@@ -648,7 +772,7 @@ function mockup(th, items, m) {
     res(out());
   });
 }
-window.API = { background, button, blank, gridStrip, pressOverlay, arrowLit, knobStrip, waveStrip, ledStrip, cpuStrip, rowOn, rowOff, mockup };
+window.API = { background, button, blank, gridStrip, pressOverlay, arrowLit, knobStrip, waveStrip, ledStrip, cpuStrip, rowOn, rowOff, tabStrip, lcdToggle, mockup };
 </script></body></html>"""
 
 
@@ -669,8 +793,8 @@ ABOUT_LINES = [
 def open_page(p, with_mpc_fonts):
     consts = dict(VERSION=VERSION, TITLE_PX=TITLE_PX, LABEL_PX=LABEL_PX, VALUE_PX=VALUE_PX, BUTTON_PX=BUTTON_PX,
                   KNOB_R=KNOB_R, BTN_W=BTN_W, BTN_H=BTN_H, BTN_GAP=BTN_GAP, CATS=CATS, THEMES=THEMES,
-                  WAVE_FRAMES=WAVE_FRAMES, LIST_COLS=LIST_COLS, LIST_ROWS=LIST_ROWS, LIST_TH=LIST_TH, LIST_GAP=LIST_GAP, LIST_PX=LCD_PX["list"], led=HEADER_LED, cpu=CPU_BAR, logoX=LOGO_X, LCD_INK=LCD_INK, KNOB_INK=KNOB_INK, ABOUT=ABOUT_LINES)
-    page = (PAGE.replace("CONST_JSON", json.dumps(consts))
+                  WAVE_FRAMES=WAVE_FRAMES, LIST_N=LIST_N, LIST_TH=LIST_TH, LIST_GAP=LIST_GAP, VIEWS=VIEWS, led=HEADER_LED, cpu=CPU_BAR, logoX=LOGO_X, LCD_INK=LCD_INK, KNOB_INK=KNOB_INK, ABOUT=ABOUT_LINES)
+    page = (PAGE.replace("CONST_JSON", json.dumps(consts)).replace("THEMES_JSON", json.dumps(THEME_TABLE))
             .replace("F_MICHROMA", font_url(os.path.join(FONTS, "Michroma-Regular.ttf")))
             .replace("F_BARLOW_BOLD", font_url(os.path.join(FONTS, "BarlowSemiCondensed-Bold.ttf")))
             .replace("F_BARLOW", font_url(os.path.join(FONTS, "BarlowSemiCondensed-SemiBold.ttf")))
@@ -690,11 +814,11 @@ def mockups(outdir):
     os.makedirs(outdir, exist_ok=True)
     with sync_playwright() as p:
         b, pg = open_page(p, True)
-        pages = [("MAIN", in_view(page_main(), 0)), ("MAIN_LIST", in_view(page_main(), 1)),
+        pages = [("MAIN", in_view(page_main(), 0)), ("MAIN_LAYERS", in_view(page_main(), 1)),
                  ("LAYERS", page_layers()), ("SETTINGS", page_settings())]
         for name, items in pages:
             for th in THEMES:
-                url = pg.evaluate("API.mockup(%s, %s, %s)" % (json.dumps(th), json.dumps(items), json.dumps(dict({"knobs": MOCK["MAIN"]["knobs"]}, **MOCK[name]))))
+                url = pg.evaluate("API.mockup(%s, %s, %s)" % (json.dumps(th), json.dumps(items), json.dumps(dict({"knobs": MOCK["MAIN"]["knobs"]}, **dict(MOCK[name], text=dict(MOCK[name].get("text", {}), theme=THEME_TABLE[th]["name"].title()))))))
                 save(url, os.path.join(outdir, "%s_%s.png" % (name.lower(), th)))
         b.close()
 
