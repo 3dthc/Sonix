@@ -20,5 +20,4 @@ if [ -n "$missing" ]; then
 fi
 
 bash "$MPC_VST/tools/build_port.sh" "$HERE/vst.json"
-python3 "$REPO/tools/shrink_skin.py" "$HERE/build/skin"     # lossless: same pixels, smaller files
 echo "built: $HERE/build/sonix.so  (+ $REPO/engine/ ships next to it)"
