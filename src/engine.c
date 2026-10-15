@@ -296,7 +296,6 @@ typedef struct { uint8_t st, d1, d2; } ev_t;
 #define PRE_LEN 8192                 /* reverb pre-delay */
 typedef struct {
     float p[NP];
-    float prev_mom[NP];
     double mom_t[NP];
     voice_t v[MAX_V];
     ev_t ev[MAX_EV]; int nev;
@@ -359,12 +358,11 @@ static int any_fav(const inst_t *s, int cat) {
     return 0;
 }
 
-/* the MAIN page's look: theme x (waveform view | preset list), one option so each picture needs one when= */
+/* the MAIN page's look: theme x LCD view (BROWSE | LAYERS), one option so a picture of both needs one when= */
+static int browsing(const inst_t *s) { return s->p[P_VIEW] < 0.5f; }
 static void sync_view(inst_t *s) {
-    int br = s->p[P_BROWSER] > 0.5f;
-    int look = ival(s, P_THEME, 0, 2) * 2 + br;
-    int cat = br ? s->view_cat : PRESET_CAT[cur_preset(s)];
-    if (look != (int)s->p[P_LOOK] || cat != (int)s->p[P_CATEGORY]) { s->p[P_LOOK] = (float)look; s->p[P_CATEGORY] = (float)cat; s->rev++; }
+    int look = ival(s, P_THEME, 0, NTHEME - 1) * 2 + !browsing(s);
+    if (look != (int)s->p[P_LOOK]) { s->p[P_LOOK] = (float)look; s->rev++; }
 }
 /* the n-th (0-based) preset of the listed category, or -1 */
 static int list_preset(const inst_t *s, int n) {
@@ -394,11 +392,11 @@ static int edited(const inst_t *s) {
     }
     return 0;
 }
-/* prev / next, the data wheel and Q-Link 16: the next preset in the category (the listed one while the list is open),
+/* prev / next, the data wheel and Q-Link 16: the next preset in the bank (the one picked on the LCD while browsing),
  * wrapping inside it; with FAV LIST on (and favourites in it) only the favourites */
 static void step_preset(inst_t *s, int dir) {
     int cur = cur_preset(s);
-    int cat = s->p[P_BROWSER] > 0.5f ? s->view_cat : PRESET_CAT[cur];
+    int cat = browsing(s) ? s->view_cat : PRESET_CAT[cur];
     int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, cat);
     int list[NPRESET], n = 0, at = -1;
     for (int i = 0; i < NPRESET; i++)
@@ -407,12 +405,17 @@ static void step_preset(inst_t *s, int dir) {
     int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
     if (list[k] != cur) apply_preset(s, list[k]);
 }
-/* a category button opens the LCD's list of its presets (the sound stays until a row is picked); the lit one again
- * closes the list */
-static void category_pressed(inst_t *s, int cat) {
-    if (s->p[P_BROWSER] > 0.5f && s->view_cat == cat) s->p[P_BROWSER] = 0;
-    else { s->p[P_BROWSER] = 1; s->view_cat = cat; }
-    sync_view(s);
+/* an option stepped by a button, wrapping like a hardware selector */
+static void step_option(inst_t *s, int i, int dir) {
+    int n = (int)PINFO[i].hi + 1, v = ival(s, i, 0, n - 1);
+    s->p[i] = (float)(((v + dir) % n + n) % n);
+}
+/* a tap on MPC's touch screen: buttons there act like toggles (each tap alternates 1 / 0, and a hold may send
+ * nothing more), so every set is a tap; a second set within 150 ms is the same tap (MPC's echo of it) */
+static int tapped(inst_t *s, int i) {
+    if (s->clock - s->mom_t[i] < 0.15) return 0;
+    s->mom_t[i] = s->clock;
+    return 1;
 }
 
 static const zone_t *find_zone(const bank_t *b, int key, int vel) {
@@ -617,6 +620,7 @@ static void *eng_create(const char *data_dir) {
     for (int i = 0; i < NP; i++) s->p[i] = PINFO[i].def;
     s->vol_smooth = -1;
     s->touch = -1;
+    for (int i = 0; i < NP; i++) s->mom_t[i] = -1;
     s->cho = calloc(2 * 2048, sizeof(float));
     s->dly = calloc(2 * DLY_LEN, sizeof(float));
     s->pre = calloc(PRE_LEN, sizeof(float));
@@ -647,7 +651,7 @@ static void eng_midi(void *inst, const uint8_t *msg, int len) {
 
 static int is_computed(int i) {      /* the engine's own displays: never set from outside */
     if (PINFO[i].kind == K_TEXT) return 1;
-    return i == P_CATEGORY || i == P_LOOK || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
+    return i == P_LOOK || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
            (i >= P_ACT_A && i <= P_ACT_D);
 }
 
@@ -657,23 +661,27 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     int i = find_key(key);
     float x = (float)atof(val);
     if (x != x) return;
-    if (i >= P_ROW_1 && i < P_ROW_1 + LIST_ROWS) {    /* a list row tapped: load its preset (0 is the old row's echo) */
+    if (i >= P_ROW_1 && i < P_ROW_1 + LIST_ROWS) {    /* a patch row tapped: load its preset */
         int pr = list_preset(s, i - P_ROW_1);
-        if (x > 0.5f && pr >= 0 && pr != cur_preset(s)) apply_preset(s, pr);
+        if (tapped(s, i) && pr >= 0 && pr != cur_preset(s)) apply_preset(s, pr);
+        return;
+    }
+    if (i >= P_BANK_1 && i < P_BANK_1 + NCAT) {       /* a bank row tapped: list its patches (the sound stays) */
+        if (tapped(s, i) && s->view_cat != i - P_BANK_1) { s->view_cat = i - P_BANK_1; s->rev++; }
         return;
     }
     if (i < 0 || is_computed(i)) return;
     if (PINFO[i].kind == K_MOMENTARY) {
-        /* a press is any set to 1: MPC may never send the release back, so no edge detection; a second 1 within 120 ms
-         * is the same press */
-        int press = x > 0.5f && (s->prev_mom[i] <= 0.5f || s->clock - s->mom_t[i] > 0.12);
-        s->prev_mom[i] = x;
         s->p[i] = x;
-        if (!press) return;
-        s->mom_t[i] = s->clock;
+        if (!tapped(s, i)) return;
         if (i == P_PREV) step_preset(s, -1);
         else if (i == P_NEXT) step_preset(s, 1);
-        else if (i >= P_CAT_PIANO && i < P_CAT_PIANO + NCAT) category_pressed(s, i - P_CAT_PIANO);
+        else if (i == P_THEME_PREV || i == P_THEME_NEXT) { step_option(s, P_THEME, i == P_THEME_NEXT ? 1 : -1); sync_view(s); s->rev++; }
+        else for (int l = 0; l < NLAYER; l++)
+            if (i == LP(P_INST_A_PREV, l) || i == LP(P_INST_A_NEXT, l)) {
+                step_option(s, LP(P_INST_A, l), i == LP(P_INST_A_NEXT, l) ? 1 : -1);
+                want_banks(s); s->rev++;
+            }
         return;
     }
     if (x < PINFO[i].lo) x = PINFO[i].lo;
@@ -687,7 +695,7 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     }
     if (i == P_FAV) { fav_set(s, cur_preset(s), x > 0.5f); s->p[P_FAV] = x > 0.5f; s->rev++; return; }
     s->p[i] = x;
-    if (i == P_BROWSER || i == P_THEME) { if (i == P_BROWSER) s->view_cat = PRESET_CAT[cur_preset(s)]; sync_view(s); return; }
+    if (i == P_VIEW || i == P_THEME) { if (i == P_VIEW) s->view_cat = PRESET_CAT[cur_preset(s)]; sync_view(s); s->rev++; return; }
     if (i >= P_FAV_0 && i <= P_FAV_9) { s->p[P_FAV] = (float)fav_get(s, cur_preset(s)); s->rev++; return; }
     if (i >= P_LAYER_A && i <= P_SOLO_D) want_banks(s);
     if (PINFO[i].kind == K_KNOB && i != P_VOLUME && i != P_BROWSE) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
@@ -800,6 +808,12 @@ static int eng_get_param(void *inst, const char *key, char *buf, int n) {
         char name[64];
         upcase(name, PRESET_NAME[cur_preset(s)], sizeof name);
         return snprintf(buf, n, "%s%s", name, fav_get(s, cur_preset(s)) ? "  \xe2\x98\x85" : "");
+    }
+    if (!strncmp(key, "bank_", 5)) {                  /* the bank list: the 12 categories, lit = the one listed */
+        int r = atoi(key + 5) - 1;
+        if (r < 0 || r >= NCAT) return 0;
+        if (strstr(key, "_on")) return snprintf(buf, n, "%d", r == s->view_cat);
+        return snprintf(buf, n, "%s", CAT_NAME[r]);
     }
     if (!strncmp(key, "row_", 4)) {                   /* the preset list: "003  VELVET GRAND *", lit = the current one */
         int r = atoi(key + 4) - 1, pr = r >= 0 && r < LIST_ROWS ? list_preset(s, r) : -1;
@@ -1037,8 +1051,8 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     if (anim && sounding && s->clock - s->wave_t >= (anim == 2 ? 0.095 : 0.195)) {
         float dbl = 20.0f * log10f(s->level + 1e-9f);
         int a = dbl >= -12 ? 3 : dbl >= -20 ? 2 : dbl >= -30 ? 1 : 0;
-        s->wave_ph = (s->wave_ph + 1) & 7;
-        s->p[P_WAVE] = (float)(1 + a * 8 + s->wave_ph);
+        s->wave_ph = (s->wave_ph + 1) & 3;
+        s->p[P_WAVE] = (float)(1 + a * 4 + s->wave_ph);
         s->wave_t = s->clock; s->rev++;
     } else if ((!anim || s->clock - s->quiet_t > 0.3) && s->p[P_WAVE] > 0) { s->p[P_WAVE] = 0; s->rev++; }
     if (s->touch_shown && s->clock - s->touch_t > 1.5) s->touch_shown = 0;

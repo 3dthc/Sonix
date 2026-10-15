@@ -146,66 +146,6 @@
       "qlink_ticks": 2
     },
     {
-      "key": "cat_piano",
-      "name": "Category Piano",
-      "momentary": true
-    },
-    {
-      "key": "cat_keys",
-      "name": "Category Keys",
-      "momentary": true
-    },
-    {
-      "key": "cat_guitar",
-      "name": "Category Guitar",
-      "momentary": true
-    },
-    {
-      "key": "cat_strings",
-      "name": "Category Strings",
-      "momentary": true
-    },
-    {
-      "key": "cat_brass",
-      "name": "Category Brass",
-      "momentary": true
-    },
-    {
-      "key": "cat_choir",
-      "name": "Category Choir",
-      "momentary": true
-    },
-    {
-      "key": "cat_pad",
-      "name": "Category Pad",
-      "momentary": true
-    },
-    {
-      "key": "cat_synth",
-      "name": "Category Synth",
-      "momentary": true
-    },
-    {
-      "key": "cat_lead",
-      "name": "Category Lead",
-      "momentary": true
-    },
-    {
-      "key": "cat_pluck",
-      "name": "Category Pluck",
-      "momentary": true
-    },
-    {
-      "key": "cat_bass",
-      "name": "Category Bass",
-      "momentary": true
-    },
-    {
-      "key": "cat_bells",
-      "name": "Category Bells",
-      "momentary": true
-    },
-    {
       "key": "prev",
       "name": "Previous Preset",
       "momentary": true
@@ -234,13 +174,13 @@
       "default": "Off"
     },
     {
-      "key": "browser",
-      "name": "Preset List",
+      "key": "view",
+      "name": "LCD View",
       "options": [
-        "Off",
-        "On"
+        "Browse",
+        "Layers"
       ],
-      "default": "Off"
+      "default": "Browse"
     },
     {
       "key": "cutoff",
@@ -469,16 +409,12 @@
     {
       "key": "inst_a_prev",
       "name": "Layer A Previous",
-      "momentary": true,
-      "step_of": "inst_a",
-      "step_delta": -1
+      "momentary": true
     },
     {
       "key": "inst_a_next",
       "name": "Layer A Next",
-      "momentary": true,
-      "step_of": "inst_a",
-      "step_delta": 1
+      "momentary": true
     },
     {
       "key": "layer_b",
@@ -587,16 +523,12 @@
     {
       "key": "inst_b_prev",
       "name": "Layer B Previous",
-      "momentary": true,
-      "step_of": "inst_b",
-      "step_delta": -1
+      "momentary": true
     },
     {
       "key": "inst_b_next",
       "name": "Layer B Next",
-      "momentary": true,
-      "step_of": "inst_b",
-      "step_delta": 1
+      "momentary": true
     },
     {
       "key": "layer_c",
@@ -705,16 +637,12 @@
     {
       "key": "inst_c_prev",
       "name": "Layer C Previous",
-      "momentary": true,
-      "step_of": "inst_c",
-      "step_delta": -1
+      "momentary": true
     },
     {
       "key": "inst_c_next",
       "name": "Layer C Next",
-      "momentary": true,
-      "step_of": "inst_c",
-      "step_delta": 1
+      "momentary": true
     },
     {
       "key": "layer_d",
@@ -823,16 +751,12 @@
     {
       "key": "inst_d_prev",
       "name": "Layer D Previous",
-      "momentary": true,
-      "step_of": "inst_d",
-      "step_delta": -1
+      "momentary": true
     },
     {
       "key": "inst_d_next",
       "name": "Layer D Next",
-      "momentary": true,
-      "step_of": "inst_d",
-      "step_delta": 1
+      "momentary": true
     },
     {
       "key": "a4_ref",
@@ -980,9 +904,27 @@
       "options": [
         "Midnight",
         "Platinum",
-        "Studio Grey"
+        "Studio Grey",
+        "Purple",
+        "Yellow",
+        "Gold",
+        "Green",
+        "Camo",
+        "Metallic Red",
+        "Silver",
+        "Ice Blue"
       ],
       "default": "Midnight"
+    },
+    {
+      "key": "theme_prev",
+      "name": "Previous Theme",
+      "momentary": true
+    },
+    {
+      "key": "theme_next",
+      "name": "Next Theme",
+      "momentary": true
     },
     {
       "key": "anim",
@@ -1027,28 +969,36 @@
       "key": "look",
       "name": "Look",
       "options": [
-        "Midnight",
-        "Midnight List",
-        "Platinum",
-        "Platinum List",
-        "Studio",
-        "Studio List"
+        "Midnight Browse",
+        "Midnight Layers",
+        "Platinum Browse",
+        "Platinum Layers",
+        "Studio Grey Browse",
+        "Studio Grey Layers",
+        "Purple Browse",
+        "Purple Layers",
+        "Yellow Browse",
+        "Yellow Layers",
+        "Gold Browse",
+        "Gold Layers",
+        "Green Browse",
+        "Green Layers",
+        "Camo Browse",
+        "Camo Layers",
+        "Metallic Red Browse",
+        "Metallic Red Layers",
+        "Silver Browse",
+        "Silver Layers",
+        "Ice Blue Browse",
+        "Ice Blue Layers"
       ],
-      "default": "Midnight"
-    },
-    {
-      "key": "category",
-      "name": "Category",
-      "min": 0,
-      "max": 11,
-      "default": 0,
-      "display": "int"
+      "default": "Midnight Browse"
     },
     {
       "key": "wave",
       "name": "Waveform",
       "min": 0,
-      "max": 32,
+      "max": 16,
       "default": 0,
       "display": "int"
     },
@@ -1231,6 +1181,102 @@
     {
       "key": "lname_d",
       "name": "Layer D Name",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_1",
+      "name": "Bank 1",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_2",
+      "name": "Bank 2",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_3",
+      "name": "Bank 3",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_4",
+      "name": "Bank 4",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_5",
+      "name": "Bank 5",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_6",
+      "name": "Bank 6",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_7",
+      "name": "Bank 7",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_8",
+      "name": "Bank 8",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_9",
+      "name": "Bank 9",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_10",
+      "name": "Bank 10",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_11",
+      "name": "Bank 11",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "bank_12",
+      "name": "Bank 12",
       "min": 0,
       "max": 1,
       "default": 0,

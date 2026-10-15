@@ -15,7 +15,8 @@ static int16_t buf[256];
 
 static void set(const char *k, const char *v) { E->set_param(S, k, v); }
 static void seti(const char *k, int v) { char b[16]; snprintf(b, sizeof b, "%d", v); set(k, b); }
-static void press(const char *k) { set(k, "1"); set(k, "0"); }
+static double run(double sec);
+static void press(const char *k) { set(k, "1"); run(0.2); }      /* one tap on MPC's screen, then a moment */
 static float getf(const char *k) { char b[128]; E->get_param(S, k, b, sizeof b); return (float)atof(b); }
 static const char *gets(const char *k) { static char b[4][160]; static int r; r = (r + 1) & 3; b[r][0] = 0; E->get_param(S, k, b[r], sizeof b[r]); return b[r]; }
 static void note(int on, int key, int vel) { uint8_t m[3] = { (uint8_t)(on ? 0x90 : 0x80), (uint8_t)key, (uint8_t)vel }; E->midi(S, m, 3); }
@@ -59,7 +60,8 @@ int main(int argc, char **argv) {
     CHECK(strstr(gets("lcd_top"), "PIANO") && strstr(gets("lcd_top"), "001 / 128"), "LCD top \"%s\"", gets("lcd_top"));
     CHECK(!strcmp(gets("lcd_ref"), "A4  440 HZ"), "LCD reference \"%s\"", gets("lcd_ref"));
     CHECK(!strcmp(gets("lcd_b"), "\xe2\x80\x94") && !strcmp(gets("lcd_a"), "GRAND PIANO"), "layer cells \"%s\" / \"%s\"", gets("lcd_a"), gets("lcd_b"));
-    CHECK(getf("category") == 0, "PIANO lit");
+    CHECK(getf("view") == 0 && getf("look") == 0 && getf("bank_1_on") == 1 && !strcmp(gets("bank_4"), "STRINGS"),
+          "BROWSE view, PIANO bank lit, banks listed (\"%s\")", gets("bank_4"));
 
     /* a note: MIDI LED, layer activity, the waveform animating at most every 100 ms, then everything idle again */
     int rev0 = (int)getf("display_rev");
@@ -84,33 +86,43 @@ int main(int argc, char **argv) {
     CHECK(!strcmp(gets("lcd_name"), "VELVET GRAND") && getf("preset") == 1, "NEXT -> preset 2 (\"%s\")", gets("lcd_name"));
     CHECK(getf("layer_b") == 1 && !strcmp(gets("lcd_b"), "WARM PAD"), "its layer B is the warm pad (\"%s\")", gets("lcd_b"));
     press("prev"); press("prev");
-    CHECK(!strcmp(gets("lcd_name"), "SALOON UPRIGHT") && getf("category") == 0, "PREV wraps inside PIANO (\"%s\")", gets("lcd_name"));
+    CHECK(!strcmp(gets("lcd_name"), "SALOON UPRIGHT") && getf("bank_1_on") == 1, "PREV wraps inside PIANO (\"%s\")", gets("lcd_name"));
     set("browse", "501");
     CHECK(!strcmp(gets("lcd_name"), "CONCERT GRAND") && getf("browse") == 500, "a data-wheel click forward: the next piano preset, the control back at rest");
     set("browse", "499"); set("browse", "499");
     CHECK(!strcmp(gets("lcd_name"), "PAD LAYER GRAND"), "two clicks back, still inside PIANO (\"%s\")", gets("lcd_name"));
     char bd[64]; E->get_param(S, "browse_display", bd, sizeof bd);
     CHECK(!strcmp(bd, "Pad Layer Grand"), "the LCD's browse control shows the preset's name (\"%s\")", bd);
+    /* MPC's screen buttons act like toggles: taps send 1, 0, 1, ...; every one counts, an echo within 150 ms doesn't */
     int p0 = (int)getf("preset");
-    set("next", "1"); run(0.2); set("next", "1");
-    CHECK((int)getf("preset") == (p0 + 2 > 10 ? p0 + 2 - 11 : p0 + 2), "NEXT pressed twice with no release in between steps twice (%d -> %g)", p0, getf("preset"));
-    set("next", "0");
+    set("next", "1"); run(0.2); set("next", "0"); run(0.2); set("next", "1"); run(0.2);
+    CHECK((int)getf("preset") == (p0 + 3) % 11, "three taps on NEXT (1, 0, 1) step three presets (%d -> %g)", p0, getf("preset"));
+    p0 = (int)getf("preset");
+    set("prev", "1"); set("prev", "1"); run(0.2);
+    CHECK((int)getf("preset") == (p0 + 10) % 11, "a tap and its echo step once (%d -> %g)", p0, getf("preset"));
     int before = (int)getf("preset");
-    press("cat_strings");
-    CHECK(getf("browser") == 1 && getf("look") == 1 && getf("category") == 3 && (int)getf("preset") == before,
-          "STRINGS opens its preset list on the LCD, the sound stays (look %g)", getf("look"));
+    press("bank_4");
+    CHECK(getf("bank_4_on") == 1 && getf("bank_1_on") == 0 && (int)getf("preset") == before,
+          "tapping the STRINGS bank lights it and lists its patches, the sound stays");
     CHECK(strstr(gets("row_1"), "STRING ENSEMBLE") && strstr(gets("row_2"), "SLOW STRINGS") && !strcmp(gets("row_12"), " "),
-          "the list rows (\"%s\", \"%s\")", gets("row_1"), gets("row_2"));
-    set("row_1", "1");
+          "the patch rows (\"%s\", \"%s\")", gets("row_1"), gets("row_2"));
+    press("row_1");
     CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE") && getf("row_1_on") == 1 && getf("row_2_on") == 0,
-          "tapping a row loads it and lights it (\"%s\")", gets("lcd_name"));
-    set("row_1", "0");
-    CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE"), "the old row's echo (0) changes nothing");
+          "tapping a patch loads it and lights it (\"%s\")", gets("lcd_name"));
     press("next");
-    CHECK(getf("row_2_on") == 1 && !strcmp(gets("lcd_name"), "SLOW STRINGS"), "NEXT moves the lit row (\"%s\")", gets("lcd_name"));
-    press("prev");
-    press("cat_strings");
-    CHECK(getf("browser") == 0 && getf("look") == 0, "the lit category again closes the list");
+    CHECK(getf("row_2_on") == 1 && !strcmp(gets("lcd_name"), "SLOW STRINGS"), "NEXT moves the lit patch (\"%s\")", gets("lcd_name"));
+    set("row_1", "0"); run(0.2);
+    CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE"), "a tap that sends 0 counts too (\"%s\")", gets("lcd_name"));
+    press("bank_7"); set("browse", "501");
+    CHECK(PRESET_CAT[(int)getf("preset")] == 6, "the data wheel browses the picked bank (PAD: \"%s\")", gets("lcd_name"));
+    set("view", "1");
+    CHECK(getf("look") == 1, "LAYERS view (look %g)", getf("look"));
+    press("theme_next"); press("theme_next");
+    CHECK(getf("theme") == 2 && getf("look") == 5, "THEME NEXT twice: Studio Grey, look %g", getf("look"));
+    press("theme_prev"); press("theme_prev"); press("theme_prev");
+    CHECK(getf("theme") == NTHEME - 1 && getf("look") == 2 * NTHEME - 1, "THEME PREV wraps to the last colorway (%g)", getf("theme"));
+    set("theme", "0"); set("view", "0");
+    CHECK(getf("look") == 0, "back to Midnight, BROWSE");
     note(1, 60, 100); double st = run(0.5); note(0, 60, 0); run(1.5);
     CHECK(st > 0.003, "and it plays at once (%.1f dB)", db(st));
     int up = find_preset("Upright Ballad");
@@ -170,6 +182,11 @@ int main(int argc, char **argv) {
     CHECK(voices_on(-1) == 3, "all three layers again (%d voices)", voices_on(-1));
     note(0, 60, 0); run(2.0);
     CHECK(!strcmp(gets("lname_b"), "WARM PAD") && !strcmp(gets("lcat_b"), "PAD"), "layer B's mini LCD (\"%s\", \"%s\")", gets("lcat_b"), gets("lname_b"));
+    int ib = (int)getf("inst_b");
+    set("inst_b_next", "1"); run(0.2); set("inst_b_next", "0"); run(0.2);
+    CHECK((int)getf("inst_b") == (ib + 2) % NINST, "layer B's NEXT: two taps, two sounds on (%d -> %g)", ib, getf("inst_b"));
+    press("inst_b_prev"); press("inst_b_prev");
+    CHECK((int)getf("inst_b") == ib, "and PREV back (%g)", getf("inst_b"));
 
     /* polyphony */
     set("polyphony", "4");

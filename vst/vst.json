@@ -2,7 +2,7 @@
   "name": "Sonix",
   "vendor": "3dthc",
   "uid": "SnX1",
-  "version": 302,
+  "version": 303,
   "so": "sonix.so",
   "params": "params.json",
   "defines": {

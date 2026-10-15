@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draws the Sonix faceplate (three pages, three colorways) and writes the matching layout, from one set of coordinates.
+"""Draws the Sonix faceplate (three pages, eleven colorways) and writes the matching layout, from one set of coordinates.
 
     python3 tools/make_skin.py                 artwork in vst/art/ and vst/layout.conf (both committed)
     python3 tools/make_skin.py --mockup DIR    full-page previews with sample values and MPC's live text drawn in,
@@ -8,15 +8,16 @@
 Needs Playwright's Chromium; run on a PC, not in the plugin build.
 
 Pages (MPC's function-key tabs), each with its own 16 Q-Links in four columns of four:
-  MAIN      the LCD in the centre (preset name with prev / next arrows, a live waveform, the four layers), the
-            category buttons, layer and favourite buttons below it; FILTER and AMP ENVELOPE on the left, LFO and
+  MAIN      one tall LCD in the centre: the preset name with prev / next arrows, then two views picked by tabs at
+            its foot, BROWSE (banks on the left, that bank's patches on the right) and LAYERS (a live waveform, the
+            four layers, the preset's description), with FAV and LIST; FILTER and AMP ENVELOPE on the left, LFO and
             FX & OUTPUT on the right (Q-Link columns 1-4).
   LAYERS    one strip per layer: a small LCD with its instrument, prev / next, on and solo, LEVEL, PAN, OCTAVE, FINE.
   SETTINGS  TUNING and PLAYING on the left, DELAY and REVERB on the right; the about screen and the SYSTEM choices
-            (theme, display animation, mod wheel, velocity curve) in the centre.
+            (theme stepper, display animation, mod wheel, velocity curve) in the centre.
 
 What is static (chassis, panels, engraved names, LCD glass and frames) is one background per page and theme. What
-moves is a control or a picture the engine drives (knobs, lit buttons, the category grid, the LCD waveform, LEDs,
+moves is a control or a picture the engine drives (knobs, lit buttons and list rows, the LCD waveform, LEDs,
 the CPU bar) plus MPC's own live text. The engine changes pictures only on events or, for the waveform, at most ten
 times a second while notes sound (every repaint costs MPC's screen thread: mpc-vst-plugins docs/NOTES.md).
 
@@ -35,7 +36,7 @@ ART = os.path.join(VST, "art")
 FONTS = os.path.join(VST, "fonts")
 MPC_FONTS = os.path.join(os.environ.get("MPC_VST", os.path.join(HERE, "..", "..", "mpc-vst-plugins")), "tools", "html_art", "fonts")
 Y_OFF = 86
-VERSION = "0.3.0"
+VERSION = "0.3.3"
 
 THEMES = ["midnight", "platinum", "studio", "purple", "yellow", "gold", "green", "camo", "red", "silver", "ice"]   # = "theme" options
 THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY", "PURPLE", "YELLOW", "GOLD", "GREEN", "CAMO", "METALLIC RED", "SILVER", "ICE BLUE"]
@@ -836,54 +837,75 @@ def mockups(outdir):
 
 
 def export_art():
-    """Every picture the layout uses, per theme, into vst/art/<theme>/ (plus a few shared transparent ones)."""
-    pages = [(name, fn()) for name, fn in PAGES]
-    lw = LCD_WAVE[2]
+    """Every picture the layout uses, per colorway, into vst/art/<theme>/ (plus a few shared transparent ones).
+
+    Light on MPC: one MAIN background per colorway (the BROWSE view) and, for the LAYERS view, only the LCD's screen
+    as an overlay; the waveform is 17 frames. The skin builder flattens list-row pictures onto a solid colour, so
+    rows (and the LCD's own buttons) are cut from the colorway's LCD with the highlight drawn on top."""
+    from PIL import Image
+    main = page_main()
     with sync_playwright() as p:
         b, pg = open_page(p, False)
         ev = lambda js, *a: pg.evaluate("API.%s(%s)" % (js, ", ".join(json.dumps(x) for x in a)))
-        for th in THEMES:
+
+        def png(url):
+            import io
+            return Image.open(io.BytesIO(base64.b64decode(url.split(",", 1)[1]))).convert("RGBA")
+
+        def on_glass(bg, box, url, path):
+            """a picture drawn over the LCD, cut with the glass behind it"""
+            x, y, w, h = box
+            g = bg.crop((x, y, x + w, y + h))
+            g.alpha_composite(png(url))
+            g.save(path)
+
+        for n, th in enumerate(THEMES):
             d = os.path.join(ART, th)
-            for name, items in pages:
-                if name == "MAIN":
-                    save(ev("background", th, in_view(items, 0)), os.path.join(d, "bg_main.png"))
-                    save(ev("background", th, in_view(items, 1)), os.path.join(d, "bg_main_list.png"))
-                else:
-                    save(ev("background", th, items), os.path.join(d, "bg_%s.png" % name.lower()))
-            # list rows: the skin builder flattens row pictures onto a solid colour, so a "clear" row is cut from this
-            # colorway's own LCD (a middle row of the list view), and the lit row is that cut plus the highlight
-            from PIL import Image
-            tw = list_tw(THEMES.index(th))
-            bgl = Image.open(os.path.join(d, "bg_main_list.png")).convert("RGBA")
-            x0, y0 = LIST_BOX[0], LIST_BOX[1] + 2 * (LIST_TH + LIST_GAP)
-            glass = bgl.crop((x0, y0, x0 + tw, y0 + LIST_TH))
-            glass.save(os.path.join(d, "row_off.png"))
-            save(ev("rowOn", th, tw, LIST_TH), os.path.join(d, "row_on_overlay.png"))
-            lit = glass.copy()
-            ov = Image.open(os.path.join(d, "row_on_overlay.png")).convert("RGBA")
-            lit.alpha_composite(ov)
-            lit.save(os.path.join(d, "row_on.png"))
-            os.remove(os.path.join(d, "row_on_overlay.png"))
+            os.makedirs(d, exist_ok=True)
+            save(ev("background", th, in_view(main, 0)), os.path.join(d, "bg_main.png"))
+            bg = Image.open(os.path.join(d, "bg_main.png")).convert("RGBA")
+            png(ev("background", th, in_view(main, 1))).crop(
+                (SX, SY, SX + SCREEN[2], SY + SCREEN[3])).save(os.path.join(d, "ov_layers.png"))
+            save(ev("background", th, page_layers()), os.path.join(d, "bg_layers.png"))
+            save(ev("background", th, page_settings()), os.path.join(d, "bg_settings.png"))
+            for key, box in (("bank", BANK_BOX), ("row", PATCH_BOX)):
+                w = list_w(box, n)
+                x0, y0 = box[0], box[1] + 5 * (LIST_TH + LIST_GAP)
+                glass = bg.crop((x0, y0, x0 + w, y0 + LIST_TH))
+                glass.save(os.path.join(d, "%s_off.png" % key))
+                lit = glass.copy()
+                lit.alpha_composite(png(ev("rowOn", th, w, LIST_TH)))
+                lit.save(os.path.join(d, "%s_on.png" % key))
+            tw = len(VIEWS) * BTN_W + (len(VIEWS) - 1) * BTN_GAP
+            strip = png(ev("tabStrip", th, [v.upper() for v in VIEWS], BTN_W, BTN_H + 4, BTN_GAP))
+            glass = bg.crop((TAB_X, TAB_Y, TAB_X + tw, TAB_Y + BTN_H + 4))
+            out = Image.new("RGBA", strip.size)
+            for f in range(len(VIEWS)):
+                out.paste(glass, (f * tw, 0))
+            out.alpha_composite(strip)
+            out.save(os.path.join(d, "tabs.png"))
+            for i, (key, label) in enumerate(LCD_TOGGLES):
+                box = (TOGGLE_X + i * (BTN_W + BTN_GAP), TAB_Y, BTN_W, BTN_H + 4)
+                for on in (0, 1):
+                    on_glass(bg, box, ev("lcdToggle", th, BTN_W, BTN_H + 4, label, on),
+                             os.path.join(d, "%s_%s.png" % (key, "on" if on else "off")))
             save(ev("knobStrip", th, 128, KNOB_R), os.path.join(d, "knob.png"))
-            save(ev("gridStrip", th, CATS, 6, BTN_W, BTN_H, BTN_GAP, 10), os.path.join(d, "cats.png"))
-            save(ev("pressOverlay", th, BTN_W, BTN_H), os.path.join(d, "press.png"))
-            for key, label in [(k, l) for kind, k, l in ROW3] + [("lay_on", "ON"), ("solo", "SOLO"),
-                                                                 ("lprev", "◀  PREV"), ("lnext", "NEXT  ▶")]:
+            for key, label in [("lay_on", "ON"), ("solo", "SOLO"), ("lprev", "◀  PREV"), ("lnext", "NEXT  ▶")]:
                 for on in (0, 1):
                     save(ev("button", th, BTN_W, BTN_H, on, label), os.path.join(d, "%s_%s.png" % (key, "on" if on else "off")))
             save(ev("arrowLit", th, BTN_W, BTN_H + 4, -1), os.path.join(d, "arrow_prev.png"))
             save(ev("arrowLit", th, BTN_W, BTN_H + 4, 1), os.path.join(d, "arrow_next.png"))
             for key, _, _, opts in SYSTEM_ROWS:
                 save(ev("gridStrip", th, opts, 3, BTN_W, BTN_H, BTN_GAP, 0), os.path.join(d, "sys_%s.png" % key))
-            save(ev("waveStrip", th, lw, LCD_WAVE[3], 0), os.path.join(d, "wave_l.png"))
-            save(ev("waveStrip", th, lw, LCD_WAVE[3], 1), os.path.join(d, "wave_r.png"))
+            save(ev("waveStrip", th, LCD_WAVE[2], LCD_WAVE[3], 0), os.path.join(d, "wave_l.png"))
+            save(ev("waveStrip", th, LCD_WAVE[2], LCD_WAVE[3], 1), os.path.join(d, "wave_r.png"))
             save(ev("ledStrip", th, 22, False), os.path.join(d, "led.png"))
             save(ev("ledStrip", th, 18, True), os.path.join(d, "lcdled.png"))
             save(ev("cpuStrip", th, CPU_BAR[2], CPU_BAR[3]), os.path.join(d, "cpu.png"))
         save(ev("blank", BTN_W, BTN_H + 4), os.path.join(ART, "clear_btn.png"))
         save(ev("blank", BTN_W + BTN_GAP, BTN_H + 4), os.path.join(ART, "clear_seg.png"))
         save(ev("blank", 20, 20 * 128), os.path.join(ART, "clear_knob.png"))
-        save(ev("blank", (LIST_BOX[2] - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS, LIST_TH), os.path.join(ART, "clear_row.png"))
+        save(ev("blank", CELL_W, CELL_H), os.path.join(ART, "clear_cell.png"))
         b.close()
 
 
@@ -896,83 +918,96 @@ def write_layout():
          "qlinks_track = " + ",".join(MAIN_QLINKS)]
     T = list(enumerate(THEMES))
 
-    def header(n, th):
-        L.append("meter cx=%d cy=%d w=22 h=22 key=midi_led strip=art/%s/led.png frames=2 when=theme:%d" % (HEADER_LED[0], HEADER_LED[1] + Y, th, n))
-        L.append("meter cx=%d cy=%d w=%d h=%d key=cpu strip=art/%s/cpu.png frames=11 when=theme:%d" % (
-            CPU_BAR[0] + CPU_BAR[2] // 2, CPU_BAR[1] + CPU_BAR[3] // 2 + Y, CPU_BAR[2], CPU_BAR[3], th, n))
+    def header(w):
+        th = w[1]
+        L.append("meter cx=%d cy=%d w=22 h=22 key=midi_led strip=art/%s/led.png frames=2 %s" % (HEADER_LED[0], HEADER_LED[1] + Y, th, w[0]))
+        L.append("meter cx=%d cy=%d w=%d h=%d key=cpu strip=art/%s/cpu.png frames=11 %s" % (
+            CPU_BAR[0] + CPU_BAR[2] // 2, CPU_BAR[1] + CPU_BAR[3] // 2 + Y, CPU_BAR[2], CPU_BAR[3], th, w[0]))
 
-    def readout(it, n, th):
-        ink, dim = LCD_INK[th]
-        x, y, w, h = it["box"]
-        L.append('readout cx=%d cy=%d w=%d h=%d label="" key=%s box=0 tsize=%d tcolor=%s tweight=%s talign=%s when=theme:%d' % (
-            x + w // 2, y + h // 2 + Y, w, h, it["key"], it["size"], ink if it["ink"] == "ink" else dim, it["weight"], it["align"], n))
+    def readout(it, w):
+        ink, dim = LCD_INK[w[1]]
+        x, y, bw, bh = it["box"]
+        L.append('readout cx=%d cy=%d w=%d h=%d label="" key=%s box=0 tsize=%d tcolor=%s tweight=%s talign=%s %s' % (
+            x + bw // 2, y + bh // 2 + Y, bw, bh, it["key"], it["size"], ink if it["ink"] == "ink" else dim, it["weight"], it["align"], w[0]))
 
-    def knob(it, n, th):
-        ink, dim = KNOB_INK[th]
-        L.append('knob cx=%d cy=%d r=%d label="%s" key=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s strip=art/%s/knob.png frames=128 when=theme:%d' % (
-            it["cx"], it["cy"] + Y, KNOB_R, it["label"], it["key"], VALUE_PX, it["bw"], ink, dim, th, n))
+    def knob(it, w):
+        ink, dim = KNOB_INK[w[1]]
+        L.append('knob cx=%d cy=%d r=%d label="%s" key=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s strip=art/%s/knob.png frames=128 %s' % (
+            it["cx"], it["cy"] + Y, KNOB_R, it["label"], it["key"], VALUE_PX, it["bw"], ink, dim, w[1], w[0]))
 
-    def pic_button(kind, key, img, x, y, n, th, extra=""):
+    def pic_button(kind, key, img, x, y, w):
         cx, cy = x + BTN_W // 2, y + (BTN_H + 4) // 2 + Y
+        th = w[1]
         if kind == "toggle":
-            L.append('toggle cx=%d cy=%d w=%d h=%d label="" key=%s ns=0 bw=%d img=art/%s/%s_off.png img_on=art/%s/%s_on.png when=theme:%d' % (
-                cx, cy, BTN_W, BTN_H + 4, key, BTN_W, th, img, th, img, n))
+            L.append('toggle cx=%d cy=%d w=%d h=%d label="" key=%s ns=0 bw=%d img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
+                cx, cy, BTN_W, BTN_H + 4, key, BTN_W, th, img, th, img, w[0]))
         else:
-            L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/%s/%s_off.png img_on=art/%s/%s_on.png when=theme:%d' % (
-                cx, cy, BTN_W, BTN_H + 4, key, th, img, th, img, n))
+            L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
+                cx, cy, BTN_W, BTN_H + 4, key, th, img, th, img, w[0]))
 
-    def lcdled(it, n, th):
-        L.append("meter cx=%d cy=%d w=18 h=18 key=%s strip=art/%s/lcdled.png frames=2 when=theme:%d" % (it["cx"], it["cy"] + Y, it["key"], th, n))
+    def lcdled(it, w):
+        L.append("meter cx=%d cy=%d w=18 h=18 key=%s strip=art/%s/lcdled.png frames=2 %s" % (it["cx"], it["cy"] + Y, it["key"], w[1], w[0]))
 
-    # ---- MAIN: per theme, two LCD views (the waveform and layers, or the preset list), each one "look" option
+    # ---- MAIN. Pictures and controls shared by both LCD views follow the theme; the views' own follow "look"
+    # (theme x view), and the transparent tap zones (view tabs, layer cells) follow the view alone.
     L.append("[tab MAIN]")
+    main = page_main()
+    for n, th in T:
+        L.append("art file=art/%s/bg_main.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
+    for n, th in T:   # the LAYERS view: its own screen over the LCD
+        L.append("art file=art/%s/ov_layers.png x=%d y=%d w=%d h=%d fit=stretch when=look:%d" % (
+            th, SX, SY + Y, SCREEN[2], SCREEN[3], 2 * n + 1))
+    tw = len(VIEWS) * BTN_W + (len(VIEWS) - 1) * BTN_GAP
+    for n, th in T:
+        w = ("when=theme:%d" % n, th)
+        header(w)
+        L.append("meter cx=%d cy=%d w=%d h=%d key=view strip=art/%s/tabs.png frames=%d %s" % (
+            TAB_X + tw // 2, TAB_Y + (BTN_H + 4) // 2 + Y, tw, BTN_H + 4, th, len(VIEWS), w[0]))
+        for it in main:
+            if "view" in it:
+                continue
+            if it["t"] == "readout":
+                readout(it, w)
+            elif it["t"] == "led":
+                L.append("meter cx=%d cy=%d w=22 h=22 key=%s strip=art/%s/led.png frames=2 %s" % (it["cx"], it["cy"] + Y, it["key"], th, w[0]))
+            elif it["t"] == "lcdarrow":
+                x, y, bw, bh = it["box"]
+                L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/arrow_%s.png %s' % (
+                    x + bw // 2, y + bh // 2 + Y, bw, bh, it["key"], th, it["key"], w[0]))
+            elif it["t"] == "presetname":
+                # the preset name is a knob that browses: touch it, then the data wheel (or a drag) steps presets
+                x, y, bw, bh = it["box"]
+                L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=browse ink=%s strip=art/clear_knob.png frames=128 %s' % (
+                    x + bw // 2 - 12, y + bh // 2 + Y, bw, bh, it["size"], LCD_INK[th][0], w[0]))
+            elif it["t"] == "lcdtoggle":
+                L.append('toggle cx=%d cy=%d w=%d h=%d label="" key=%s ns=0 bw=%d img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
+                    it["x"] + BTN_W // 2, it["y"] + (BTN_H + 4) // 2 + Y, BTN_W, BTN_H + 4, it["key"], BTN_W, th, it["key"], th, it["key"], w[0]))
+            elif it["t"] == "knob":
+                knob(it, w)
     for n, th in T:
         for view in (0, 1):
-            look = n * 2 + view
-            start = len(L)
-            items = in_view(page_main(), view)
-            L.append("art file=art/%s/bg_main%s.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (
-                th, "_list" if view else "", Y, n))
-            header(n, th)
-            if not view:
-                wx, wy, ww, wh = LCD_WAVE
-                for half, nm in ((0, "wave_l"), (1, "wave_r")):
-                    L.append("meter cx=%d cy=%d w=%d h=%d key=wave strip=art/%s/%s.png frames=%d when=theme:%d" % (
-                        wx + ww // 4 + half * ww // 2, wy + wh // 2 + Y, ww // 2, wh, th, nm, WAVE_FRAMES, n))
-            gw, gh = 6 * BTN_W + 5 * BTN_GAP, 2 * (BTN_H + 10) - 10 + 4
-            L.append("meter cx=%d cy=%d w=%d h=%d key=category strip=art/%s/cats.png frames=%d when=theme:%d" % (
-                GRID_X + gw // 2, GRID_Y + gh // 2 + Y, gw, gh, th, len(CATS), n))
-            for it in items:
-                if it["t"] == "readout":
-                    readout(it, n, th)
-                elif it["t"] == "lcdled":
-                    lcdled(it, n, th)
-                elif it["t"] == "led":
-                    L.append("meter cx=%d cy=%d w=22 h=22 key=%s strip=art/%s/led.png frames=2 when=theme:%d" % (it["cx"], it["cy"] + Y, it["key"], th, n))
-                elif it["t"] == "lcdarrow":
-                    x, y, w, h = it["box"]
-                    L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/arrow_%s.png when=theme:%d' % (
-                        x + w // 2, y + h // 2 + Y, w, h, it["key"], th, it["key"], n))
-                elif it["t"] == "presetname":
-                    # the preset name is a knob on the preset list: touch it, then the data wheel (or a drag) browses
-                    x, y, w, h = it["box"]
-                    L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=browse ink=%s strip=art/clear_knob.png frames=128 when=theme:%d' % (
-                        x + w // 2 - 12, y + h // 2 + Y, w, h, it["size"], LCD_INK[th][0], n))
-                elif it["t"] == "list":
-                    x, y, w, h = it["box"]
-                    L.append('list x=%d y=%d w=%d h=%d key=row cols=%d rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 img=art/%s/row_off.png img_on=art/%s/row_on.png when=theme:%d' % (
-                        x, y + Y, w - 2 * n, h, LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP, LCD_PX["list"], LCD_INK[th][0], th, th, n))
-                elif it["t"] in ("toggle", "button"):
-                    pic_button(it["t"], it["key"], it["key"], it["x"], it["y"], n, th)
-                elif it["t"] == "knob":
-                    knob(it, n, th)
-            for i, key in enumerate(CAT_KEYS):
-                cx = GRID_X + (i % 6) * (BTN_W + BTN_GAP) + BTN_W // 2
-                cy = GRID_Y + (i // 6) * (BTN_H + 10) + (BTN_H + 4) // 2 + Y
-                L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/press.png when=theme:%d' % (
-                    cx, cy, BTN_W, BTN_H + 4, key, th, n))
-            for k in range(start, len(L)):
-                L[k] = L[k].replace("when=theme:%d" % n, "when=look:%d" % look)
+            w = ("when=look:%d" % (2 * n + view), th)
+            for it in main:
+                if it.get("view") != view:
+                    continue
+                if it["t"] == "list":
+                    x, y, bw, bh = it["box"]
+                    L.append('list x=%d y=%d w=%d h=%d key=%s cols=1 rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
+                        x, y + Y, list_w(it["box"], n), bh, it["key"], LIST_N, LIST_TH, LIST_GAP, it["size"], LCD_INK[th][0],
+                        th, it["key"], th, it["key"], w[0]))
+                elif it["t"] == "wave":
+                    wx, wy, ww, wh = it["box"]
+                    for half, nm in ((0, "wave_l"), (1, "wave_r")):
+                        L.append("meter cx=%d cy=%d w=%d h=%d key=wave strip=art/%s/%s.png frames=%d %s" % (
+                            wx + ww // 4 + half * ww // 2, wy + wh // 2 + Y, ww // 2, wh, th, nm, WAVE_FRAMES, w[0]))
+                elif it["t"] == "readout":
+                    readout(it, w)
+    L.append('enum_h cx=%d cy=%d label="" key=view sw=%d sh=%d img=art/clear_seg.png img_on=art/clear_seg.png' % (
+        TAB_X + (len(VIEWS) * (BTN_W + BTN_GAP)) // 2, TAB_Y + (BTN_H + 4) // 2 + Y, BTN_W + BTN_GAP, BTN_H + 4))
+    for it in main:
+        if it["t"] == "celltoggle":   # tap a layer's cell: that layer on / off
+            L.append('toggle cx=%d cy=%d w=%d h=%d label="" key=%s ns=0 bw=%d img=art/clear_cell.png img_on=art/clear_cell.png when=view:1' % (
+                it["x"] + it["w"] // 2, it["y"] + it["h"] // 2 + Y, it["w"], it["h"], it["key"], it["w"]))
     L.append('qlinks "MAIN" = ' + ",".join(MAIN_QLINKS))
 
     # ---- LAYERS
@@ -981,19 +1016,20 @@ def write_layout():
     for n, th in T:
         L.append("art file=art/%s/bg_layers.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
     for n, th in T:
-        header(n, th)
+        w = ("when=theme:%d" % n, th)
+        header(w)
         for it in items:
             if it["t"] == "readout":
-                readout(it, n, th)
+                readout(it, w)
             elif it["t"] == "lcdled":
-                lcdled(it, n, th)
+                lcdled(it, w)
             elif it["t"] in ("toggle", "button"):
                 img = {"layer": "lay_on", "solo": "solo", "inst": None}[it["key"].split("_")[0]]
                 if img is None:
                     img = "lprev" if it["key"].endswith("_prev") else "lnext"
-                pic_button(it["t"], it["key"], img, it["x"], it["y"], n, th)
+                pic_button(it["t"], it["key"], img, it["x"], it["y"], w)
             elif it["t"] == "knob":
-                knob(it, n, th)
+                knob(it, w)
     L.append('qlinks "LAYERS" = ' + ",".join("%s_%s" % (k, l) for l in LAYERS for k, _ in LAYER_KNOBS))
 
     # ---- SETTINGS
@@ -1002,16 +1038,23 @@ def write_layout():
     for n, th in T:
         L.append("art file=art/%s/bg_settings.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
     for n, th in T:
-        header(n, th)
+        w = ("when=theme:%d" % n, th)
+        header(w)
         for it in items:
             if it["t"] == "knob":
-                knob(it, n, th)
+                knob(it, w)
+            elif it["t"] == "readout":
+                readout(it, w)
+            elif it["t"] == "button":
+                pic_button("button", it["key"], "lprev" if it["key"].endswith("_prev") else "lnext", it["x"], it["y"], w)
             elif it["t"] == "sysrow":
                 w3 = 3 * BTN_W + 2 * BTN_GAP
-                L.append("meter cx=%d cy=%d w=%d h=%d key=%s strip=art/%s/sys_%s.png frames=3 when=theme:%d" % (
-                    it["x"] + w3 // 2, it["y"] + (BTN_H + 4) // 2 + Y, w3, BTN_H + 4, it["key"], th, it["key"], n))
-                L.append('enum_h cx=%d cy=%d label="" key=%s sw=%d sh=%d img=art/clear_seg.png img_on=art/clear_seg.png when=theme:%d' % (
-                    it["x"] + (3 * (BTN_W + BTN_GAP)) // 2, it["y"] + (BTN_H + 4) // 2 + Y, it["key"], BTN_W + BTN_GAP, BTN_H + 4, n))
+                L.append("meter cx=%d cy=%d w=%d h=%d key=%s strip=art/%s/sys_%s.png frames=3 %s" % (
+                    it["x"] + w3 // 2, it["y"] + (BTN_H + 4) // 2 + Y, w3, BTN_H + 4, it["key"], th, it["key"], w[0]))
+    for it in items:
+        if it["t"] == "sysrow":
+            L.append('enum_h cx=%d cy=%d label="" key=%s sw=%d sh=%d img=art/clear_seg.png img_on=art/clear_seg.png' % (
+                it["x"] + (3 * (BTN_W + BTN_GAP)) // 2, it["y"] + (BTN_H + 4) // 2 + Y, it["key"], BTN_W + BTN_GAP, BTN_H + 4))
     L.append('qlinks "SETTINGS" = ' + ",".join(k for _, _, _, ks in SETTINGS_SECTIONS for k, _ in ks))
     with open(os.path.join(VST, "layout.conf"), "w") as f:
         f.write("\n".join(L) + "\n")
@@ -1024,7 +1067,7 @@ def main():
     import shutil
     for th in THEMES:                                  # start clean: the v0.2 pictures are not used any more
         shutil.rmtree(os.path.join(ART, th), ignore_errors=True)
-    for f in ("clear_btn.png", "clear_cell.png", "clear_seg.png", "clear_knob.png", "clear_row.png"):
+    for f in ("clear_btn.png", "clear_cell.png", "clear_seg.png", "clear_knob.png", "clear_row.png"):   # (clear_row: v0.3.2)
         if os.path.exists(os.path.join(ART, f)):
             os.remove(os.path.join(ART, f))
     export_art()

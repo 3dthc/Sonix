@@ -5,11 +5,13 @@ ARM VST2 plugin on [sd88me/mpc-vst-plugins](https://github.com/sd88me/mpc-vst-pl
 pads, strings, brass, choirs, leads, plucks, bass, bells, synth chords and FX, from redistributable recordings and
 sounds rendered by this project.
 
-Status: early development (v0.3.0, device test). 128 factory presets (MPC's PRESET list) built from 45 instruments;
+Status: early development (v0.3.3, device test). 128 factory presets (MPC's PRESET list) built from 45 instruments;
 four layers with level, pan, octave, fine, on and solo; a 12 dB filter with envelope, key and velocity tracking; an LFO
 for filter, vibrato and tremolo; chorus, a tempo-synced delay and reverb; tuning (A4 reference, tune, transpose, bend
-range) and playing settings; and the Sonix faceplate in three colorways (Midnight, Platinum, Studio Grey) on three
-pages (MAIN, LAYERS, SETTINGS), each with its 16 Q-Links in four columns of four.
+range) and playing settings; and the Sonix faceplate in eleven colorways (Midnight, Platinum, Studio Grey, Purple, Yellow, Gold, Green,
+Camo, Metallic Red, Silver, Ice Blue) on three pages (MAIN, LAYERS, SETTINGS), each with its 16 Q-Links in four
+columns of four. MAIN's LCD has two views: BROWSE (banks on the left, that bank's patches on the right) and LAYERS
+(the waveform and the four layers).
 
 The instruments stay compressed in RAM (about 115 MB for all of them) and every voice decodes its own sample as it
 plays, so every preset plays the moment it is picked.
@@ -47,7 +49,7 @@ upstream libraries name their notes an octave or two away from where they sound.
 
 ## The faceplate
 
-`python3 tools/make_skin.py` redraws every picture for the three pages and colorways in headless Chromium
+`python3 tools/make_skin.py` redraws every picture for the three pages and eleven colorways in headless Chromium
 (Playwright) and writes `vst/layout.conf` from the same coordinates; both are committed, so the plugin build only
 reads them (`--mockup <dir>` draws full-page previews with MPC's live text). The engine changes the page's pictures
 (LEDs, CPU bar, the lit category) only on events and the LCD waveform at most every 100 ms while notes sound, since

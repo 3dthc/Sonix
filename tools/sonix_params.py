@@ -18,7 +18,11 @@ from pack_sonix import ORDER, CATEGORIES  # noqa: E402
 
 INSTRUMENTS = [d for _, d, _ in ORDER]
 LAYERS = "abcd"
-LIST_ROWS = 12                     # the LCD's preset list: 2 columns x 6 rows (every category fits)
+LIST_ROWS = 12                     # the LCD's patch list: one column of 12 (every category fits)
+VIEWS = ["Browse", "Layers"]       # the MAIN LCD's two views
+THEMES = ["Midnight", "Platinum", "Studio Grey", "Purple", "Yellow", "Gold", "Green", "Camo", "Metallic Red", "Silver",
+          "Ice Blue"]              # = make_skin.THEMES, in order
+WAVE_FRAMES = 17                   # the LCD waveform: idle + 4 levels x 4 phases
 DELAY_TIMES = ["1/16", "1/8T", "1/8", "1/8.", "1/4T", "1/4", "1/4.", "1/2"]
 
 
@@ -42,11 +46,10 @@ def spec():
     from presets import PRESETS
     P = [knob("volume", "Volume", 0.8, fmt="VOL", preset=False),           # index 0: MPC toggles it on insert / STOP
          option("preset", "Preset", [p["name"] for p in PRESETS], PRESETS[0]["name"], preset=False)]
-    P += [momentary("cat_" + c.lower(), "Category " + c.title()) for c in CATEGORIES]
     P += [momentary("prev", "Previous Preset"), momentary("next", "Next Preset"),
           option("fav", "Favourite", ["Off", "On"], "Off", preset=False),
           option("fav_only", "Favourites Only", ["Off", "On"], "Off", preset=False),
-          option("browser", "Preset List", ["Off", "On"], "Off", preset=False)]
+          option("view", "LCD View", VIEWS, VIEWS[0], preset=False)]
     P += [knob("cutoff", "Cutoff", 1.0, fmt="CUTOFF"), knob("resonance", "Resonance", 0.0),
           knob("env_amt", "Env Amount", 0.5, fmt="BIPOLAR"), knob("key_track", "Key Track", 0.0),
           knob("attack", "Attack", 0.0, fmt="ATTACK"), knob("decay", "Decay", 0.5, fmt="TIME"),
@@ -63,8 +66,8 @@ def spec():
               knob("octave_" + l, "Layer %s Octave" % L, 0, -3, 3, fmt="OCT", integer=True),
               knob("fine_" + l, "Layer %s Fine" % L, 0, -100, 100, fmt="CENTS", integer=True),
               option("solo_" + l, "Layer %s Solo" % L, ["Off", "On"], "Off", preset=False),
-              momentary("inst_%s_prev" % l, "Layer %s Previous" % L, "inst_" + l, -1),
-              momentary("inst_%s_next" % l, "Layer %s Next" % L, "inst_" + l, 1)]
+              momentary("inst_%s_prev" % l, "Layer %s Previous" % L),      # stepped by the engine: every tap counts
+              momentary("inst_%s_next" % l, "Layer %s Next" % L)]
     P += [knob("a4_ref", "A4 Ref", 440, 400, 480, fmt="HZINT", integer=True, preset=False),
           knob("tune", "Tune", 0, -100, 100, fmt="CENTS", integer=True, preset=False),
           knob("transpose", "Transpose", 0, -24, 24, fmt="SEMI", integer=True, preset=False),
@@ -78,15 +81,16 @@ def spec():
           knob("delay_width", "Delay Width", 0.8),
           knob("rev_size", "Reverb Size", 0.6), knob("rev_damp", "Reverb Damping", 0.4),
           knob("rev_predelay", "Reverb Pre-Delay", 0.1, fmt="PREDELAY"), knob("rev_width", "Reverb Width", 1.0),
-          option("theme", "Theme", ["Midnight", "Platinum", "Studio Grey"], "Midnight", preset=False),
+          option("theme", "Theme", THEMES, THEMES[0], preset=False),
+          momentary("theme_prev", "Previous Theme"), momentary("theme_next", "Next Theme"),
           option("anim", "Animation", ["Off", "Low", "Smooth"], "Smooth", preset=False),
           option("mod_wheel", "Mod Wheel", ["Vibrato", "Filter", "Off"], "Vibrato", preset=False),
           option("vel_curve", "Velocity Curve", ["Soft", "Normal", "Hard"], "Normal", preset=False)]
     # the data wheel / Q-Link browser: rests at 500; a move up or down steps one preset in the category
     P += [knob("browse", "Browse", 500, 0, 1000, fmt="BROWSE", integer=True, preset=False)]
-    P += [option("look", "Look", ["Midnight", "Midnight List", "Platinum", "Platinum List", "Studio", "Studio List"],
-                 "Midnight", preset=False, fmt="LOOK"),
-          display("category", "Category", len(CATEGORIES) - 1), display("wave", "Waveform", 32), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
+    P += [option("look", "Look", ["%s %s" % (t, v) for t in THEMES for v in VIEWS], "%s %s" % (THEMES[0], VIEWS[0]),
+                 preset=False, fmt="LOOK"),
+          display("wave", "Waveform", WAVE_FRAMES - 1), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
           display("cpu", "CPU", 10)]
     P += [display("act_" + l, "Layer %s Active" % l.upper(), 1) for l in LAYERS]
     P += [display(k, n, 1, "string") for k, n in (
@@ -95,6 +99,7 @@ def spec():
         ("lcd_line", "LCD Line"))]
     P += [display("lcat_" + l, "Layer %s Category" % l.upper(), 1, "string") for l in LAYERS]
     P += [display("lname_" + l, "Layer %s Name" % l.upper(), 1, "string") for l in LAYERS]
+    P += [display("bank_%d" % (i + 1), "Bank %d" % (i + 1), 1, "string") for i in range(len(CATEGORIES))]
     P += [display("row_%d" % (i + 1), "List Row %d" % (i + 1), 1, "string") for i in range(LIST_ROWS)]
     P += [display("fav_%d" % i, "Favourites %d" % (i + 1), 8191) for i in range(10)]
     return P
@@ -161,6 +166,7 @@ def to_header(P):
     L.append("typedef struct { int kind, fmt; float lo, hi, def; int whole, in_preset; } pinfo_t;")
     L.append("static const pinfo_t PINFO[NP] = {\n" + "\n".join(rows) + "\n};")
     L.append("#define LIST_ROWS %d" % LIST_ROWS)
+    L.append("#define NTHEME %d" % len(THEMES))
     L.append("#define NDELAY_TIMES %d" % len(DELAY_TIMES))
     L.append("static const float DELAY_BEATS[NDELAY_TIMES] = { 0.25f, 1.0f / 3, 0.5f, 0.75f, 2.0f / 3, 1.0f, 1.5f, 2.0f };")
     return "\n".join(L) + "\n"

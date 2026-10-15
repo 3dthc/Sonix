@@ -2,23 +2,11 @@
 enum {
     P_VOLUME,
     P_PRESET,
-    P_CAT_PIANO,
-    P_CAT_KEYS,
-    P_CAT_GUITAR,
-    P_CAT_STRINGS,
-    P_CAT_BRASS,
-    P_CAT_CHOIR,
-    P_CAT_PAD,
-    P_CAT_SYNTH,
-    P_CAT_LEAD,
-    P_CAT_PLUCK,
-    P_CAT_BASS,
-    P_CAT_BELLS,
     P_PREV,
     P_NEXT,
     P_FAV,
     P_FAV_ONLY,
-    P_BROWSER,
+    P_VIEW,
     P_CUTOFF,
     P_RESONANCE,
     P_ENV_AMT,
@@ -87,12 +75,13 @@ enum {
     P_REV_PREDELAY,
     P_REV_WIDTH,
     P_THEME,
+    P_THEME_PREV,
+    P_THEME_NEXT,
     P_ANIM,
     P_MOD_WHEEL,
     P_VEL_CURVE,
     P_BROWSE,
     P_LOOK,
-    P_CATEGORY,
     P_WAVE,
     P_MIDI_LED,
     P_LFO_LED,
@@ -117,6 +106,18 @@ enum {
     P_LNAME_B,
     P_LNAME_C,
     P_LNAME_D,
+    P_BANK_1,
+    P_BANK_2,
+    P_BANK_3,
+    P_BANK_4,
+    P_BANK_5,
+    P_BANK_6,
+    P_BANK_7,
+    P_BANK_8,
+    P_BANK_9,
+    P_BANK_10,
+    P_BANK_11,
+    P_BANK_12,
     P_ROW_1,
     P_ROW_2,
     P_ROW_3,
@@ -144,23 +145,11 @@ enum {
 static const char *const PKEY[NP] = {
     "volume",
     "preset",
-    "cat_piano",
-    "cat_keys",
-    "cat_guitar",
-    "cat_strings",
-    "cat_brass",
-    "cat_choir",
-    "cat_pad",
-    "cat_synth",
-    "cat_lead",
-    "cat_pluck",
-    "cat_bass",
-    "cat_bells",
     "prev",
     "next",
     "fav",
     "fav_only",
-    "browser",
+    "view",
     "cutoff",
     "resonance",
     "env_amt",
@@ -229,12 +218,13 @@ static const char *const PKEY[NP] = {
     "rev_predelay",
     "rev_width",
     "theme",
+    "theme_prev",
+    "theme_next",
     "anim",
     "mod_wheel",
     "vel_curve",
     "browse",
     "look",
-    "category",
     "wave",
     "midi_led",
     "lfo_led",
@@ -259,6 +249,18 @@ static const char *const PKEY[NP] = {
     "lname_b",
     "lname_c",
     "lname_d",
+    "bank_1",
+    "bank_2",
+    "bank_3",
+    "bank_4",
+    "bank_5",
+    "bank_6",
+    "bank_7",
+    "bank_8",
+    "bank_9",
+    "bank_10",
+    "bank_11",
+    "bank_12",
     "row_1",
     "row_2",
     "row_3",
@@ -285,23 +287,11 @@ static const char *const PKEY[NP] = {
 static const char *const PNAME[NP] = {
     "VOLUME",
     "PRESET",
-    "CATEGORY PIANO",
-    "CATEGORY KEYS",
-    "CATEGORY GUITAR",
-    "CATEGORY STRINGS",
-    "CATEGORY BRASS",
-    "CATEGORY CHOIR",
-    "CATEGORY PAD",
-    "CATEGORY SYNTH",
-    "CATEGORY LEAD",
-    "CATEGORY PLUCK",
-    "CATEGORY BASS",
-    "CATEGORY BELLS",
     "PREVIOUS PRESET",
     "NEXT PRESET",
     "FAVOURITE",
     "FAVOURITES ONLY",
-    "PRESET LIST",
+    "LCD VIEW",
     "CUTOFF",
     "RESONANCE",
     "ENV AMOUNT",
@@ -370,12 +360,13 @@ static const char *const PNAME[NP] = {
     "REVERB PRE-DELAY",
     "REVERB WIDTH",
     "THEME",
+    "PREVIOUS THEME",
+    "NEXT THEME",
     "ANIMATION",
     "MOD WHEEL",
     "VELOCITY CURVE",
     "BROWSE",
     "LOOK",
-    "CATEGORY",
     "WAVEFORM",
     "MIDI LED",
     "LFO LED",
@@ -400,6 +391,18 @@ static const char *const PNAME[NP] = {
     "LAYER B NAME",
     "LAYER C NAME",
     "LAYER D NAME",
+    "BANK 1",
+    "BANK 2",
+    "BANK 3",
+    "BANK 4",
+    "BANK 5",
+    "BANK 6",
+    "BANK 7",
+    "BANK 8",
+    "BANK 9",
+    "BANK 10",
+    "BANK 11",
+    "BANK 12",
     "LIST ROW 1",
     "LIST ROW 2",
     "LIST ROW 3",
@@ -429,23 +432,11 @@ typedef struct { int kind, fmt; float lo, hi, def; int whole, in_preset; } pinfo
 static const pinfo_t PINFO[NP] = {
     { K_KNOB, F_VOL, 0.0f, 1.0f, 0.8f, 0, 0 },  /* volume */
     { K_OPTION, F_OPT, 0.0f, 127.0f, 0.0f, 1, 0 },  /* preset */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_piano */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_keys */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_guitar */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_strings */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_brass */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_choir */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_pad */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_synth */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_lead */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_pluck */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_bass */
-    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* cat_bells */
     { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* prev */
     { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* next */
     { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* fav */
     { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* fav_only */
-    { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* browser */
+    { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* view */
     { K_KNOB, F_CUTOFF, 0.0f, 1.0f, 1.0f, 0, 1 },  /* cutoff */
     { K_KNOB, F_PCT, 0.0f, 1.0f, 0.0f, 0, 1 },  /* resonance */
     { K_KNOB, F_BIPOLAR, 0.0f, 1.0f, 0.5f, 0, 1 },  /* env_amt */
@@ -513,14 +504,15 @@ static const pinfo_t PINFO[NP] = {
     { K_KNOB, F_PCT, 0.0f, 1.0f, 0.4f, 0, 1 },  /* rev_damp */
     { K_KNOB, F_PREDELAY, 0.0f, 1.0f, 0.1f, 0, 1 },  /* rev_predelay */
     { K_KNOB, F_PCT, 0.0f, 1.0f, 1.0f, 0, 1 },  /* rev_width */
-    { K_OPTION, F_OPT, 0.0f, 2.0f, 0.0f, 1, 0 },  /* theme */
+    { K_OPTION, F_OPT, 0.0f, 10.0f, 0.0f, 1, 0 },  /* theme */
+    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* theme_prev */
+    { K_MOMENTARY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* theme_next */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 2.0f, 1, 0 },  /* anim */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 0.0f, 1, 0 },  /* mod_wheel */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 1.0f, 1, 0 },  /* vel_curve */
     { K_KNOB, F_BROWSE, 0.0f, 1000.0f, 500.0f, 1, 0 },  /* browse */
-    { K_OPTION, F_LOOK, 0.0f, 5.0f, 0.0f, 1, 0 },  /* look */
-    { K_DISPLAY, F_NONE, 0.0f, 11.0f, 0.0f, 0, 0 },  /* category */
-    { K_DISPLAY, F_NONE, 0.0f, 32.0f, 0.0f, 0, 0 },  /* wave */
+    { K_OPTION, F_LOOK, 0.0f, 21.0f, 0.0f, 1, 0 },  /* look */
+    { K_DISPLAY, F_NONE, 0.0f, 16.0f, 0.0f, 0, 0 },  /* wave */
     { K_DISPLAY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* midi_led */
     { K_DISPLAY, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lfo_led */
     { K_DISPLAY, F_NONE, 0.0f, 10.0f, 0.0f, 0, 0 },  /* cpu */
@@ -544,6 +536,18 @@ static const pinfo_t PINFO[NP] = {
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_b */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_c */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_d */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_1 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_2 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_3 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_4 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_5 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_6 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_7 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_8 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_9 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_10 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_11 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_12 */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_1 */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_2 */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* row_3 */
@@ -568,5 +572,6 @@ static const pinfo_t PINFO[NP] = {
     { K_DISPLAY, F_NONE, 0.0f, 8191.0f, 0.0f, 0, 0 },  /* fav_9 */
 };
 #define LIST_ROWS 12
+#define NTHEME 11
 #define NDELAY_TIMES 8
 static const float DELAY_BEATS[NDELAY_TIMES] = { 0.25f, 1.0f / 3, 0.5f, 0.75f, 2.0f / 3, 1.0f, 1.5f, 2.0f };
