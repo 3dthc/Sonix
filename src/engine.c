@@ -297,6 +297,7 @@ typedef struct { uint8_t st, d1, d2; } ev_t;
 typedef struct {
     float p[NP];
     double mom_t[NP];
+    float wlast[NP];                 /* tap pads: the last value the host sent (the data wheel nudges from it) */
     voice_t v[MAX_V];
     ev_t ev[MAX_EV]; int nev;
     int pedal;
@@ -317,7 +318,7 @@ typedef struct {
     double midi_t, wave_t, cpu_t, quiet_t;
     double cpu_acc; int cpu_n;
     float level;                     /* output level the waveform follows */
-    int view_cat;                    /* the category the LCD's preset list shows */
+    int view_cat;                    /* the bank the LCD's patch list shows (FAVS: the favourites) */
     int wave_ph;
     int layer_busy[NLAYER];
 } inst_t;
@@ -353,10 +354,6 @@ static void fav_set(inst_t *s, int pr, int on) {
     w = on ? w | (1 << (pr % 13)) : w & ~(1 << (pr % 13));
     s->p[P_FAV_0 + pr / 13] = (float)w;
 }
-static int any_fav(const inst_t *s, int cat) {
-    for (int i = 0; i < NPRESET; i++) if (fav_get(s, i) && (cat < 0 || PRESET_CAT[i] == cat)) return 1;
-    return 0;
-}
 
 /* the MAIN page's look: theme x LCD view (BROWSE | LAYERS), one option so a picture of both needs one when= */
 static int browsing(const inst_t *s) { return s->p[P_VIEW] < 0.5f; }
@@ -364,11 +361,25 @@ static void sync_view(inst_t *s) {
     int look = ival(s, P_THEME, 0, NTHEME - 1) * 2 + !browsing(s);
     if (look != (int)s->p[P_LOOK]) { s->p[P_LOOK] = (float)look; s->rev++; }
 }
-/* the n-th (0-based) preset of the listed category, or -1 */
-static int list_preset(const inst_t *s, int n) {
-    for (int i = 0, k = 0; i < NPRESET; i++)
-        if (PRESET_CAT[i] == s->view_cat && k++ == n) return i;
-    return -1;
+#define FAVS NCAT                    /* view_cat for the favourites list */
+/* the presets the LCD's patch list holds, in order: the bank's, or every favourite */
+static int list_members(const inst_t *s, int *out) {
+    int n = 0;
+    for (int i = 0; i < NPRESET; i++)
+        if (s->view_cat == FAVS ? fav_get(s, i) : PRESET_CAT[i] == s->view_cat) out[n++] = i;
+    return n;
+}
+/* the list's page: the one holding the current preset (a bank always fits one page; favourites may not) */
+static int list_page(const inst_t *s, const int *m, int n) {
+    int cur = cur_preset(s);
+    for (int k = 0; k < n; k++) if (m[k] == cur) return k / LIST_ROWS;
+    return 0;
+}
+static int list_pages(int n) { return n > 0 ? (n + LIST_ROWS - 1) / LIST_ROWS : 1; }
+/* the preset on row r (0-based) of the page shown, or -1 */
+static int list_preset(const inst_t *s, int r) {
+    int m[NPRESET], n = list_members(s, m), k = list_page(s, m, n) * LIST_ROWS + r;
+    return r >= 0 && r < LIST_ROWS && k < n ? m[k] : -1;
 }
 
 static void apply_preset(inst_t *s, int pr) {
@@ -378,7 +389,7 @@ static void apply_preset(inst_t *s, int pr) {
     for (int l = 0; l < NLAYER; l++) s->p[LP(P_SOLO_A, l)] = 0;
     s->p[P_PRESET] = (float)pr;
     s->p[P_FAV] = (float)fav_get(s, pr);
-    s->view_cat = PRESET_CAT[pr];                 /* an open list follows the preset into its category */
+    if (s->view_cat != FAVS) s->view_cat = PRESET_CAT[pr];   /* the list follows the preset into its bank */
     s->touch_shown = 0;
     want_banks(s);
     sync_view(s);
@@ -392,15 +403,11 @@ static int edited(const inst_t *s) {
     }
     return 0;
 }
-/* prev / next, the data wheel and Q-Link 16: the next preset in the bank (the one picked on the LCD while browsing),
- * wrapping inside it; with FAV LIST on (and favourites in it) only the favourites */
+/* prev / next, the data wheel and Q-Link 16: the next preset in the listed bank (or the favourites), wrapping inside it */
 static void step_preset(inst_t *s, int dir) {
     int cur = cur_preset(s);
-    int cat = browsing(s) ? s->view_cat : PRESET_CAT[cur];
-    int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, cat);
-    int list[NPRESET], n = 0, at = -1;
-    for (int i = 0; i < NPRESET; i++)
-        if (PRESET_CAT[i] == cat && (!only || fav_get(s, i))) { if (i == cur) at = n; list[n++] = i; }
+    int list[NPRESET], n = list_members(s, list), at = -1;
+    for (int k = 0; k < n; k++) if (list[k] == cur) at = k;
     if (!n) return;
     int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
     if (list[k] != cur) apply_preset(s, list[k]);
@@ -410,6 +417,14 @@ static void step_option(inst_t *s, int i, int dir) {
     int n = (int)PINFO[i].hi + 1, v = ival(s, i, 0, n - 1);
     s->p[i] = (float)(((v + dir) % n + n) % n);
 }
+static void set_view(inst_t *s, int v) {
+    if ((int)s->p[P_VIEW] != v) { s->p[P_VIEW] = (float)v; sync_view(s); s->rev++; }
+}
+static void sync_favs(inst_t *s) {
+    float f = (float)fav_get(s, cur_preset(s)), l = (float)(s->view_cat == FAVS);
+    if (f != s->p[P_FAV] || l != s->p[P_FAVS]) { s->p[P_FAV] = f; s->p[P_FAVS] = l; s->rev++; }
+}
+static int is_tap(int i) { return PINFO[i].fmt == F_TAP; }
 /* a tap on MPC's touch screen: buttons there act like toggles (each tap alternates 1 / 0, and a hold may send
  * nothing more), so every set is a tap; a second set within 150 ms is the same tap (MPC's echo of it) */
 static int tapped(inst_t *s, int i) {
@@ -620,7 +635,7 @@ static void *eng_create(const char *data_dir) {
     for (int i = 0; i < NP; i++) s->p[i] = PINFO[i].def;
     s->vol_smooth = -1;
     s->touch = -1;
-    for (int i = 0; i < NP; i++) s->mom_t[i] = -1;
+    for (int i = 0; i < NP; i++) { s->mom_t[i] = -1; s->wlast[i] = 0.5f; }
     s->cho = calloc(2 * 2048, sizeof(float));
     s->dly = calloc(2 * DLY_LEN, sizeof(float));
     s->pre = calloc(PRE_LEN, sizeof(float));
@@ -651,8 +666,52 @@ static void eng_midi(void *inst, const uint8_t *msg, int len) {
 
 static int is_computed(int i) {      /* the engine's own displays: never set from outside */
     if (PINFO[i].kind == K_TEXT) return 1;
-    return i == P_LOOK || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
+    return i == P_LOOK || i == P_VIEW || i == P_FAV || i == P_FAVS || i == P_WAVE || i == P_MIDI_LED || i == P_LFO_LED || i == P_CPU ||
            (i >= P_ACT_A && i <= P_ACT_D);
+}
+
+/* what a tap on a pad does */
+static void pad_tapped(inst_t *s, int i) {
+    if (i == P_PREV || i == P_NEXT) step_preset(s, i == P_NEXT ? 1 : -1);
+    else if (i == P_GO_BROWSE || i == P_GO_LAYERS) set_view(s, i == P_GO_LAYERS);
+    else if (i == P_FAV_TAP) fav_set(s, cur_preset(s), !fav_get(s, cur_preset(s)));
+    else if (i == P_FAVS_TAP) {                      /* the favourites list, or back to the preset's bank */
+        s->view_cat = s->view_cat == FAVS ? PRESET_CAT[cur_preset(s)] : FAVS;
+        set_view(s, 0);
+    } else if (i >= P_BPICK_1 && i < P_BPICK_1 + NCAT) { s->view_cat = i - P_BPICK_1; set_view(s, 0); }
+    else if (i >= P_PICK_1 && i < P_PICK_1 + LIST_ROWS) {
+        int pr = list_preset(s, i - P_PICK_1);
+        if (pr >= 0 && pr != cur_preset(s)) apply_preset(s, pr);
+    } else if (i >= P_CELL_A && i <= P_CELL_D) {
+        int l = i - P_CELL_A;
+        s->p[LP(P_LAYER_A, l)] = layer_on(s, l) ? 0.0f : 1.0f;
+        want_banks(s);
+    }
+    sync_favs(s);
+    s->rev++;
+}
+/* the data wheel turned while a pad was the last thing touched: a bank pad steps banks, every other pad presets */
+static void pad_wheel(inst_t *s, int i, int dir) {
+    if (i >= P_BPICK_1 && i < P_BPICK_1 + NCAT) {
+        int c = s->view_cat == FAVS ? (dir > 0 ? 0 : NCAT - 1) : ((s->view_cat + dir) % NCAT + NCAT) % NCAT;
+        s->view_cat = c;
+    } else step_preset(s, dir);
+    sync_favs(s);
+    s->rev++;
+}
+/* A pad's value rests at 0.5. A tap sends exactly 0 or 1 (MPC flips the button it shows); the data wheel sends small
+ * moves from the value it last had (up: next). Near either end the pad recentres, so a wheel move never lands on 0 or 1. */
+static void tap_pad(inst_t *s, int i, float x) {
+    if (x <= 0.0f || x >= 1.0f) {
+        s->p[i] = 0.5f; s->wlast[i] = 0.5f;
+        if (tapped(s, i)) pad_tapped(s, i);
+        return;
+    }
+    float d = x - s->wlast[i];
+    s->wlast[i] = x; s->p[i] = x;
+    if (x < 0.2f || x > 0.8f) { s->p[i] = 0.5f; s->wlast[i] = 0.5f; s->rev++; }
+    if (fabsf(d) < 1e-5f || fabsf(d) > 0.2f) return;   /* no move, or a jump (a project reload, automation) */
+    pad_wheel(s, i, d > 0 ? 1 : -1);
 }
 
 static void eng_set_param(void *inst, const char *key, const char *val) {
@@ -661,22 +720,12 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     int i = find_key(key);
     float x = (float)atof(val);
     if (x != x) return;
-    if (i >= P_ROW_1 && i < P_ROW_1 + LIST_ROWS) {    /* a patch row tapped: load its preset */
-        int pr = list_preset(s, i - P_ROW_1);
-        if (tapped(s, i) && pr >= 0 && pr != cur_preset(s)) apply_preset(s, pr);
-        return;
-    }
-    if (i >= P_BANK_1 && i < P_BANK_1 + NCAT) {       /* a bank row tapped: list its patches (the sound stays) */
-        if (tapped(s, i) && s->view_cat != i - P_BANK_1) { s->view_cat = i - P_BANK_1; s->rev++; }
-        return;
-    }
     if (i < 0 || is_computed(i)) return;
+    if (is_tap(i)) { tap_pad(s, i, x); return; }
     if (PINFO[i].kind == K_MOMENTARY) {
         s->p[i] = x;
         if (!tapped(s, i)) return;
-        if (i == P_PREV) step_preset(s, -1);
-        else if (i == P_NEXT) step_preset(s, 1);
-        else if (i == P_THEME_PREV || i == P_THEME_NEXT) { step_option(s, P_THEME, i == P_THEME_NEXT ? 1 : -1); sync_view(s); s->rev++; }
+        if (i == P_THEME_PREV || i == P_THEME_NEXT) { step_option(s, P_THEME, i == P_THEME_NEXT ? 1 : -1); sync_view(s); s->rev++; }
         else for (int l = 0; l < NLAYER; l++)
             if (i == LP(P_INST_A_PREV, l) || i == LP(P_INST_A_NEXT, l)) {
                 step_option(s, LP(P_INST_A, l), i == LP(P_INST_A_NEXT, l) ? 1 : -1);
@@ -693,12 +742,11 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
         s->p[P_BROWSE] = 500; s->rev++;
         return;
     }
-    if (i == P_FAV) { fav_set(s, cur_preset(s), x > 0.5f); s->p[P_FAV] = x > 0.5f; s->rev++; return; }
     s->p[i] = x;
-    if (i == P_VIEW || i == P_THEME) { if (i == P_VIEW) s->view_cat = PRESET_CAT[cur_preset(s)]; sync_view(s); s->rev++; return; }
-    if (i >= P_FAV_0 && i <= P_FAV_9) { s->p[P_FAV] = (float)fav_get(s, cur_preset(s)); s->rev++; return; }
+    if (i == P_VIEW || i == P_THEME) { sync_view(s); s->rev++; return; }
+    if (i >= P_FAV_0 && i <= P_FAV_9) { sync_favs(s); s->rev++; return; }
     if (i >= P_LAYER_A && i <= P_SOLO_D) want_banks(s);
-    if (PINFO[i].kind == K_KNOB && i != P_VOLUME && i != P_BROWSE) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
+    if (PINFO[i].kind == K_KNOB && i != P_VOLUME && i != P_BROWSE && !is_tap(i)) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
     s->rev++;
 }
 
@@ -777,6 +825,11 @@ static int lcd_text(inst_t *s, int i, char *buf, int n) {
     }
     switch (i) {
     case P_LCD_TOP:
+        if (s->view_cat == FAVS && browsing(s)) {          /* the favourites list: which page of it */
+            int m[NPRESET], k = list_members(s, m);
+            return snprintf(buf, n, "FAVORITES" DOT "PAGE %d / %d%s", list_page(s, m, k) + 1, list_pages(k),
+                            edited(s) ? DOT "EDITED" : "");
+        }
         return snprintf(buf, n, "%s" DOT "%03d / %d%s%s", CAT_NAME[PRESET_CAT[pr]], pr + 1, NPRESET,
                         fav_get(s, pr) ? DOT "\xe2\x98\x85" : "", edited(s) ? DOT "EDITED" : "");
     case P_LCD_REF: {
@@ -815,13 +868,18 @@ static int eng_get_param(void *inst, const char *key, char *buf, int n) {
         if (strstr(key, "_on")) return snprintf(buf, n, "%d", r == s->view_cat);
         return snprintf(buf, n, "%s", CAT_NAME[r]);
     }
-    if (!strncmp(key, "row_", 4)) {                   /* the preset list: "003  VELVET GRAND *", lit = the current one */
+    if (!strncmp(key, "row_", 4)) {                   /* the patch list: "VELVET GRAND *", lit = the current one */
         int r = atoi(key + 4) - 1, pr = r >= 0 && r < LIST_ROWS ? list_preset(s, r) : -1;
         if (strstr(key, "_on")) return snprintf(buf, n, "%d", pr >= 0 && pr == cur_preset(s));
-        if (pr < 0) return snprintf(buf, n, " ");
+        if (pr < 0) {
+            int m[NPRESET];
+            if (s->view_cat == FAVS && !list_members(s, m) && r < 2)
+                return snprintf(buf, n, r ? "TAP  \xe2\x98\x85 FAV  TO ADD ONE" : "NO FAVORITES YET");
+            return snprintf(buf, n, " ");
+        }
         char name[64];
         upcase(name, PRESET_NAME[pr], sizeof name);
-        return snprintf(buf, n, "%d  %s%s", pr + 1, name, fav_get(s, pr) ? "  \xe2\x98\x85" : "");
+        return snprintf(buf, n, "%s%s", name, fav_get(s, pr) && s->view_cat != FAVS ? "  \xe2\x98\x85" : "");
     }
     int i = find_key(key);
     if (i >= 0 && PINFO[i].kind == K_TEXT) return lcd_text(s, i, buf, n);

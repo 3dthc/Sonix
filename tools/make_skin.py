@@ -36,7 +36,7 @@ ART = os.path.join(VST, "art")
 FONTS = os.path.join(VST, "fonts")
 MPC_FONTS = os.path.join(os.environ.get("MPC_VST", os.path.join(HERE, "..", "..", "mpc-vst-plugins")), "tools", "html_art", "fonts")
 Y_OFF = 86
-VERSION = "0.3.3"
+VERSION = "0.3.4"
 
 THEMES = ["midnight", "platinum", "studio", "purple", "yellow", "gold", "green", "camo", "red", "silver", "ice"]   # = "theme" options
 THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY", "PURPLE", "YELLOW", "GOLD", "GREEN", "CAMO", "METALLIC RED", "SILVER", "ICE BLUE"]
@@ -111,8 +111,11 @@ LCD_LINE = (SX + 18, AREA_Y + 280, SW - 36, 40)
 TAB_Y = SY + 500                                             # the tab strip: BROWSE | LAYERS, then FAV and LIST
 VIEWS = ["BROWSE", "LAYERS"]
 TAB_X = SX + 8
-LCD_TOGGLES = [("fav", "★  FAV"), ("fav_only", "★  LIST")]
-TOGGLE_X = SX + SW - 8 - 2 * BTN_W - BTN_GAP
+LCD_TOGGLES = [("fav", "★  FAV", BTN_W, "fav_tap"), ("favs", "★  FAVORITES", 156, "favs_tap")]   # (lit key, label, w, pad)
+TOGGLE_X = SX + SW - 8 - sum(w for _, _, w, _ in LCD_TOGGLES) - BTN_GAP * (len(LCD_TOGGLES) - 1)
+# Every touch target on the LCD is a "pad": a transparent button on a parameter of its own that rests at 0.5. MPC hands
+# the data wheel to whatever was touched last; on a pad the engine turns the wheel into browsing (a bank pad: banks,
+# every other pad: presets), so touching a tab or FAV never leaves the wheel flipping it.
 LFO_LED = (RX + SIDE_W - 26, SIDE_Y + 15)                    # an LED by the LFO panel's title, lit while the LFO runs
 
 
@@ -261,13 +264,22 @@ def page_main():
         it.append(dict(t="cell", x=x, y=y, w=CELL_W, h=CELL_H, letter=l.upper(), view=1))
         it.append(dict(t="readout", key="lcd_" + l, box=(x + 40, y, CELL_W - 48, CELL_H), size=LCD_PX["cell"],
                        ink="ink", align="left", weight="semibold", view=1))
-        it.append(dict(t="celltoggle", key="layer_" + l, x=x, y=y, w=CELL_W, h=CELL_H, view=1))   # tap: layer on / off
+        it.append(dict(t="pad", key="cell_" + l, box=(x, y, CELL_W, CELL_H), view=1))   # tap: layer on / off
     it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="semibold", view=1),
            dict(t="rule", x=SX + 18, y=TAB_Y - 6, w=SW - 36),
            dict(t="lcdtabs", key="view", x=TAB_X, y=TAB_Y),
            dict(t="led", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1])]
-    for i, (key, label) in enumerate(LCD_TOGGLES):
-        it.append(dict(t="lcdtoggle", key=key, label=label, x=TOGGLE_X + i * (BTN_W + BTN_GAP), y=TAB_Y))
+    x = TOGGLE_X
+    for key, label, w, pad in LCD_TOGGLES:
+        it.append(dict(t="lcdtoggle", key=key, label=label, x=x, y=TAB_Y, w=w))
+        it.append(dict(t="pad", key=pad, box=(x, TAB_Y, w, LCD_BH)))
+        x += w + BTN_GAP
+    for i, key in enumerate(("go_browse", "go_layers")):
+        it.append(dict(t="pad", key=key, box=(TAB_X + i * (BTN_W + BTN_GAP), TAB_Y, BTN_W, LCD_BH)))
+    it += [dict(t="pad", key="prev", box=LCD_PREV), dict(t="pad", key="next", box=LCD_NEXT)]
+    for key, box, n, th in (("bpick", BANK_BOX, BANK_N, BANK_TH), ("pick", PATCH_BOX, PATCH_N, PATCH_TH)):
+        for r in range(n):
+            it.append(dict(t="pad", key="%s_%d" % (key, r + 1), box=(box[0], box[1] + r * (th + LIST_GAP), box[2], th), view=0))
     return it
 
 
@@ -334,12 +346,12 @@ MOCK = {
                    row=dict(rows=["STRING ENSEMBLE", "SLOW STRINGS", "SOLO VIOLIN", "PIZZICATO  ★",
                                   "TREMOLO STRINGS", "SPICCATO", "SYNTH STRINGS", "STRINGS & BRASS",
                                   "EPIC OCTAVES", "PIZZ & SPIC", "MACHINE STRINGS"], lit=1)),
-        on=dict(fav=0, fav_only=0, lfo_led=1), view=0),
+        on=dict(fav=0, favs=0, lfo_led=1), view=0),
     "MAIN_LAYERS": dict(
         text=dict(lcd_top="PIANO  ·  002 / 128  ·  ★", lcd_ref="A4  440 HZ", preset="Velvet Grand",
                   lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENSEMBLE", lcd_d="—",
                   lcd_line="Soft grand over a slow pad and wide strings"),
-        on=dict(fav=1, fav_only=0, lfo_led=1), view=1, wave=(2, 1)),
+        on=dict(fav=1, favs=0, lfo_led=1), view=1, wave=(2, 1)),
     "LAYERS": dict(
         knobs=dict(level_a=(0.86, "-1.3 DB"), pan_a=(0.5, "C"), octave_a=(0.5, "0"), fine_a=(0.5, "0 CT"),
                    level_b=(0.62, "-6.9 DB"), pan_b=(0.38, "L 24"), octave_b=(0.5, "0"), fine_b=(0.54, "+8 CT"),
@@ -759,7 +771,7 @@ function mockup(th, items, m) {
       } else if (it.t === 'lcdtabs') {
         C.VIEWS.forEach((l, i) => lcdBtn(t, it.x + i * (C.BTN_W + C.BTN_GAP), it.y, C.BTN_W, C.LCD_BH, l, i === (m.view || 0)));
       } else if (it.t === 'lcdtoggle') {
-        lcdBtn(t, it.x, it.y, C.BTN_W, C.LCD_BH, it.label, (m.on || {})[it.key]);
+        lcdBtn(t, it.x, it.y, it.w, C.LCD_BH, it.label, (m.on || {})[it.key]);
       } else if (it.t === 'led') {
         const on = (m.on || {})[it.key];
         ctx.save(); ctx.beginPath(); ctx.arc(it.cx, it.cy, 7, 0, 2 * Math.PI); ctx.fillStyle = on ? t.led : t.ledOff;
@@ -888,17 +900,20 @@ def export_art():
                 out.paste(glass, (f * tw, 0))
             out.alpha_composite(strip)
             out.save(os.path.join(d, "tabs.png"))
-            for i, (key, label) in enumerate(LCD_TOGGLES):
-                box = (TOGGLE_X + i * (BTN_W + BTN_GAP), TAB_Y, BTN_W, LCD_BH)
+            for it in main:                          # FAV, FAVORITES: off / lit, a 2-frame strip on the glass
+                if it["t"] != "lcdtoggle":
+                    continue
+                g = bg.crop((it["x"], it["y"], it["x"] + it["w"], it["y"] + LCD_BH))
+                st = Image.new("RGBA", (2 * it["w"], LCD_BH))
                 for on in (0, 1):
-                    on_glass(bg, box, ev("lcdToggle", th, BTN_W, LCD_BH, label, on),
-                             os.path.join(d, "%s_%s.png" % (key, "on" if on else "off")))
+                    f = g.copy()
+                    f.alpha_composite(png(ev("lcdToggle", th, it["w"], LCD_BH, it["label"], on)))
+                    st.paste(f, (on * it["w"], 0))
+                st.save(os.path.join(d, "%s.png" % it["key"]))
             save(ev("knobStrip", th, 128, KNOB_R), os.path.join(d, "knob.png"))
             for key, label in [("lay_on", "ON"), ("solo", "SOLO"), ("lprev", "◀  PREV"), ("lnext", "NEXT  ▶")]:
                 for on in (0, 1):
                     save(ev("button", th, BTN_W, BTN_H, on, label), os.path.join(d, "%s_%s.png" % (key, "on" if on else "off")))
-            save(ev("arrowLit", th, BTN_W, LCD_BH, -1), os.path.join(d, "arrow_prev.png"))
-            save(ev("arrowLit", th, BTN_W, LCD_BH, 1), os.path.join(d, "arrow_next.png"))
             for key, _, _, opts in SYSTEM_ROWS:
                 save(ev("gridStrip", th, opts, 3, BTN_W, BTN_H, BTN_GAP, 0), os.path.join(d, "sys_%s.png" % key))
             save(ev("waveStrip", th, LCD_WAVE[2], LCD_WAVE[3], 0), os.path.join(d, "wave_l.png"))
@@ -906,11 +921,10 @@ def export_art():
             save(ev("ledStrip", th, 22, False), os.path.join(d, "led.png"))
             save(ev("ledStrip", th, 18, True), os.path.join(d, "lcdled.png"))
             save(ev("cpuStrip", th, CPU_BAR[2], CPU_BAR[3]), os.path.join(d, "cpu.png"))
-        save(ev("blank", BTN_W, LCD_BH), os.path.join(ART, "clear_btn.png"))
-        save(ev("blank", BTN_W + BTN_GAP, LCD_BH), os.path.join(ART, "clear_lseg.png"))
+        for w_, h_ in sorted({tuple(it["box"][2:]) for it in main if it["t"] == "pad"}):
+            save(ev("blank", w_, h_), os.path.join(ART, "pad_%dx%d.png" % (w_, h_)))
         save(ev("blank", BTN_W + BTN_GAP, BTN_H + 4), os.path.join(ART, "clear_seg.png"))
         save(ev("blank", 20, 20 * 128), os.path.join(ART, "clear_knob.png"))
-        save(ev("blank", CELL_W, CELL_H), os.path.join(ART, "clear_cell.png"))
         b.close()
 
 
@@ -975,18 +989,14 @@ def write_layout():
                 readout(it, w)
             elif it["t"] == "led":
                 L.append("meter cx=%d cy=%d w=22 h=22 key=%s strip=art/%s/led.png frames=2 %s" % (it["cx"], it["cy"] + Y, it["key"], th, w[0]))
-            elif it["t"] == "lcdarrow":
-                x, y, bw, bh = it["box"]
-                L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/arrow_%s.png %s' % (
-                    x + bw // 2, y + bh // 2 + Y, bw, bh, it["key"], th, it["key"], w[0]))
             elif it["t"] == "presetname":
                 # the preset name is a knob that browses: touch it, then the data wheel (or a drag) steps presets
                 x, y, bw, bh = it["box"]
                 L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=browse ink=%s strip=art/clear_knob.png frames=128 %s' % (
                     x + bw // 2 - 12, y + bh // 2 + Y, bw, bh, it["size"], LCD_INK[th][0], w[0]))
             elif it["t"] == "lcdtoggle":
-                L.append('toggle cx=%d cy=%d w=%d h=%d label="" key=%s ns=0 bw=%d img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
-                    it["x"] + BTN_W // 2, it["y"] + LCD_BH // 2 + Y, BTN_W, LCD_BH, it["key"], BTN_W, th, it["key"], th, it["key"], w[0]))
+                L.append("meter cx=%d cy=%d w=%d h=%d key=%s strip=art/%s/%s.png frames=2 %s" % (
+                    it["x"] + it["w"] // 2, it["y"] + LCD_BH // 2 + Y, it["w"], LCD_BH, it["key"], th, it["key"], w[0]))
             elif it["t"] == "knob":
                 knob(it, w)
     for n, th in T:
@@ -997,7 +1007,7 @@ def write_layout():
                     continue
                 if it["t"] == "list":
                     x, y, bw, bh = it["box"]
-                    L.append('list x=%d y=%d w=%d h=%d key=%s cols=1 rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
+                    L.append('list x=%d y=%d w=%d h=%d key=%s cols=1 rows=%d order=cols tap=no th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
                         x, y + Y, list_w(it["box"], n), bh, it["key"], it["n"], it["th"], LIST_GAP, it["size"], LCD_INK[th][0],
                         th, it["key"], th, it["key"], w[0]))
                 elif it["t"] == "wave":
@@ -1007,12 +1017,12 @@ def write_layout():
                             wx + ww // 4 + half * ww // 2, wy + wh // 2 + Y, ww // 2, wh, th, nm, WAVE_FRAMES, w[0]))
                 elif it["t"] == "readout":
                     readout(it, w)
-    L.append('enum_h cx=%d cy=%d label="" key=view sw=%d sh=%d img=art/clear_lseg.png img_on=art/clear_lseg.png' % (
-        TAB_X + (len(VIEWS) * (BTN_W + BTN_GAP)) // 2, TAB_Y + LCD_BH // 2 + Y, BTN_W + BTN_GAP, LCD_BH))
-    for it in main:
-        if it["t"] == "celltoggle":   # tap a layer's cell: that layer on / off
-            L.append('toggle cx=%d cy=%d w=%d h=%d label="" key=%s ns=0 bw=%d img=art/clear_cell.png img_on=art/clear_cell.png when=view:1' % (
-                it["x"] + it["w"] // 2, it["y"] + it["h"] // 2 + Y, it["w"], it["h"], it["key"], it["w"]))
+    for it in main:   # the pads, on top: one set for every colorway (transparent)
+        if it["t"] == "pad":
+            x, y, bw, bh = it["box"]
+            L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/pad_%dx%d.png img_on=art/pad_%dx%d.png%s' % (
+                x + bw // 2, y + bh // 2 + Y, bw, bh, it["key"], bw, bh, bw, bh,
+                " when=view:%d" % it["view"] if "view" in it else ""))
     L.append('qlinks "MAIN" = ' + ",".join(MAIN_QLINKS))
 
     # ---- LAYERS
@@ -1072,7 +1082,7 @@ def main():
     import shutil
     for th in THEMES:                                  # start clean: the v0.2 pictures are not used any more
         shutil.rmtree(os.path.join(ART, th), ignore_errors=True)
-    for f in ("clear_btn.png", "clear_cell.png", "clear_seg.png", "clear_knob.png", "clear_row.png"):   # (clear_row: v0.3.2)
+    for f in [f for f in os.listdir(ART) if f.startswith(("clear_", "pad_"))]:   # (clear_row: v0.3.2)
         if os.path.exists(os.path.join(ART, f)):
             os.remove(os.path.join(ART, f))
     export_art()

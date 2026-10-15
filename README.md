@@ -5,13 +5,14 @@ ARM VST2 plugin on [sd88me/mpc-vst-plugins](https://github.com/sd88me/mpc-vst-pl
 pads, strings, brass, choirs, leads, plucks, bass, bells, synth chords and FX, from redistributable recordings and
 sounds rendered by this project.
 
-Status: early development (v0.3.3, device test). 128 factory presets (MPC's PRESET list) built from 45 instruments;
+Status: early development (v0.3.4, device test). 128 factory presets (MPC's PRESET list) built from 45 instruments;
 four layers with level, pan, octave, fine, on and solo; a 12 dB filter with envelope, key and velocity tracking; an LFO
 for filter, vibrato and tremolo; chorus, a tempo-synced delay and reverb; tuning (A4 reference, tune, transpose, bend
 range) and playing settings; and the Sonix faceplate in eleven colorways (Midnight, Platinum, Studio Grey, Purple, Yellow, Gold, Green,
 Camo, Metallic Red, Silver, Ice Blue) on three pages (MAIN, LAYERS, SETTINGS), each with its 16 Q-Links in four
 columns of four. MAIN's LCD has two views: BROWSE (banks on the left, that bank's patches on the right) and LAYERS
-(the waveform and the four layers).
+(the waveform and the four layers), plus a favourites list. Every LCD control hands the data wheel to
+the browser.
 
 The instruments stay compressed in RAM (about 115 MB for all of them) and every voice decodes its own sample as it
 plays, so every preset plays the moment it is picked.

@@ -18,7 +18,7 @@ from pack_sonix import ORDER, CATEGORIES  # noqa: E402
 
 INSTRUMENTS = [d for _, d, _ in ORDER]
 LAYERS = "abcd"
-LIST_ROWS = 12                     # the LCD's patch list: one column of 12 (every category fits)
+LIST_ROWS = 11                     # the LCD's patch list: one page of 11 (every bank fits on one page)
 VIEWS = ["Browse", "Layers"]       # the MAIN LCD's two views
 THEMES = ["Midnight", "Platinum", "Studio Grey", "Purple", "Yellow", "Gold", "Green", "Camo", "Metallic Red", "Silver",
           "Ice Blue"]              # = make_skin.THEMES, in order
@@ -38,6 +38,12 @@ def momentary(key, name, step_of=None, delta=0):
     return dict(key=key, name=name, kind="momentary", step_of=step_of, delta=delta)
 
 
+def tap(key, name):
+    """A tap pad on the LCD: a tap sends exactly 0 or 1 and does the pad's job; the data wheel, if the pad was the
+    last thing touched, nudges it from 0.5 and browses instead (MPC gives a touched control the wheel)."""
+    return dict(key=key, name=name, kind="knob", min=0.0, max=1.0, default=0.5, fmt="TAP", integer=False, preset=False)
+
+
 def display(key, name, hi, kind="int"):
     return dict(key=key, name=name, kind="display", max=hi, disp=kind)
 
@@ -46,9 +52,9 @@ def spec():
     from presets import PRESETS
     P = [knob("volume", "Volume", 0.8, fmt="VOL", preset=False),           # index 0: MPC toggles it on insert / STOP
          option("preset", "Preset", [p["name"] for p in PRESETS], PRESETS[0]["name"], preset=False)]
-    P += [momentary("prev", "Previous Preset"), momentary("next", "Next Preset"),
-          option("fav", "Favourite", ["Off", "On"], "Off", preset=False),
-          option("fav_only", "Favourites Only", ["Off", "On"], "Off", preset=False),
+    P += [tap("prev", "Previous Preset"), tap("next", "Next Preset"),
+          tap("go_browse", "Show Browser"), tap("go_layers", "Show Layers"),
+          tap("fav_tap", "Favourite"), tap("favs_tap", "Favourites List"),
           option("view", "LCD View", VIEWS, VIEWS[0], preset=False)]
     P += [knob("cutoff", "Cutoff", 1.0, fmt="CUTOFF"), knob("resonance", "Resonance", 0.0),
           knob("env_amt", "Env Amount", 0.5, fmt="BIPOLAR"), knob("key_track", "Key Track", 0.0),
@@ -90,7 +96,8 @@ def spec():
     P += [knob("browse", "Browse", 500, 0, 1000, fmt="BROWSE", integer=True, preset=False)]
     P += [option("look", "Look", ["%s %s" % (t, v) for t in THEMES for v in VIEWS], "%s %s" % (THEMES[0], VIEWS[0]),
                  preset=False, fmt="LOOK"),
-          display("wave", "Waveform", WAVE_FRAMES - 1), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
+          display("wave", "Waveform", WAVE_FRAMES - 1), display("fav", "Favourite Lit", 1),
+          display("favs", "Favourites Shown", 1), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
           display("cpu", "CPU", 10)]
     P += [display("act_" + l, "Layer %s Active" % l.upper(), 1) for l in LAYERS]
     P += [display(k, n, 1, "string") for k, n in (
@@ -102,6 +109,9 @@ def spec():
     P += [display("bank_%d" % (i + 1), "Bank %d" % (i + 1), 1, "string") for i in range(len(CATEGORIES))]
     P += [display("row_%d" % (i + 1), "List Row %d" % (i + 1), 1, "string") for i in range(LIST_ROWS)]
     P += [display("fav_%d" % i, "Favourites %d" % (i + 1), 8191) for i in range(10)]
+    P += [tap("bpick_%d" % (i + 1), "Bank Pad %d" % (i + 1)) for i in range(len(CATEGORIES))]
+    P += [tap("pick_%d" % (i + 1), "Patch Pad %d" % (i + 1)) for i in range(LIST_ROWS)]
+    P += [tap("cell_" + l, "Layer %s Pad" % l.upper()) for l in LAYERS]
     return P
 
 
@@ -110,7 +120,9 @@ def to_json(P):
     for p in P:
         q = {"key": p["key"], "name": p["name"]}
         if p["kind"] == "knob":
-            q.update(min=p["min"], max=p["max"], default=p["default"], dynamic_display=True)
+            q.update(min=p["min"], max=p["max"], default=p["default"])
+            if p["fmt"] != "TAP":
+                q["dynamic_display"] = True
             if p["integer"]:
                 q["display"] = "int"
         elif p["kind"] == "option":
@@ -176,6 +188,11 @@ def main():
     P = spec()
     keys = [p["key"] for p in P]
     assert len(keys) == len(set(keys))
+    from presets import PRESETS
+    per = {}
+    for pr in PRESETS:
+        per[pr["cat"]] = per.get(pr["cat"], 0) + 1
+    assert max(per.values()) <= LIST_ROWS, "a bank no longer fits one page of the LCD list"
     with open(os.path.join(REPO, "vst", "params.json"), "w") as f:
         json.dump(to_json(P), f, indent=2)
         f.write("\n")

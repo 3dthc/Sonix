@@ -148,30 +148,44 @@
     {
       "key": "prev",
       "name": "Previous Preset",
-      "momentary": true
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
     },
     {
       "key": "next",
       "name": "Next Preset",
-      "momentary": true
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
     },
     {
-      "key": "fav",
+      "key": "go_browse",
+      "name": "Show Browser",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "go_layers",
+      "name": "Show Layers",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "fav_tap",
       "name": "Favourite",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "Off"
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
     },
     {
-      "key": "fav_only",
-      "name": "Favourites Only",
-      "options": [
-        "Off",
-        "On"
-      ],
-      "default": "Off"
+      "key": "favs_tap",
+      "name": "Favourites List",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
     },
     {
       "key": "view",
@@ -1003,6 +1017,22 @@
       "display": "int"
     },
     {
+      "key": "fav",
+      "name": "Favourite Lit",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "favs",
+      "name": "Favourites Shown",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
       "key": "midi_led",
       "name": "MIDI LED",
       "min": 0,
@@ -1371,14 +1401,6 @@
       "display": "string"
     },
     {
-      "key": "row_12",
-      "name": "List Row 12",
-      "min": 0,
-      "max": 1,
-      "default": 0,
-      "display": "string"
-    },
-    {
       "key": "fav_0",
       "name": "Favourites 1",
       "min": 0,
@@ -1457,6 +1479,195 @@
       "max": 8191,
       "default": 0,
       "display": "int"
+    },
+    {
+      "key": "bpick_1",
+      "name": "Bank Pad 1",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_2",
+      "name": "Bank Pad 2",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_3",
+      "name": "Bank Pad 3",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_4",
+      "name": "Bank Pad 4",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_5",
+      "name": "Bank Pad 5",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_6",
+      "name": "Bank Pad 6",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_7",
+      "name": "Bank Pad 7",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_8",
+      "name": "Bank Pad 8",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_9",
+      "name": "Bank Pad 9",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_10",
+      "name": "Bank Pad 10",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_11",
+      "name": "Bank Pad 11",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "bpick_12",
+      "name": "Bank Pad 12",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_1",
+      "name": "Patch Pad 1",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_2",
+      "name": "Patch Pad 2",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_3",
+      "name": "Patch Pad 3",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_4",
+      "name": "Patch Pad 4",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_5",
+      "name": "Patch Pad 5",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_6",
+      "name": "Patch Pad 6",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_7",
+      "name": "Patch Pad 7",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_8",
+      "name": "Patch Pad 8",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_9",
+      "name": "Patch Pad 9",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_10",
+      "name": "Patch Pad 10",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "pick_11",
+      "name": "Patch Pad 11",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "cell_a",
+      "name": "Layer A Pad",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "cell_b",
+      "name": "Layer B Pad",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "cell_c",
+      "name": "Layer C Pad",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "cell_d",
+      "name": "Layer D Pad",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
     }
   ]
 }

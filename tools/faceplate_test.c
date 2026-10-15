@@ -18,6 +18,13 @@ static void seti(const char *k, int v) { char b[16]; snprintf(b, sizeof b, "%d",
 static double run(double sec);
 static void press(const char *k) { set(k, "1"); run(0.2); }      /* one tap on MPC's screen, then a moment */
 static float getf(const char *k) { char b[128]; E->get_param(S, k, b, sizeof b); return (float)atof(b); }
+static void wheel(const char *k, int clicks) {   /* the data wheel on the last-touched pad: 0.01 per click from its value */
+    float v = getf(k);
+    for (int c = 0; c < (clicks > 0 ? clicks : -clicks); c++) {
+        v += clicks > 0 ? 0.01f : -0.01f; char b[32]; snprintf(b, sizeof b, "%g", v); set(k, b);
+        v = getf(k) == 0.5f && (v < 0.2f || v > 0.8f) ? 0.5f : v;   /* MPC reads the recentred value back */
+    }
+}
 static const char *gets(const char *k) { static char b[4][160]; static int r; r = (r + 1) & 3; b[r][0] = 0; E->get_param(S, k, b[r], sizeof b[r]); return b[r]; }
 static void note(int on, int key, int vel) { uint8_t m[3] = { (uint8_t)(on ? 0x90 : 0x80), (uint8_t)key, (uint8_t)vel }; E->midi(S, m, 3); }
 static void cc(int n, int v) { uint8_t m[3] = { 0xB0, (uint8_t)n, (uint8_t)v }; E->midi(S, m, 3); }
@@ -93,35 +100,51 @@ int main(int argc, char **argv) {
     CHECK(!strcmp(gets("lcd_name"), "PAD LAYER GRAND"), "two clicks back, still inside PIANO (\"%s\")", gets("lcd_name"));
     char bd[64]; E->get_param(S, "browse_display", bd, sizeof bd);
     CHECK(!strcmp(bd, "Pad Layer Grand"), "the LCD's browse control shows the preset's name (\"%s\")", bd);
-    /* MPC's screen buttons act like toggles: taps send 1, 0, 1, ...; every one counts, an echo within 150 ms doesn't */
+    /* LCD pads: a tap is exactly 0 or 1 (MPC flips the button it shows); every one counts, an echo within 150 ms doesn't */
     int p0 = (int)getf("preset");
     set("next", "1"); run(0.2); set("next", "0"); run(0.2); set("next", "1"); run(0.2);
     CHECK((int)getf("preset") == (p0 + 3) % 11, "three taps on NEXT (1, 0, 1) step three presets (%d -> %g)", p0, getf("preset"));
     p0 = (int)getf("preset");
-    set("prev", "1"); set("prev", "1"); run(0.2);
+    set("prev", "0"); set("prev", "0"); run(0.2);
     CHECK((int)getf("preset") == (p0 + 10) % 11, "a tap and its echo step once (%d -> %g)", p0, getf("preset"));
+    CHECK(getf("next") == 0.5f, "a pad rests at 0.5 after a tap (%g)", getf("next"));
+    /* the data wheel after touching a pad browses, whatever the pad is */
+    p0 = (int)getf("preset");
+    wheel("go_layers", 2);
+    CHECK((int)getf("preset") == (p0 + 2) % 11 && getf("view") == 0, "wheel on the LAYERS tab: two presets on, the view stays (%d -> %g)", p0, getf("preset"));
+    wheel("go_layers", -1);
+    CHECK((int)getf("preset") == (p0 + 1) % 11, "and back one (%g)", getf("preset"));
+    wheel("fav_tap", 30);
+    CHECK(getf("fav") == 0 && (int)getf("preset") == (p0 + 31) % 11, "30 clicks on the FAV pad: no favourite set, 30 presets on, no tap from recentring (%g)", getf("preset"));
     int before = (int)getf("preset");
-    press("bank_4");
+    press("bpick_4");
     CHECK(getf("bank_4_on") == 1 && getf("bank_1_on") == 0 && (int)getf("preset") == before,
           "tapping the STRINGS bank lights it and lists its patches, the sound stays");
-    CHECK(strstr(gets("row_1"), "STRING ENSEMBLE") && strstr(gets("row_2"), "SLOW STRINGS") && !strcmp(gets("row_12"), " "),
-          "the patch rows (\"%s\", \"%s\")", gets("row_1"), gets("row_2"));
-    press("row_1");
+    CHECK(!strcmp(gets("row_1"), "STRING ENSEMBLE") && !strcmp(gets("row_2"), "SLOW STRINGS") && !strcmp(gets("row_11"), "MACHINE STRINGS"),
+          "the patch rows, names only (\"%s\", \"%s\")", gets("row_1"), gets("row_2"));
+    press("pick_1");
     CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE") && getf("row_1_on") == 1 && getf("row_2_on") == 0,
           "tapping a patch loads it and lights it (\"%s\")", gets("lcd_name"));
+    wheel("pick_1", 1);
+    CHECK(getf("row_2_on") == 1 && !strcmp(gets("lcd_name"), "SLOW STRINGS"), "the wheel after tapping a patch: the next one (\"%s\")", gets("lcd_name"));
     press("next");
-    CHECK(getf("row_2_on") == 1 && !strcmp(gets("lcd_name"), "SLOW STRINGS"), "NEXT moves the lit patch (\"%s\")", gets("lcd_name"));
-    set("row_1", "0"); run(0.2);
+    CHECK(getf("row_3_on") == 1, "NEXT moves the lit patch (\"%s\")", gets("lcd_name"));
+    set("pick_1", "0"); run(0.2);
     CHECK(!strcmp(gets("lcd_name"), "STRING ENSEMBLE"), "a tap that sends 0 counts too (\"%s\")", gets("lcd_name"));
-    press("bank_7"); set("browse", "501");
-    CHECK(PRESET_CAT[(int)getf("preset")] == 6, "the data wheel browses the picked bank (PAD: \"%s\")", gets("lcd_name"));
-    set("view", "1");
-    CHECK(getf("look") == 1, "LAYERS view (look %g)", getf("look"));
+    wheel("bpick_4", 1);
+    CHECK(getf("bank_5_on") == 1 && !strcmp(gets("lcd_name"), "STRING ENSEMBLE"), "the wheel after tapping a bank steps banks (BRASS lit), the sound stays");
+    press("bpick_7"); set("browse", "501");
+    CHECK(PRESET_CAT[(int)getf("preset")] == 6, "the data wheel on the name browses the picked bank (PAD: \"%s\")", gets("lcd_name"));
+    press("go_layers");
+    CHECK(getf("view") == 1 && getf("look") == 1, "LAYERS tab (look %g)", getf("look"));
+    int lb = (int)getf("layer_b"); press("cell_b");
+    CHECK((int)getf("layer_b") == !lb, "tapping layer B's cell turns it %s", lb ? "on" : "off");
+    press("cell_b");
     press("theme_next"); press("theme_next");
     CHECK(getf("theme") == 2 && getf("look") == 5, "THEME NEXT twice: Studio Grey, look %g", getf("look"));
     press("theme_prev"); press("theme_prev"); press("theme_prev");
     CHECK(getf("theme") == NTHEME - 1 && getf("look") == 2 * NTHEME - 1, "THEME PREV wraps to the last colorway (%g)", getf("theme"));
-    set("theme", "0"); set("view", "0");
+    set("theme", "0"); press("go_browse");
     CHECK(getf("look") == 0, "back to Midnight, BROWSE");
     note(1, 60, 100); double st = run(0.5); note(0, 60, 0); run(1.5);
     CHECK(st > 0.003, "and it plays at once (%.1f dB)", db(st));
@@ -137,17 +160,28 @@ int main(int argc, char **argv) {
     seti("preset", up);
     CHECK(getf("cutoff") == 0.5f, "re-sending the current preset keeps the edit (a project reload)");
 
-    /* favourites */
-    set("fav", "1");
-    CHECK(strstr(gets("lcd_name"), "\xe2\x98\x85") != NULL, "FAV marks the preset (\"%s\")", gets("lcd_name"));
+    /* favourites: a list of their own, in pages of 11 */
+    press("favs_tap");
+    CHECK(getf("favs") == 1 && !strcmp(gets("row_1"), "NO FAVORITES YET") && getf("bank_1_on") == 0, "no favourites yet (\"%s\")", gets("row_1"));
+    press("fav_tap");
+    CHECK(getf("fav") == 1 && strstr(gets("lcd_name"), "\xe2\x98\x85") != NULL, "FAV marks the preset (\"%s\")", gets("lcd_name"));
     int fw = (int)getf("fav_0") | (int)getf("fav_1") | (int)getf("fav_2") | (int)getf("fav_3") | (int)getf("fav_4") |
              (int)getf("fav_5") | (int)getf("fav_6") | (int)getf("fav_7") | (int)getf("fav_8") | (int)getf("fav_9");
     CHECK(fw != 0, "and stores it in the project");
+    CHECK(!strcmp(gets("row_1"), "UPRIGHT BALLAD") && getf("row_1_on") == 1, "it is in the favourites list (\"%s\")", gets("row_1"));
+    for (int k = 0; k < 14; k++) { seti("preset", 20 + k * 7); press("fav_tap"); }
+    seti("preset", 20 + 13 * 7);
+    CHECK(strstr(gets("lcd_top"), "PAGE 2 / 2") != NULL && getf("row_4_on") == 1, "15 favourites: page 2 shows the 15th (\"%s\")", gets("lcd_top"));
     press("next");
-    CHECK(getf("fav") == 0, "the next preset isn't a favourite");
-    set("fav_only", "1"); press("next");
-    CHECK(getf("preset") == up, "FAV LIST: NEXT steps to the favourite (%g)", getf("preset"));
-    set("fav_only", "0"); set("fav", "0");
+    CHECK((int)getf("preset") == up && strstr(gets("lcd_top"), "PAGE 1 / 2"), "NEXT wraps to the first favourite (\"%s\")", gets("lcd_top"));
+    wheel("pick_3", -1);
+    CHECK((int)getf("preset") == 20 + 13 * 7, "the wheel steps back through the favourites (%g)", getf("preset"));
+    press("favs_tap");
+    { char bk[24]; snprintf(bk, sizeof bk, "bank_%d_on", PRESET_CAT[(int)getf("preset")] + 1);
+      CHECK(getf("favs") == 0 && getf(bk) == 1, "★ FAVORITES again: back to the preset's bank (%s)", bk); }
+    for (int k = 0; k < 14; k++) { seti("preset", 20 + k * 7); press("fav_tap"); }
+    seti("preset", up); press("fav_tap");
+    CHECK(getf("fav") == 0, "favourites cleared");
 
     /* layers: solo, octave, A4 reference (on the sub bass: a near-sine) */
     int sub = find_preset("Sub Bass");
