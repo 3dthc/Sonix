@@ -36,7 +36,7 @@ ART = os.path.join(VST, "art")
 FONTS = os.path.join(VST, "fonts")
 MPC_FONTS = os.path.join(os.environ.get("MPC_VST", os.path.join(HERE, "..", "..", "mpc-vst-plugins")), "tools", "html_art", "fonts")
 Y_OFF = 86
-VERSION = "0.3.6"
+VERSION = "0.3.7"
 
 THEMES = ["midnight", "platinum", "studio", "purple", "yellow", "gold", "green", "camo", "red", "silver", "ice"]   # = "theme" options
 THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY", "PURPLE", "YELLOW", "GOLD", "GREEN", "CAMO", "METALLIC RED", "SILVER", "ICE BLUE"]
@@ -47,8 +47,24 @@ LAYERS = "abcd"
 # ---- sizes: every button one size, every knob one size (big-hands rule); text sizes in px
 BTN_W, BTN_H, BTN_GAP = 108, 47, 8                          # a button picture is BTN_W x (BTN_H + 4): the drop shadow
 KNOB_R = 36
-LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 18, 26, 17, 14
-LCD_PX = dict(top=24, name=42, cell=34, line=30, lcat=26, lname=30, list=33, bank=30)
+LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 18, 22, 17, 14
+# MPC's live text (Label components) takes a font height = the font's whole line (ascent + descent); for Titillium Web
+# that is 1.521 x the letter size (em) these sizes are in. So every live-text size goes to the layout multiplied by it,
+# or MPC draws the letters a third smaller than designed (as it did up to v0.3.6).
+JUCE_H = 1.521
+
+
+def jh(px):
+    """A live-text size in letter (em) px -> the font height MPC's Label wants."""
+    return int(round(px * JUCE_H))
+
+
+def value_label():
+    """Where MPC puts a knob's value (shadow_skin.py): a label from the knob's centre + r + 2, value_h tall, its text
+    centred in it. -> (label height, baseline below the knob's centre) for the mockups."""
+    vh = max(26, int(round(jh(VALUE_PX) * 1.2)))
+    return vh, KNOB_R + 2 + vh / 2 + 0.3725 * VALUE_PX
+LCD_PX = dict(top=24, name=39, cell=38, line=30, lcat=26, lname=38, lname_small=29, list=33, bank=30)
 
 # ---- the chassis shared by MAIN and SETTINGS: a 2 x 2 knob panel in each corner, the centre column between
 W, H = 1280, 628
@@ -60,7 +76,7 @@ TOP_Y = 46                                                   # the centre column
 SIDE_Y, PANEL_H = 8, 303                                     # the side panels run the full height
 BOT_Y = SIDE_Y + PANEL_H + 6                                 # 317
 KCOL = (70, 198)                                             # knob centres across a side panel
-KROW0, KPITCH = 30, 136                                      # first knob row's top below the panel top, row pitch
+KROW0, KPITCH = 26, 135                                      # first knob row's top below the panel top, row pitch
 
 MAIN_SECTIONS = [  # (x, y, title, four (key, label)); list order = Q-Link order (one column of four each)
     (LX, SIDE_Y, "FILTER", [("cutoff", "CUTOFF"), ("resonance", "RESONANCE"), ("env_amt", "ENV AMT"), ("key_track", "KEY TRACK")]),
@@ -128,7 +144,7 @@ def list_w(box, n):
 # ---- LAYERS: four strips
 STRIP_W, STRIP_PITCH = 310, 318
 STRIP_Y, STRIP_H = TOP_Y, 574
-MINI = (4, 30, 302, 104)                                    # mini LCD bezel within a strip (x, y offsets, w, h)
+MINI = (4, 30, 302, 110)                                    # mini LCD bezel within a strip (x, y offsets, w, h)
 STRIP_BTN_Y = (STRIP_Y + 150, STRIP_Y + 207)
 STRIP_KCOL = (82, 228)
 STRIP_KROW = STRIP_Y + 272                                   # first knob row's top
@@ -293,8 +309,9 @@ def page_layers():
         it.append(dict(t="readout", key="lcat_" + l, box=(bx + 14, by + 8, bw - 60, 34), size=LCD_PX["lcat"], ink="dim",
                        align="left", weight="semibold"))
         it.append(dict(t="lcdled", key="act_" + l, cx=bx + bw - 28, cy=by + 28, label=""))
-        it.append(dict(t="readout", key="inst_" + l, box=(bx + 12, by + 44, bw - 24, 50), size=LCD_PX["lname"], ink="ink",
-                       align="left", weight="bold"))
+        for key, px in (("lbig_", LCD_PX["lname"]), ("lsml_", LCD_PX["lname_small"])):   # big when the name fits
+            it.append(dict(t="readout", key=key + l, box=(bx + 12, by + 42, bw - 24, 58), size=px, ink="ink",
+                           align="left", weight="bold", pad=4))
         bx0 = x + (STRIP_W - (2 * BTN_W + BTN_GAP)) // 2
         it.append(dict(t="button", key="inst_%s_prev" % l, label="◀  PREV", x=bx0, y=STRIP_BTN_Y[0]))
         it.append(dict(t="button", key="inst_%s_next" % l, label="NEXT  ▶", x=bx0 + BTN_W + BTN_GAP, y=STRIP_BTN_Y[0]))
@@ -357,8 +374,8 @@ MOCK = {
                    level_b=(0.62, "-6.9 DB"), pan_b=(0.38, "L 24"), octave_b=(0.5, "0"), fine_b=(0.54, "+8 CT"),
                    level_c=(0.55, "-9.0 DB"), pan_c=(0.62, "R 24"), octave_c=(0.667, "+1"), fine_c=(0.46, "-8 CT"),
                    level_d=(0.7, "-4.6 DB"), pan_d=(0.5, "C"), octave_d=(0.333, "-1"), fine_d=(0.5, "0 CT")),
-        text=dict(lcat_a="PIANO", inst_a="GRAND PIANO", lcat_b="PAD", inst_b="WARM PAD", lcat_c="BRASS  ·  MUTED",
-                  inst_c="ORCHESTRAL BRASS", lcat_d="BASS  ·  OFF", inst_d="SUB BASS"),
+        text=dict(lcat_a="PIANO", lbig_a="GRAND PIANO", lcat_b="PAD", lbig_b="WARM PAD", lcat_c="BRASS  ·  MUTED",
+                  lsml_c="ORCHESTRAL BRASS", lcat_d="BASS  ·  OFF", lbig_d="SUB BASS"),
         on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, solo_a=0, solo_b=0, solo_c=0, solo_d=0,
                 act_a=1, act_b=1, act_c=1, act_d=0)),
     "SETTINGS": dict(
@@ -753,7 +770,7 @@ function mockup(th, items, m) {
       if (it.t === 'knob') {
         const [v, s] = m.knobs[it.key] || [0, ''];
         knobFrame(t, it.cx, it.cy, C.KNOB_R, v);
-        text(s, it.cx, it.cy + C.KNOB_R + 2 + 15 + C.VALUE_PX * 0.33, { size: C.VALUE_PX, font: 'Titillium', weight: 600, color: '#' + kink[0], align: 'center' });
+        text(s, it.cx, it.cy + C.VALUE_DY, { size: C.VALUE_PX, font: 'Titillium', weight: 600, color: '#' + kink[0], align: 'center' });
       } else if (it.t === 'readout') {
         const s = (m.text || {})[it.key]; if (s == null) return;
         const [x, y, w, h] = it.box, ax = it.align === 'left' ? x : it.align === 'right' ? x + w : x + w / 2;
@@ -819,7 +836,7 @@ ABOUT_LINES = [
 
 
 def open_page(p, with_mpc_fonts):
-    consts = dict(VERSION=VERSION, TITLE_PX=TITLE_PX, LABEL_PX=LABEL_PX, VALUE_PX=VALUE_PX, BUTTON_PX=BUTTON_PX,
+    consts = dict(VERSION=VERSION, VALUE_DY=value_label()[1], TITLE_PX=TITLE_PX, LABEL_PX=LABEL_PX, VALUE_PX=VALUE_PX, BUTTON_PX=BUTTON_PX,
                   KNOB_R=KNOB_R, BTN_W=BTN_W, BTN_H=BTN_H, BTN_GAP=BTN_GAP, CATS=CATS, THEMES=THEMES,
                   WAVE_FRAMES=WAVE_FRAMES, LIST_GAP=LIST_GAP, LCD_BH=LCD_BH, VIEWS=VIEWS, led=HEADER_LED, cpu=CPU_BAR, logoX=LOGO_X, LCD_INK=LCD_INK, KNOB_INK=KNOB_INK, ABOUT=ABOUT_LINES)
     page = (PAGE.replace("CONST_JSON", json.dumps(consts)).replace("THEMES_JSON", json.dumps(THEME_TABLE))
@@ -946,13 +963,14 @@ def write_layout():
     def readout(it, w):
         ink, dim = LCD_INK[w[1]]
         x, y, bw, bh = it["box"]
-        L.append('readout cx=%d cy=%d w=%d h=%d label="" key=%s box=0 tsize=%d tcolor=%s tweight=%s talign=%s %s' % (
-            x + bw // 2, y + bh // 2 + Y, bw, bh, it["key"], it["size"], ink if it["ink"] == "ink" else dim, it["weight"], it["align"], w[0]))
+        L.append('readout cx=%d cy=%d w=%d h=%d label="" key=%s box=0 tsize=%d tcolor=%s tweight=%s talign=%s%s %s' % (
+            x + bw // 2, y + bh // 2 + Y, bw, bh, it["key"], jh(it["size"]), ink if it["ink"] == "ink" else dim, it["weight"], it["align"],
+            " tpad=%d" % it["pad"] if "pad" in it else "", w[0]))
 
     def knob(it, w):
         ink, dim = KNOB_INK[w[1]]
         L.append('knob cx=%d cy=%d r=%d label="%s" key=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s strip=art/%s/knob.png frames=128 %s' % (
-            it["cx"], it["cy"] + Y, KNOB_R, it["label"], it["key"], VALUE_PX, it["bw"], ink, ink, w[1], w[0]))   # values at full strength
+            it["cx"], it["cy"] + Y, KNOB_R, it["label"], it["key"], jh(VALUE_PX), it["bw"], ink, ink, w[1], w[0]))   # values at full strength
 
     def pic_button(kind, key, img, x, y, w):
         cx, cy = x + BTN_W // 2, y + (BTN_H + 4) // 2 + Y
@@ -993,7 +1011,7 @@ def write_layout():
                 # the preset name is a knob that browses: touch it, then the data wheel (or a drag) steps presets
                 x, y, bw, bh = it["box"]
                 L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=browse ink=%s strip=art/clear_knob.png frames=128 %s' % (
-                    x + bw // 2 - 12, y + bh // 2 + Y, bw, bh, it["size"], LCD_INK[th][0], w[0]))
+                    x + bw // 2 - 12, y + bh // 2 + Y, bw, bh, jh(it["size"]), LCD_INK[th][0], w[0]))
             elif it["t"] == "lcdtoggle":
                 L.append("meter cx=%d cy=%d w=%d h=%d key=%s strip=art/%s/%s.png frames=2 %s" % (
                     it["x"] + it["w"] // 2, it["y"] + LCD_BH // 2 + Y, it["w"], LCD_BH, it["key"], th, it["key"], w[0]))
@@ -1008,7 +1026,7 @@ def write_layout():
                 if it["t"] == "list":
                     x, y, bw, bh = it["box"]
                     L.append('list x=%d y=%d w=%d h=%d key=%s cols=1 rows=%d order=cols tap=no th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 img=art/%s/%s_off.png img_on=art/%s/%s_on.png %s' % (
-                        x, y + Y, list_w(it["box"], n), bh, it["key"], it["n"], it["th"], LIST_GAP, it["size"], LCD_INK[th][0],
+                        x, y + Y, list_w(it["box"], n), bh, it["key"], it["n"], it["th"], LIST_GAP, jh(it["size"]), LCD_INK[th][0],
                         th, it["key"], th, it["key"], w[0]))
                 elif it["t"] == "wave":
                     wx, wy, ww, wh = it["box"]

@@ -817,6 +817,14 @@ static int lcd_text(inst_t *s, int i, char *buf, int n) {
                          !layer_plays(s, l) ? DOT "MUTED" : "";
         return snprintf(buf, n, "%s%s", CAT_NAME[INST_CAT[layer_inst(s, l)]], st);
     }
+    if ((i >= P_LBIG_A && i <= P_LBIG_D) || (i >= P_LSML_A && i <= P_LSML_D)) {   /* one of the two is blank */
+        int big = i <= P_LBIG_D, inst = layer_inst(s, i - (big ? P_LBIG_A : P_LSML_A));
+        int missing = bank_state_of(inst) == BANK_FAILED, fits = missing || INST_BIG[inst];
+        if (big != fits) return snprintf(buf, n, " ");
+        if (missing) return snprintf(buf, n, "SOUND MISSING");
+        upcase(name, INST_NAME[inst], sizeof name);
+        return snprintf(buf, n, "%s", name);
+    }
     if (i >= P_LNAME_A && i <= P_LNAME_D) {
         int inst = layer_inst(s, i - P_LNAME_A);
         if (bank_state_of(inst) == BANK_FAILED) return snprintf(buf, n, "SOUND MISSING");

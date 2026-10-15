@@ -110,6 +110,14 @@ enum {
     P_LNAME_B,
     P_LNAME_C,
     P_LNAME_D,
+    P_LBIG_A,
+    P_LBIG_B,
+    P_LBIG_C,
+    P_LBIG_D,
+    P_LSML_A,
+    P_LSML_B,
+    P_LSML_C,
+    P_LSML_D,
     P_BANK_1,
     P_BANK_2,
     P_BANK_3,
@@ -283,6 +291,14 @@ static const char *const PKEY[NP] = {
     "lname_b",
     "lname_c",
     "lname_d",
+    "lbig_a",
+    "lbig_b",
+    "lbig_c",
+    "lbig_d",
+    "lsml_a",
+    "lsml_b",
+    "lsml_c",
+    "lsml_d",
     "bank_1",
     "bank_2",
     "bank_3",
@@ -455,6 +471,14 @@ static const char *const PNAME[NP] = {
     "LAYER B NAME",
     "LAYER C NAME",
     "LAYER D NAME",
+    "LAYER A NAME BIG",
+    "LAYER B NAME BIG",
+    "LAYER C NAME BIG",
+    "LAYER D NAME BIG",
+    "LAYER A NAME SMALL",
+    "LAYER B NAME SMALL",
+    "LAYER C NAME SMALL",
+    "LAYER D NAME SMALL",
     "BANK 1",
     "BANK 2",
     "BANK 3",
@@ -630,6 +654,14 @@ static const pinfo_t PINFO[NP] = {
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_b */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_c */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lname_d */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lbig_a */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lbig_b */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lbig_c */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lbig_d */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lsml_a */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lsml_b */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lsml_c */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* lsml_d */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_1 */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_2 */
     { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* bank_3 */
@@ -693,5 +725,6 @@ static const pinfo_t PINFO[NP] = {
 };
 #define LIST_ROWS 11
 #define NTHEME 11
+static const unsigned char INST_BIG[45] = { 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };   /* name fits the mini LCD in big type */
 #define NDELAY_TIMES 8
 static const float DELAY_BEATS[NDELAY_TIMES] = { 0.25f, 1.0f / 3, 0.5f, 0.75f, 2.0f / 3, 1.0f, 1.5f, 2.0f };

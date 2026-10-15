@@ -216,6 +216,12 @@ int main(int argc, char **argv) {
     CHECK(voices_on(-1) == 3, "all three layers again (%d voices)", voices_on(-1));
     note(0, 60, 0); run(2.0);
     CHECK(!strcmp(gets("lname_b"), "WARM PAD") && !strcmp(gets("lcat_b"), "PAD"), "layer B's mini LCD (\"%s\", \"%s\")", gets("lcat_b"), gets("lname_b"));
+    CHECK(!strcmp(gets("lbig_b"), "WARM PAD") && !strcmp(gets("lsml_b"), " "), "a short name in big type (\"%s\")", gets("lbig_b"));
+    { int ob = -1; for (int k = 0; k < NINST; k++) if (!strcmp(INST_NAME[k], "Orchestral Brass")) ob = k;
+      seti("inst_b", ob);
+      CHECK(!strcmp(gets("lsml_b"), "ORCHESTRAL BRASS") && !strcmp(gets("lbig_b"), " "), "a long one in the smaller type (\"%s\")", gets("lsml_b"));
+      seti("inst_b", find_preset("Velvet Grand") >= 0 ? 0 : 0); }
+    seti("preset", find_preset("Velvet Grand"));
     int ib = (int)getf("inst_b");
     set("inst_b_next", "1"); run(0.2); set("inst_b_next", "0"); run(0.2);
     CHECK((int)getf("inst_b") == (ib + 2) % NINST, "layer B's NEXT: two taps, two sounds on (%d -> %g)", ib, getf("inst_b"));

@@ -1217,6 +1217,70 @@
       "display": "string"
     },
     {
+      "key": "lbig_a",
+      "name": "Layer A Name Big",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lbig_b",
+      "name": "Layer B Name Big",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lbig_c",
+      "name": "Layer C Name Big",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lbig_d",
+      "name": "Layer D Name Big",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lsml_a",
+      "name": "Layer A Name Small",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lsml_b",
+      "name": "Layer B Name Small",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lsml_c",
+      "name": "Layer C Name Small",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "lsml_d",
+      "name": "Layer D Name Small",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
       "key": "bank_1",
       "name": "Bank 1",
       "min": 0,

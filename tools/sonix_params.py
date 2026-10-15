@@ -106,6 +106,9 @@ def spec():
         ("lcd_line", "LCD Line"))]
     P += [display("lcat_" + l, "Layer %s Category" % l.upper(), 1, "string") for l in LAYERS]
     P += [display("lname_" + l, "Layer %s Name" % l.upper(), 1, "string") for l in LAYERS]
+    # the LAYERS page's mini LCDs: a sound name in big type when it fits, else in the smaller one (the other stays blank)
+    P += [display("lbig_" + l, "Layer %s Name Big" % l.upper(), 1, "string") for l in LAYERS]
+    P += [display("lsml_" + l, "Layer %s Name Small" % l.upper(), 1, "string") for l in LAYERS]
     P += [display("bank_%d" % (i + 1), "Bank %d" % (i + 1), 1, "string") for i in range(len(CATEGORIES))]
     P += [display("row_%d" % (i + 1), "List Row %d" % (i + 1), 1, "string") for i in range(LIST_ROWS)]
     P += [display("fav_%d" % i, "Favourites %d" % (i + 1), 8191) for i in range(10)]
@@ -137,6 +140,19 @@ def to_json(P):
             q.update(min=0, max=p["max"], default=0, display=p["disp"])
         out.append(q)
     return {"name": "Sonix", "params": out}
+
+
+MINI_NAME_W = 270                  # the mini LCD's name box (278) less its 4 px padding (tools/make_skin.py)
+MINI_BIG_PX = 38
+
+
+def big_fits():
+    """Per instrument: does its upper-case name fit the mini LCD at MINI_BIG_PX (Titillium Web Bold, as MPC draws it)?"""
+    from PIL import ImageFont
+    font = os.path.join(os.environ.get("MPC_VST", os.path.join(REPO, "..", "mpc-vst-plugins")), "tools", "html_art",
+                        "fonts", "TitilliumWeb-Bold.ttf")
+    f = ImageFont.truetype(font, MINI_BIG_PX)
+    return [f.getlength(d.upper()) <= MINI_NAME_W for d in INSTRUMENTS]
 
 
 def cf(x):
@@ -179,6 +195,9 @@ def to_header(P):
     L.append("static const pinfo_t PINFO[NP] = {\n" + "\n".join(rows) + "\n};")
     L.append("#define LIST_ROWS %d" % LIST_ROWS)
     L.append("#define NTHEME %d" % len(THEMES))
+    fits = big_fits()
+    L.append("static const unsigned char INST_BIG[%d] = { %s };   /* name fits the mini LCD in big type */" % (
+        len(fits), ", ".join(str(int(f)) for f in fits)))
     L.append("#define NDELAY_TIMES %d" % len(DELAY_TIMES))
     L.append("static const float DELAY_BEATS[NDELAY_TIMES] = { 0.25f, 1.0f / 3, 0.5f, 0.75f, 2.0f / 3, 1.0f, 1.5f, 2.0f };")
     return "\n".join(L) + "\n"
