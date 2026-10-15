@@ -47,8 +47,8 @@ LAYERS = "abcd"
 # ---- sizes: every button one size, every knob one size (big-hands rule); text sizes in px
 BTN_W, BTN_H, BTN_GAP = 108, 47, 8                          # a button picture is BTN_W x (BTN_H + 4): the drop shadow
 KNOB_R = 36
-LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 17, 21, 16, 12
-LCD_PX = dict(top=22, name=42, cell=28, line=24, lcat=22, lname=27, list=33, bank=30)
+LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 18, 26, 17, 14
+LCD_PX = dict(top=24, name=42, cell=30, line=28, lcat=24, lname=27, list=33, bank=30)
 
 # ---- the chassis shared by MAIN and SETTINGS: a 2 x 2 knob panel in each corner, the centre column between
 W, H = 1280, 628
@@ -504,8 +504,8 @@ function listTiles(it) {
 function lcdBtn(t, x, y, w, h, label, on) {
   if (on) rowLit(t, x + 2, y + 3, w - 4, h - 6);
   else { ctx.save(); rr(x + 2.5, y + 3.5, w - 5, h - 7, 6); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.7; ctx.lineWidth = 1.4; ctx.stroke(); ctx.restore(); }
-  text(label, x + w / 2 + (on ? 4 : 0), y + h / 2 + 6, { size: 17, font: 'Barlow', weight: 700, spacing: 1.5, align: 'center',
-    color: on ? t.lcdText : t.lcdDim });
+  text(label, x + w / 2 + (on ? 4 : 0), y + h / 2 + 7, { size: 19, font: 'Barlow', weight: 700, spacing: 1.2, align: 'center',
+    color: t.lcdText, alpha: on ? 1 : 0.82 });
 }
 function tabStrip(th, labels, w, h, gap) {          // one frame per tab lit, side by side
   const t = T[th], fw = labels.length * w + (labels.length - 1) * gap; setup(fw * labels.length, h);
@@ -552,8 +552,8 @@ function chassis(t, th) {
   ctx.fillStyle = t.edgeHi; ctx.fillRect(0, 0, 1280, 1);
   const ly = 36;
   logo(t, C.logoX, ly, 30);
-  text('MIDI', C.led[0] + 14, C.led[1] + 5, { size: 14, spacing: 3, color: t.muted, engrave: t.engrave });
-  text('CPU', C.cpu[0] - 10, C.cpu[1] + 9, { size: 14, spacing: 3, color: t.muted, engrave: t.engrave, align: 'right' });
+  text('MIDI', C.led[0] + 14, C.led[1] + 5, { size: 15, spacing: 3, color: t.muted, engrave: t.engrave });
+  text('CPU', C.cpu[0] - 10, C.cpu[1] + 9, { size: 15, spacing: 3, color: t.muted, engrave: t.engrave, align: 'right' });
   rr(C.cpu[0] - 1, C.cpu[1] - 1, C.cpu[2] + 2, C.cpu[3] + 2, 5); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
   ctx.beginPath(); ctx.arc(C.led[0], C.led[1], 8, 0, 2 * Math.PI); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
 }
@@ -600,11 +600,11 @@ function background(th, items) {
       ctx.strokeStyle = t.bevelHi; ctx.beginPath(); ctx.moveTo(it.x, it.y + 1.5); ctx.lineTo(it.x + it.w, it.y + 1.5); ctx.stroke(); ctx.restore();
     } else if (it.t === 'themerow') {
       text(it.label, it.lx, it.y + 22, { size: C.LABEL_PX + 1, spacing: 1.5, color: t.text, engrave: t.engrave, weight: 700 });
-      text(it.caption, it.lx, it.y + 42, { size: 14, spacing: 0.5, color: t.muted, engrave: t.engrave, weight: 600 });
+      text(it.caption, it.lx, it.y + 43, { size: 16, spacing: 0.3, color: t.muted, engrave: t.engrave, weight: 600 });
       lcdFrame(t, it.bezel, it.screen, 4); glares.push([it.screen, 4]);
     } else if (it.t === 'sysrow') {
       text(it.label, it.lx, it.y + 22, { size: C.LABEL_PX + 1, spacing: 1.5, color: t.text, engrave: t.engrave, weight: 700 });
-      text(it.caption, it.lx, it.y + 42, { size: 14, spacing: 0.5, color: t.muted, engrave: t.engrave, weight: 600 });
+      text(it.caption, it.lx, it.y + 43, { size: 16, spacing: 0.3, color: t.muted, engrave: t.engrave, weight: 600 });
     }
   });
   glares.forEach(g => glare(...g));
@@ -615,7 +615,7 @@ function aboutScreen(t, s) {
   // the plugin's name and version, nothing else
   const lt = Object.assign({}, t, { logo: t.lcdText, led: t.lcdText, logoGlow: t.lcdGlow });
   ctx.save(); logo(lt, cx - 135, sy + sh / 2 + 6, 46); ctx.restore();
-  lcdGlyph(t, 'VERSION ' + C.VERSION, cx, sy + sh / 2 + 52, { size: 16, font: 'Michroma', weight: 400, align: 'center', color: t.lcdDim, spacing: 3 });
+  lcdGlyph(t, 'VERSION ' + C.VERSION, cx, sy + sh / 2 + 54, { size: 19, font: 'Michroma', weight: 400, align: 'center', color: t.lcdDim, spacing: 3 });
 }
 
 // ---------- buttons: raised off, pressed and lit on ----------
@@ -753,7 +753,7 @@ function mockup(th, items, m) {
       if (it.t === 'knob') {
         const [v, s] = m.knobs[it.key] || [0, ''];
         knobFrame(t, it.cx, it.cy, C.KNOB_R, v);
-        text(s, it.cx, it.cy + C.KNOB_R + 2 + 13 + C.VALUE_PX * 0.33, { size: C.VALUE_PX, font: 'Titillium', weight: 600, color: '#' + kink[1], align: 'center' });
+        text(s, it.cx, it.cy + C.KNOB_R + 2 + 15 + C.VALUE_PX * 0.33, { size: C.VALUE_PX, font: 'Titillium', weight: 600, color: '#' + kink[0], align: 'center' });
       } else if (it.t === 'readout') {
         const s = (m.text || {})[it.key]; if (s == null) return;
         const [x, y, w, h] = it.box, ax = it.align === 'left' ? x : it.align === 'right' ? x + w : x + w / 2;
@@ -952,7 +952,7 @@ def write_layout():
     def knob(it, w):
         ink, dim = KNOB_INK[w[1]]
         L.append('knob cx=%d cy=%d r=%d label="%s" key=%s ns=0 vs=%d bw=%d ink=%s ink_dim=%s strip=art/%s/knob.png frames=128 %s' % (
-            it["cx"], it["cy"] + Y, KNOB_R, it["label"], it["key"], VALUE_PX, it["bw"], ink, dim, w[1], w[0]))
+            it["cx"], it["cy"] + Y, KNOB_R, it["label"], it["key"], VALUE_PX, it["bw"], ink, ink, w[1], w[0]))   # values at full strength
 
     def pic_button(kind, key, img, x, y, w):
         cx, cy = x + BTN_W // 2, y + (BTN_H + 4) // 2 + Y
