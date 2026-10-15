@@ -82,6 +82,8 @@ def spec():
           option("anim", "Animation", ["Off", "Low", "Smooth"], "Smooth", preset=False),
           option("mod_wheel", "Mod Wheel", ["Vibrato", "Filter", "Off"], "Vibrato", preset=False),
           option("vel_curve", "Velocity Curve", ["Soft", "Normal", "Hard"], "Normal", preset=False)]
+    # the data wheel / Q-Link browser: rests at 500; a move up or down steps one preset in the category
+    P += [knob("browse", "Browse", 500, 0, 1000, fmt="BROWSE", integer=True, preset=False)]
     P += [option("look", "Look", ["Midnight", "Midnight List", "Platinum", "Platinum List", "Studio", "Studio List"],
                  "Midnight", preset=False, fmt="LOOK"),
           display("category", "Category", len(CATEGORIES) - 1), display("wave", "Waveform", 32), display("midi_led", "MIDI LED", 1), display("lfo_led", "LFO LED", 1),
@@ -109,7 +111,7 @@ def to_json(P):
         elif p["kind"] == "option":
             q.update(options=p["options"], default=p["default"])
             if p["key"] == "preset":
-                q["qlink_ticks"] = 2                 # two data-wheel clicks or Q-Link events per preset
+                q["qlink_ticks"] = 2                 # (on screen the LCD's browse control steps presets instead)
         elif p["kind"] == "momentary":
             q["momentary"] = True
             if p["step_of"]:

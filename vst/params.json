@@ -1015,6 +1015,15 @@
       "default": "Normal"
     },
     {
+      "key": "browse",
+      "name": "Browse",
+      "min": 0,
+      "max": 1000,
+      "default": 500,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
       "key": "look",
       "name": "Look",
       "options": [

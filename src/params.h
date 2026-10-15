@@ -90,6 +90,7 @@ enum {
     P_ANIM,
     P_MOD_WHEEL,
     P_VEL_CURVE,
+    P_BROWSE,
     P_LOOK,
     P_CATEGORY,
     P_WAVE,
@@ -231,6 +232,7 @@ static const char *const PKEY[NP] = {
     "anim",
     "mod_wheel",
     "vel_curve",
+    "browse",
     "look",
     "category",
     "wave",
@@ -371,6 +373,7 @@ static const char *const PNAME[NP] = {
     "ANIMATION",
     "MOD WHEEL",
     "VELOCITY CURVE",
+    "BROWSE",
     "LOOK",
     "CATEGORY",
     "WAVEFORM",
@@ -421,7 +424,7 @@ static const char *const PNAME[NP] = {
     "FAVOURITES 10",
 };
 enum { K_KNOB, K_OPTION, K_MOMENTARY, K_DISPLAY, K_TEXT };
-enum { F_ATTACK, F_BIPOLAR, F_CENTS, F_CUTOFF, F_HZINT, F_INT, F_LEVEL, F_LFO, F_LOOK, F_NONE, F_OCT, F_OPT, F_PAN, F_PCT, F_PREDELAY, F_SEMI, F_TIME, F_TONE, F_VIB, F_VOL };
+enum { F_ATTACK, F_BIPOLAR, F_BROWSE, F_CENTS, F_CUTOFF, F_HZINT, F_INT, F_LEVEL, F_LFO, F_LOOK, F_NONE, F_OCT, F_OPT, F_PAN, F_PCT, F_PREDELAY, F_SEMI, F_TIME, F_TONE, F_VIB, F_VOL };
 typedef struct { int kind, fmt; float lo, hi, def; int whole, in_preset; } pinfo_t;
 static const pinfo_t PINFO[NP] = {
     { K_KNOB, F_VOL, 0.0f, 1.0f, 0.8f, 0, 0 },  /* volume */
@@ -514,6 +517,7 @@ static const pinfo_t PINFO[NP] = {
     { K_OPTION, F_OPT, 0.0f, 2.0f, 2.0f, 1, 0 },  /* anim */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 0.0f, 1, 0 },  /* mod_wheel */
     { K_OPTION, F_OPT, 0.0f, 2.0f, 1.0f, 1, 0 },  /* vel_curve */
+    { K_KNOB, F_BROWSE, 0.0f, 1000.0f, 500.0f, 1, 0 },  /* browse */
     { K_OPTION, F_LOOK, 0.0f, 5.0f, 0.0f, 1, 0 },  /* look */
     { K_DISPLAY, F_NONE, 0.0f, 11.0f, 0.0f, 0, 0 },  /* category */
     { K_DISPLAY, F_NONE, 0.0f, 32.0f, 0.0f, 0, 0 },  /* wave */

@@ -47,7 +47,7 @@ LAYERS = "abcd"
 BTN_W, BTN_H, BTN_GAP = 108, 47, 8                          # a button picture is BTN_W x (BTN_H + 4): the drop shadow
 KNOB_R = 36
 LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 17, 21, 16, 12
-LCD_PX = dict(top=22, name=42, cell=20, line=22, lcat=22, lname=27, list=23)
+LCD_PX = dict(top=22, name=42, cell=24, line=22, lcat=22, lname=27, list=26)
 
 # ---- the chassis shared by MAIN and SETTINGS: a 2 x 2 knob panel in each corner, the centre column between
 W, H = 1280, 628
@@ -74,7 +74,7 @@ SETTINGS_SECTIONS = [
     (RX, BOT_Y, "REVERB", [("rev_size", "SIZE"), ("rev_damp", "DAMPING"), ("rev_predelay", "PRE-DELAY"), ("rev_width", "WIDTH")]),
 ]
 # MAIN's Q-Links: the four sections' knobs, but the 16th (VOLUME, which MPC's track has too) browses presets
-MAIN_QLINKS = [k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks][:15] + ["preset"]
+MAIN_QLINKS = [k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks][:15] + ["browse"]
 LAYER_KNOBS = [("level", "LEVEL"), ("pan", "PAN"), ("octave", "OCTAVE"), ("fine", "FINE")]
 SYSTEM_ROWS = [  # (key, label, caption, options)
     ("theme", "THEME", "faceplate colours", ["MIDNIGHT", "PLATINUM", "STUDIO"]),
@@ -93,13 +93,13 @@ LCD_RULE_Y = SY + 42
 LCD_PREV = (SX + 8, SY + 50, BTN_W, BTN_H + 4)
 LCD_NEXT = (SX + SW - 8 - BTN_W, SY + 50, BTN_W, BTN_H + 4)
 LCD_NAME = (SX + 8 + BTN_W + 8, SY + 50, SW - 2 * (8 + BTN_W + 8), BTN_H + 4)
-LCD_WAVE = (SX + 16, SY + 112, SW - 32, 76)                  # two meters side by side (MPC's strip width limit)
+LCD_WAVE = (SX + 16, SY + 106, SW - 32, 64)                  # two meters side by side (MPC's strip width limit)
 WAVE_FRAMES = 33                                             # 0 idle, then 4 levels x 8 phases
-CELL_Y, CELL_H, CELL_W, CELL_GAP = SY + 198, 40, 156, 10
+CELL_Y, CELL_H, CELL_W, CELL_GAP = SY + 178, 44, (SW - 32 - 8) // 2, 8   # the four layers, 2 x 2
 LIST_BOX = (SX + 16, SY + 104, SW - 32, 206)                 # the preset list (2 x 6 rows) in place of the waveform view
 LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP = 2, 6, 31, 4
-LCD_LINE = (SX + 18, SY + 246, SW - 36, 32)
-LFO_LED = (SX + 30, SY + 296)                                # an LED on the LCD's foot, lit while the LFO runs
+LCD_LINE = (SX + 18, SY + 276, SW - 36, 32)
+LFO_LED = (RX + SIDE_W - 26, SIDE_Y + 15)                    # an LED by the LFO panel's title, lit while the LFO runs
 BROWSE = (CX0, 394, CW, 226)
 GRID_X = CX0 + (CW - (6 * BTN_W + 5 * BTN_GAP)) // 2         # 296
 GRID_Y = BROWSE[1] + 32
@@ -125,6 +125,7 @@ LOGO_X = 640 - 116                                           # the header sits o
 HEADER_LED = (CX0 + 22, 22)                                  # MIDI LED centre
 CPU_BAR = (CX1 - 112, 17, 96, 10)
 
+LCD_BG = {"midnight": "06121f", "platinum": "1a1206", "studio": "a8bc86"}   # each colorway's LCD glass
 LCD_INK = {"midnight": ("9fe4ff", "7cc2e6"), "platinum": ("ffbe5c", "e6a24f"), "studio": ("16200c", "3a4826")}
 KNOB_INK = {"midnight": ("e4e7ec", "c3cad5"), "platinum": ("1b1e22", "343a42"), "studio": ("121417", "24282d")}
 
@@ -146,15 +147,16 @@ def page_main():
            dict(t="readout", key="lcd_ref", box=LCD_REF, size=LCD_PX["top"], ink="dim", align="right", weight="semibold"),
            dict(t="rule", x=SX + 18, y=LCD_RULE_Y, w=SW - 36),
            dict(t="lcdarrow", key="prev", box=LCD_PREV, dir=-1), dict(t="lcdarrow", key="next", box=LCD_NEXT, dir=1),
-           dict(t="presetname", key="preset", box=LCD_NAME, size=LCD_PX["name"]),
+           dict(t="presetname", key="browse", box=LCD_NAME, size=LCD_PX["name"]),
            dict(t="wave", box=LCD_WAVE, view=0)]
     for i, l in enumerate(LAYERS):
-        x = SX + 16 + i * (CELL_W + CELL_GAP)
-        it.append(dict(t="cell", x=x, y=CELL_Y, w=CELL_W, h=CELL_H, letter=l.upper(), view=0))
-        it.append(dict(t="readout", key="lcd_" + l, box=(x + 28, CELL_Y, CELL_W - 32, CELL_H), size=LCD_PX["cell"],
+        x = SX + 16 + (i % 2) * (CELL_W + CELL_GAP)
+        y = CELL_Y + (i // 2) * (CELL_H + 4)
+        it.append(dict(t="cell", x=x, y=y, w=CELL_W, h=CELL_H, letter=l.upper(), view=0))
+        it.append(dict(t="readout", key="lcd_" + l, box=(x + 36, y, CELL_W - 44, CELL_H), size=LCD_PX["cell"],
                        ink="ink", align="left", weight="semibold", view=0))
     it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="semibold", view=0),
-           dict(t="lcdled", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1], label="LFO", view=0),
+           dict(t="led", key="lfo_led", cx=LFO_LED[0], cy=LFO_LED[1]),
            dict(t="list", key="row", box=LIST_BOX, view=1),
            dict(t="panel", x=BROWSE[0], y=BROWSE[1], w=BROWSE[2], h=BROWSE[3], title="BROWSE"),
            dict(t="catgrid", x=GRID_X, y=GRID_Y)]
@@ -212,7 +214,7 @@ MOCK = {
                    lfo_rate=(0.35, "3.1 HZ"), lfo_filter=(0.0, "0 %"), lfo_pitch=(0.12, "12 CT"), lfo_amp=(0.0, "0 %"),
                    chorus=(0.3, "30 %"), delay=(0.18, "18 %"), reverb=(0.42, "42 %"), volume=(0.8, "-1.9 DB")),
         text=dict(lcd_top="PIANO  ·  002 / 128  ·  ★", lcd_ref="A4  440 HZ", preset="Velvet Grand",
-                  lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENS", lcd_d="—",
+                  lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENSEMBLE", lcd_d="—",
                   lcd_line="Soft grand over a slow pad and wide strings"),
         on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, fav=1, fav_only=0, lfo_led=1),
         category=0, wave=(2, 3)),
@@ -267,7 +269,7 @@ const T = {
     panel1:'#262a32', panel2:'#1a1d22', panelEdge:'#0b0c0f', bevelHi:'rgba(255,255,255,0.09)', drop:'rgba(0,0,0,0.55)',
     text:'#e4e7ec', muted:'#a3acba', engrave:[0,-1,'rgba(0,0,0,0.75)'], logo:'#eef1f5', logoGlow:'rgba(76,195,255,0.6)',
     led:'#4cc3ff', ledOff:'#1d2732', ledGlow:'rgba(76,195,255,0.7)',
-    bezel1:'#0b0c0f', bezel2:'#22252c', lcd:'#06121f', lcdText:'#9fe4ff', lcdDim:'#7cc2e6', lcdFaint:'rgba(143,220,255,0.10)', lcdGlow:'rgba(120,210,255,0.5)',
+    bezel1:'#0b0c0f', bezel2:'#22252c', lcd:'#06121f', lcdText:'#9fe4ff', lcdDim:'#7cc2e6', rowFill:0.26, lcdFaint:'rgba(143,220,255,0.10)', lcdGlow:'rgba(120,210,255,0.5)',
     knobHi:'#5a616d', knobLo:'#0a0b0d', knobEdge:'#050607', capHi:'#454a54', capLo:'#16181c', ridge:'rgba(255,255,255,0.10)', knobLine:'#eef1f5',
     btnTop:'#3b404a', btnBot:'#22252b', btnOnTop:'#16293c', btnOnBot:'#0e1b28', btnEdge:'#0b0c0f', btnShadow:'#07080a', btnText:'#d9dde4',
     btnEngrave:[0,-1,'rgba(0,0,0,0.75)'], screw:['#70767f','#2a2d33'], well:'rgba(0,0,0,0.16)', name:'MIDNIGHT' },
@@ -275,7 +277,7 @@ const T = {
     panel1:'#e4e7eb', panel2:'#c7cbd1', panelEdge:'#9aa0a7', bevelHi:'rgba(255,255,255,0.9)', drop:'rgba(0,0,0,0.22)',
     text:'#16191d', muted:'#3d444e', engrave:[0,1,'rgba(255,255,255,0.8)'], logo:'#16191d', logoGlow:'rgba(255,154,31,0.4)',
     led:'#ff9a1f', ledOff:'#9f9b93', ledGlow:'rgba(255,154,31,0.7)',
-    bezel1:'#7c8188', bezel2:'#c3c7cd', lcd:'#1a1206', lcdText:'#ffbe5c', lcdDim:'#e6a24f', lcdFaint:'rgba(255,182,72,0.10)', lcdGlow:'rgba(255,170,60,0.5)',
+    bezel1:'#7c8188', bezel2:'#c3c7cd', lcd:'#1a1206', lcdText:'#ffbe5c', lcdDim:'#e6a24f', rowFill:0.26, lcdFaint:'rgba(255,182,72,0.10)', lcdGlow:'rgba(255,170,60,0.5)',
     knobHi:'#7c828c', knobLo:'#121417', knobEdge:'#0c0d0f', capHi:'#686e77', capLo:'#1e2125', ridge:'rgba(255,255,255,0.13)', knobLine:'#f4f4f4',
     btnTop:'#fbfbfc', btnBot:'#cdd1d6', btnOnTop:'#fff5e6', btnOnBot:'#efd2ad', btnEdge:'#939880', btnShadow:'#858a91', btnText:'#1f2328',
     btnEngrave:[0,1,'rgba(255,255,255,0.85)'], screw:['#ffffff','#999da4'], well:'rgba(0,0,0,0.08)', name:'PLATINUM' },
@@ -283,7 +285,7 @@ const T = {
     panel1:'#b8bbbf', panel2:'#9ea1a5', panelEdge:'#7a7d82', bevelHi:'rgba(255,255,255,0.6)', drop:'rgba(0,0,0,0.26)',
     text:'#121417', muted:'#262a2f', engrave:[0,1,'rgba(255,255,255,0.5)'], logo:'#121417', logoGlow:'rgba(255,61,46,0.3)',
     led:'#ff3d2e', ledOff:'#74777b', ledGlow:'rgba(255,61,46,0.65)',
-    bezel1:'#222427', bezel2:'#4b4e52', lcd:'#a8bc86', lcdText:'#16200c', lcdDim:'#3a4826', lcdFaint:'rgba(22,32,12,0.08)', lcdGlow:'rgba(0,0,0,0)',
+    bezel1:'#222427', bezel2:'#4b4e52', lcd:'#a8bc86', lcdText:'#16200c', lcdDim:'#3a4826', rowFill:0.85, rowTint:'#d6e6b8', lcdFaint:'rgba(22,32,12,0.08)', lcdGlow:'rgba(0,0,0,0)',
     knobHi:'#6e747d', knobLo:'#101113', knobEdge:'#0a0b0c', capHi:'#5b6068', capLo:'#1a1c1f', ridge:'rgba(255,255,255,0.11)', knobLine:'#f0f0f0',
     btnTop:'#eceef0', btnBot:'#b7babe', btnOnTop:'#fff1ef', btnOnBot:'#efc6c0', btnEdge:'#73767b', btnShadow:'#62656a', btnText:'#15171a',
     btnEngrave:[0,1,'rgba(255,255,255,0.6)'], screw:['#e7e8ea','#7c7f84'], well:'rgba(0,0,0,0.10)', name:'STUDIO GREY' },
@@ -369,11 +371,16 @@ function listTiles(it) {
     out.push([x + (i % C.LIST_COLS) * (tw + C.LIST_GAP), y + Math.floor(i / C.LIST_COLS) * (C.LIST_TH + C.LIST_GAP), tw, C.LIST_TH]);
   return out;
 }
-function rowLit(t, x, y, w, h) {
-  ctx.save(); rr(x + 1, y + 1, w - 2, h - 2, 4); ctx.fillStyle = t.lcdText; ctx.globalAlpha = 0.14; ctx.fill(); ctx.restore();
-  ctx.save(); ctx.shadowColor = t.lcdGlow; ctx.shadowBlur = 8; rr(x + 1, y + 1, w - 2, h - 2, 4); ctx.strokeStyle = t.lcdText; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
+function rowLit(t, x, y, w, h) {   // the selected preset: a tinted bar, a bright frame and a solid marker on the left
+  ctx.save(); rr(x + 1, y + 1, w - 2, h - 2, 4); ctx.fillStyle = t.rowTint || t.lcdText; ctx.globalAlpha = t.rowFill; ctx.fill(); ctx.restore();
+  ctx.save(); ctx.shadowColor = t.lcdGlow; ctx.shadowBlur = 10; rr(x + 1.5, y + 1.5, w - 3, h - 3, 4); ctx.strokeStyle = t.lcdText; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore();
+  ctx.save(); rr(x + 3, y + 5, 5, h - 10, 2); ctx.fillStyle = t.lcdText; ctx.fill(); ctx.restore();
 }
-function rowOn(th, w, h) { setup(w, h); rowLit(T[th], 0, 0, w, h); return out(); }
+// an idle list row: the LCD's own glass (cut from the screen behind it), so no host colour shows through
+function rowOff(th, w, h) { const t = T[th]; setup(w, h); ctx.fillStyle = t.lcd; ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = t.lcdFaint; for (let y = 2; y < h; y += 3) ctx.fillRect(0, y, w, 1);
+  rr(0.5, 0.5, w - 1, h - 1, 4); ctx.strokeStyle = t.lcdDim; ctx.globalAlpha = 0.3; ctx.stroke(); return out(); }
+function rowOn(th, w, h) { const t = T[th]; setup(w, h); ctx.fillStyle = t.lcd; ctx.fillRect(0, 0, w, h); rowLit(t, 0, 0, w, h); return out(); }
 function glare(screen, r) {
   const [sx, sy, sw, sh] = screen;
   ctx.save(); rr(sx, sy, sw, sh, r); ctx.clip();
@@ -432,8 +439,10 @@ function background(th, items) {
       ctx.globalAlpha = 0.5; ctx.setLineDash([2, 5]); ctx.beginPath(); ctx.moveTo(x, y + h / 2); ctx.lineTo(x + w, y + h / 2); ctx.stroke(); ctx.restore();
     } else if (it.t === 'cell') {
       ctx.save(); ctx.strokeStyle = t.lcdDim; ctx.lineWidth = 1.2; ctx.globalAlpha = 0.8; rr(it.x, it.y, it.w, it.h, 4); ctx.stroke();
-      ctx.globalAlpha = 1; rr(it.x + 4, it.y + 4, 18, it.h - 8, 3); ctx.fillStyle = t.lcdDim; ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore();
-      lcdGlyph(t, it.letter, it.x + 13, it.y + it.h / 2 + 6, { size: 15, font: 'Michroma', weight: 400, align: 'center' });
+      ctx.globalAlpha = 1; rr(it.x + 4, it.y + 4, 24, it.h - 8, 3); ctx.fillStyle = t.lcdDim; ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore();
+      lcdGlyph(t, it.letter, it.x + 16, it.y + it.h / 2 + 7, { size: 18, font: 'Michroma', weight: 400, align: 'center' });
+    } else if (it.t === 'led') {
+      ctx.beginPath(); ctx.arc(it.cx, it.cy, 8, 0, 2 * Math.PI); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
     } else if (it.t === 'lcdled') {
       if (it.label) lcdGlyph(t, it.label, it.cx + 14, it.cy + 6, { size: 15, font: 'Michroma', weight: 400, color: t.lcdDim, glow: null });
     } else if (it.t === 'list') {
@@ -634,7 +643,7 @@ function mockup(th, items, m) {
     res(out());
   });
 }
-window.API = { background, button, blank, gridStrip, pressOverlay, arrowLit, knobStrip, waveStrip, ledStrip, cpuStrip, rowOn, mockup };
+window.API = { background, button, blank, gridStrip, pressOverlay, arrowLit, knobStrip, waveStrip, ledStrip, cpuStrip, rowOn, rowOff, mockup };
 </script></body></html>"""
 
 
@@ -702,6 +711,7 @@ def export_art():
                     save(ev("background", th, items), os.path.join(d, "bg_%s.png" % name.lower()))
             tw = (LIST_BOX[2] - (LIST_COLS - 1) * LIST_GAP) // LIST_COLS
             save(ev("rowOn", th, tw, LIST_TH), os.path.join(d, "row_on.png"))
+            save(ev("rowOff", th, tw, LIST_TH), os.path.join(d, "row_off.png"))
             save(ev("knobStrip", th, 128, KNOB_R), os.path.join(d, "knob.png"))
             save(ev("gridStrip", th, CATS, 6, BTN_W, BTN_H, BTN_GAP, 10), os.path.join(d, "cats.png"))
             save(ev("pressOverlay", th, BTN_W, BTN_H), os.path.join(d, "press.png"))
@@ -785,6 +795,8 @@ def write_layout():
                     readout(it, n, th)
                 elif it["t"] == "lcdled":
                     lcdled(it, n, th)
+                elif it["t"] == "led":
+                    L.append("meter cx=%d cy=%d w=22 h=22 key=%s strip=art/%s/led.png frames=2 when=theme:%d" % (it["cx"], it["cy"] + Y, it["key"], th, n))
                 elif it["t"] == "lcdarrow":
                     x, y, w, h = it["box"]
                     L.append('button cx=%d cy=%d w=%d h=%d label="" key=%s img=art/clear_btn.png img_on=art/%s/arrow_%s.png when=theme:%d' % (
@@ -792,12 +804,12 @@ def write_layout():
                 elif it["t"] == "presetname":
                     # the preset name is a knob on the preset list: touch it, then the data wheel (or a drag) browses
                     x, y, w, h = it["box"]
-                    L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=preset ink=%s strip=art/clear_knob.png frames=128 when=theme:%d' % (
+                    L.append('knob cx=%d cy=%d r=5 lay=side bw=%d bh=%d vs=%d label="" key=browse ink=%s strip=art/clear_knob.png frames=128 when=theme:%d' % (
                         x + w // 2 - 12, y + h // 2 + Y, w, h, it["size"], LCD_INK[th][0], n))
                 elif it["t"] == "list":
                     x, y, w, h = it["box"]
-                    L.append('list x=%d y=%d w=%d h=%d key=row cols=%d rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left img=art/clear_row.png img_on=art/%s/row_on.png when=theme:%d' % (
-                        x, y + Y, w, h, LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP, LCD_PX["list"], LCD_INK[th][0], th, n))
+                    L.append('list x=%d y=%d w=%d h=%d key=row cols=%d rows=%d order=cols th=%d gap=%d tsize=%d tcolor=%s tweight=semibold talign=left tx=16 color=%s img=art/%s/row_off.png img_on=art/%s/row_on.png when=theme:%d' % (
+                        x, y + Y, w, h, LIST_COLS, LIST_ROWS, LIST_TH, LIST_GAP, LCD_PX["list"], LCD_INK[th][0], LCD_BG[th], th, th, n))
                 elif it["t"] in ("toggle", "button"):
                     pic_button(it["t"], it["key"], it["key"], it["x"], it["y"], n, th)
                 elif it["t"] == "knob":

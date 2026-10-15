@@ -14,7 +14,7 @@ v0.3 rebuilds the instruments (45 now, from the same open sources plus a few mor
 downloads, 10-20 minutes). Expected near the end:
 - `exported: VSTPluginMain`
 - `highest glibc: GLIBC_2.x` (2.31 or lower is ideal)
-- `dist/Sonix-0.3.1-mpc-armv7.zip`, about 125 MB (v0.2 was 220 MB), also copied to your Windows Downloads
+- `dist/Sonix-0.3.2-mpc-armv7.zip`, about 125 MB (v0.2 was 220 MB), also copied to your Windows Downloads
 
 If the build fails, send me the last ~30 lines of output.
 
@@ -28,9 +28,10 @@ parameter list changed again, so open a fresh Sonix rather than a project saved 
 | 1 | It loads | Plugin browser → Sonix on a new track | MAIN page, Concert Grand on the LCD, plays at once |
 | 2 | PRESET list | MPC's PRESET button / menu for the track | 128 presets by name; picking one changes the sound and the LCD |
 | 3 | Instant presets | Pick presets while playing pads | each one plays right away, no "Loading" pause (after the first few seconds) |
-| 4 | ◀ ▶ on the LCD | Tap the arrows | previous / next preset, across categories, wraps around |
+| 4 | ◀ ▶ on the LCD | Tap the arrows, several times quickly | previous / next preset inside the current category, wraps around; every tap counts |
 | 5 | Preset list | Tap STRINGS, then a name in the list; tap STRINGS again | the LCD lists the category's presets; a tap loads one (lit); the lit button again closes the list |
-| 5b | Scrolling | Touch the preset name on the LCD, turn the data wheel; turn Q-Link 16 | presets step one by one (two clicks each); the list follows into the next category |
+| 5b | Scrolling | Touch the preset name on the LCD, turn the data wheel; turn Q-Link 16 | one preset per click, inside the category; the selected row is clearly highlighted |
+| 5c | Studio Grey list | SETTINGS → STUDIO, open a list | light green rows, dark text, easy to read |
 | 6 | PRESET list stays open | Open MPC's PRESET list and play pads | the list doesn't close while the waveform moves |
 | 7 | Waveform | Play, soft and hard | the LCD wave moves smoothly while notes sound, taller when louder, flat when silent |
 | 8 | FAV / LIST | ★ FAV on a few presets, then ★ LIST on, then ◀ ▶ | a ★ on the LCD's top line; ◀ ▶ only visit the favourites |

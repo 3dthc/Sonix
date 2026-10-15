@@ -84,7 +84,17 @@ int main(int argc, char **argv) {
     CHECK(!strcmp(gets("lcd_name"), "VELVET GRAND") && getf("preset") == 1, "NEXT -> preset 2 (\"%s\")", gets("lcd_name"));
     CHECK(getf("layer_b") == 1 && !strcmp(gets("lcd_b"), "WARM PAD"), "its layer B is the warm pad (\"%s\")", gets("lcd_b"));
     press("prev"); press("prev");
-    CHECK(getf("preset") == NPRESET - 1 && getf("category") == NCAT - 1, "PREV wraps to the last preset (%g, \"%s\")", getf("preset"), gets("lcd_name"));
+    CHECK(!strcmp(gets("lcd_name"), "SALOON UPRIGHT") && getf("category") == 0, "PREV wraps inside PIANO (\"%s\")", gets("lcd_name"));
+    set("browse", "501");
+    CHECK(!strcmp(gets("lcd_name"), "CONCERT GRAND") && getf("browse") == 500, "a data-wheel click forward: the next piano preset, the control back at rest");
+    set("browse", "499"); set("browse", "499");
+    CHECK(!strcmp(gets("lcd_name"), "PAD LAYER GRAND"), "two clicks back, still inside PIANO (\"%s\")", gets("lcd_name"));
+    char bd[64]; E->get_param(S, "browse_display", bd, sizeof bd);
+    CHECK(!strcmp(bd, "Pad Layer Grand"), "the LCD's browse control shows the preset's name (\"%s\")", bd);
+    int p0 = (int)getf("preset");
+    set("next", "1"); run(0.2); set("next", "1");
+    CHECK((int)getf("preset") == (p0 + 2 > 10 ? p0 + 2 - 11 : p0 + 2), "NEXT pressed twice with no release in between steps twice (%d -> %g)", p0, getf("preset"));
+    set("next", "0");
     int before = (int)getf("preset");
     press("cat_strings");
     CHECK(getf("browser") == 1 && getf("look") == 1 && getf("category") == 3 && (int)getf("preset") == before,

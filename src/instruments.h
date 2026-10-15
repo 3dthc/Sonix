@@ -94,7 +94,7 @@ static const char *INST_NAME[NINST] = {
     "Tubular Bells",
     "FM Bells",
 };
-static const char *INST_SHORT[NINST] = {
+static const char *INST_SHORT[NINST] __attribute__((unused)) = {
     "GRAND PIANO",
     "UPRIGHT",
     "FM E-PIANO",

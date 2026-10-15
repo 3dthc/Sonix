@@ -297,6 +297,7 @@ typedef struct { uint8_t st, d1, d2; } ev_t;
 typedef struct {
     float p[NP];
     float prev_mom[NP];
+    double mom_t[NP];
     voice_t v[MAX_V];
     ev_t ev[MAX_EV]; int nev;
     int pedal;
@@ -393,13 +394,18 @@ static int edited(const inst_t *s) {
     }
     return 0;
 }
-/* prev / next: every preset in order, or only the favourites while FAV LIST is on (and there are some) */
+/* prev / next, the data wheel and Q-Link 16: the next preset in the category (the listed one while the list is open),
+ * wrapping inside it; with FAV LIST on (and favourites in it) only the favourites */
 static void step_preset(inst_t *s, int dir) {
-    int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, -1), cur = cur_preset(s);
-    for (int k = 1; k <= NPRESET; k++) {
-        int i = ((cur + dir * k) % NPRESET + NPRESET) % NPRESET;
-        if (!only || fav_get(s, i)) { apply_preset(s, i); return; }
-    }
+    int cur = cur_preset(s);
+    int cat = s->p[P_BROWSER] > 0.5f ? s->view_cat : PRESET_CAT[cur];
+    int only = s->p[P_FAV_ONLY] > 0.5f && any_fav(s, cat);
+    int list[NPRESET], n = 0, at = -1;
+    for (int i = 0; i < NPRESET; i++)
+        if (PRESET_CAT[i] == cat && (!only || fav_get(s, i))) { if (i == cur) at = n; list[n++] = i; }
+    if (!n) return;
+    int k = at < 0 ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
+    if (list[k] != cur) apply_preset(s, list[k]);
 }
 /* a category button opens the LCD's list of its presets (the sound stays until a row is picked); the lit one again
  * closes the list */
@@ -658,10 +664,13 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     }
     if (i < 0 || is_computed(i)) return;
     if (PINFO[i].kind == K_MOMENTARY) {
-        int press = x > 0.5f && s->prev_mom[i] <= 0.5f;
+        /* a press is any set to 1: MPC may never send the release back, so no edge detection; a second 1 within 120 ms
+         * is the same press */
+        int press = x > 0.5f && (s->prev_mom[i] <= 0.5f || s->clock - s->mom_t[i] > 0.12);
         s->prev_mom[i] = x;
         s->p[i] = x;
         if (!press) return;
+        s->mom_t[i] = s->clock;
         if (i == P_PREV) step_preset(s, -1);
         else if (i == P_NEXT) step_preset(s, 1);
         else if (i >= P_CAT_PIANO && i < P_CAT_PIANO + NCAT) category_pressed(s, i - P_CAT_PIANO);
@@ -671,12 +680,17 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     if (x > PINFO[i].hi) x = PINFO[i].hi;
     if (PINFO[i].whole) x = roundf(x);
     if (i == P_PRESET) { if ((int)x != cur_preset(s)) apply_preset(s, (int)x); return; }
+    if (i == P_BROWSE) {                               /* one step per wheel click / Q-Link event, then back to rest */
+        if ((int)x != 500) step_preset(s, x > 500 ? 1 : -1);
+        s->p[P_BROWSE] = 500; s->rev++;
+        return;
+    }
     if (i == P_FAV) { fav_set(s, cur_preset(s), x > 0.5f); s->p[P_FAV] = x > 0.5f; s->rev++; return; }
     s->p[i] = x;
     if (i == P_BROWSER || i == P_THEME) { if (i == P_BROWSER) s->view_cat = PRESET_CAT[cur_preset(s)]; sync_view(s); return; }
     if (i >= P_FAV_0 && i <= P_FAV_9) { s->p[P_FAV] = (float)fav_get(s, cur_preset(s)); s->rev++; return; }
     if (i >= P_LAYER_A && i <= P_SOLO_D) want_banks(s);
-    if (PINFO[i].kind == K_KNOB && i != P_VOLUME) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
+    if (PINFO[i].kind == K_KNOB && i != P_VOLUME && i != P_BROWSE) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
     s->rev++;
 }
 
@@ -715,6 +729,7 @@ static int fmt_display(const inst_t *s, int i, char *buf, int n) {
     case F_HZINT: return snprintf(buf, n, "%d Hz", (int)lroundf(x));
     case F_INT: return snprintf(buf, n, "%d", (int)lroundf(x));
     case F_PREDELAY: return snprintf(buf, n, "%d ms", (int)lroundf(clamp01(x) * 100));
+    case F_BROWSE: return snprintf(buf, n, "%s", PRESET_NAME[cur_preset(s)]);   /* the knob shows the preset's name */
     }
     return snprintf(buf, n, "%g", x);
 }
@@ -737,7 +752,8 @@ static int lcd_text(inst_t *s, int i, char *buf, int n) {
     if (i >= P_LCD_A && i <= P_LCD_D) {
         int l = i - P_LCD_A;
         if (!layer_on(s, l)) return snprintf(buf, n, "\xe2\x80\x94");
-        return snprintf(buf, n, "%s", INST_SHORT[layer_inst(s, l)]);
+        upcase(name, INST_NAME[layer_inst(s, l)], sizeof name);
+        return snprintf(buf, n, "%s", name);
     }
     if (i >= P_LCAT_A && i <= P_LCAT_D) {
         int l = i - P_LCAT_A;

@@ -207,7 +207,7 @@ def write_tables():
         f.write(f"#define NINST {len(names)}\n")
         f.write("static const char *INST_FILE[NINST] = {\n" + "".join(f'    "{n}",\n' for n in names) + "};\n")
         f.write("static const char *INST_NAME[NINST] = {\n" + "".join(f'    "{d}",\n' for _, d, _ in ORDER) + "};\n")
-        f.write("static const char *INST_SHORT[NINST] = {\n" + "".join(f'    "{sh}",\n' for _, _, sh in ORDER) + "};\n")
+        f.write("static const char *INST_SHORT[NINST] __attribute__((unused)) = {\n" + "".join(f'    "{sh}",\n' for _, _, sh in ORDER) + "};\n")
         f.write(f"#define NCAT {len(CATEGORIES)}\n")
         f.write("static const char *CAT_NAME[NCAT] = { " + ", ".join(f'"{c}"' for c in CATEGORIES) + " };\n")
         f.write("static const unsigned char INST_CAT[NINST] = { " + ", ".join(str(c) for c in cats) + " };\n")
