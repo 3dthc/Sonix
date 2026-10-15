@@ -1,23 +1,85 @@
 # Sonix
 
-An original ROMpler instrument for Akai MPC OS standalone devices (built and tested on an MPC Live II), as a native
-ARM VST2 plugin on [sd88me/mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins). Melodic only: pianos, keys,
-pads, strings, brass, choirs, leads, plucks, bass, bells, synth chords and FX, from redistributable recordings and
-sounds rendered by this project.
+A ROMpler instrument plugin for Akai MPC standalone devices (built and tested on an MPC Live II): 128 presets, 45
+instruments, four layers per preset, built-in effects and a touch faceplate in eleven colorways. It runs natively on
+the MPC as an ARM VST2 plugin, built on [sd88me/mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins).
 
-Status: early development (v0.3.7, device test). 128 factory presets (MPC's PRESET list) built from 45 instruments;
-four layers with level, pan, octave, fine, on and solo; a 12 dB filter with envelope, key and velocity tracking; an LFO
-for filter, vibrato and tremolo; chorus, a tempo-synced delay and reverb; tuning (A4 reference, tune, transpose, bend
-range) and playing settings; and the Sonix faceplate in eleven colorways (Midnight, Platinum, Studio Grey, Purple, Yellow, Gold, Green,
-Camo, Metallic Red, Silver, Ice Blue) on three pages (MAIN, LAYERS, SETTINGS), each with its 16 Q-Links in four
-columns of four. MAIN's LCD has two views: BROWSE (banks on the left, that bank's patches on the right) and LAYERS
-(the waveform and the four layers), plus a favourites list. Every LCD control hands the data wheel to
-the browser.
+![Sonix: MAIN page, preset browser](docs/images/main_browse.jpg)
 
-The instruments stay compressed in RAM (about 115 MB for all of them) and every voice decodes its own sample as it
-plays, so every preset plays the moment it is picked.
+## Features
 
-## Repository layout
+- **128 presets in 12 banks:** piano, keys, guitar, strings, brass, choir, pad, synth, lead, pluck, bass, bells.
+  They also appear in MPC's own PRESET list.
+- **45 instruments** from open recordings (CC0 / CC BY) and original synth renders, about 115 MB in total.
+  Every preset plays the moment you pick it.
+- **Four layers per preset**, each with its own sound, level, pan, octave, fine tune, on and solo.
+- **Sound shaping:** a 12 dB filter with envelope, key and velocity tracking; amp envelope; an LFO for filter,
+  vibrato and tremolo; chorus, a tempo-synced delay and reverb.
+- **Favourites:** star any preset and find them all in one list.
+- **Eleven colorways:** Midnight, Platinum, Studio Grey, Purple, Yellow, Gold, Green, Camo, Metallic Red, Silver,
+  Ice Blue.
+- **Made for the MPC:** every page has 16 Q-Links in four columns of four, the data wheel browses presets, and
+  your edits, layers, favourites and theme are saved with the project.
+
+## The pages
+
+### MAIN
+
+The centre screen has two views, picked with **BROWSE** and **LAYERS** at its foot.
+
+- **BROWSE:** banks on the left, that bank's presets on the right. Tap a bank, then tap a preset to load it.
+- **LAYERS:** a live waveform, the four layers (tap one to turn it on or off) and the preset's description.
+
+![MAIN page, LAYERS view](docs/images/main_layers.jpg)
+
+| Control | What it does |
+| --- | --- |
+| ◀ ▶ | previous / next preset in the bank |
+| Preset name, data wheel, Q-Link 16 | step through presets one at a time; after touching a bank the wheel steps banks |
+| ★ FAV | mark or unmark the current preset as a favourite |
+| ★ FAVORITES | list every favourite (11 per page); tap again to go back to the bank |
+| FILTER, AMP ENVELOPE, LFO, FX & OUTPUT | the 16 knobs; one Q-Link column each |
+
+The top line shows the bank, the preset number, ★ for a favourite and EDITED once you change a knob. The MIDI light,
+LFO light and CPU bar are in the header.
+
+### LAYERS
+
+One strip per layer: its sound on a small screen, ◀ PREV / NEXT ▶ to change the sound, ON, SOLO, and LEVEL, PAN,
+OCTAVE, FINE (one Q-Link column per layer). The light on each screen shows when that layer is sounding.
+
+![LAYERS page](docs/images/layers.jpg)
+
+### SETTINGS
+
+TUNING (A4 reference, tune, transpose, bend range), PLAYING (polyphony, velocity, velocity to filter, stereo spread),
+DELAY (time, feedback, tone, width) and REVERB (size, damping, pre-delay, width). In the centre: the colorway
+(◀ PREV / NEXT ▶), the waveform animation (OFF / LOW / SMOOTH), the mod wheel (vibrato, filter or off) and the
+velocity curve (soft / normal / hard).
+
+![SETTINGS page](docs/images/settings.jpg)
+
+### Colorways
+
+![The eleven colorways](docs/images/colorways.jpg)
+
+## Install
+
+Build on a Windows PC with WSL (Ubuntu) and Docker Desktop: start Docker Desktop, then run in Ubuntu
+
+```sh
+cd ~ && { [ -d Sonix ] || git clone https://github.com/3dthc/Sonix.git; } && cd Sonix && git pull && bash install.sh
+```
+
+The first build downloads and builds the instruments (several minutes). It ends with
+`Sonix-<version>-mpc-armv7.zip` in your Windows Downloads. Install it on the MPC like any other plugin, then restart
+the MPC. The SETTINGS page shows the version you are running. TESTING.md has a checklist for trying a new build.
+
+## Building from source
+
+The sections below are for working on Sonix itself.
+
+### Repository layout
 
 | Path | What |
 | --- | --- |
@@ -32,7 +94,7 @@ plays, so every preset plays the moment it is picked.
 | `library/LICENSES.md`, `library/files.csv` | sources and licenses, per instrument and per file |
 | `engine/` | the packed instruments the plugin loads (built, not committed; shipped in the release zip) |
 
-## Building the library
+### Building the library
 
 ```sh
 tools/fetch_sources.sh           # clones the upstream sample sets into raw/ (only the folders Sonix uses)
@@ -48,12 +110,12 @@ Needs Python 3 with numpy, scipy and soundfile (or just git and Docker: `tools/b
 container, and `install.sh` calls it when `engine/` is empty). Every recorded sample set is mapped by measured pitch, since several
 upstream libraries name their notes an octave or two away from where they sound.
 
-## The faceplate
+### The faceplate
 
 `python3 tools/make_skin.py` redraws every picture for the three pages and eleven colorways in headless Chromium
 (Playwright) and writes `vst/layout.conf` from the same coordinates; both are committed, so the plugin build only
 reads them (`--mockup <dir>` draws full-page previews with MPC's live text). The engine changes the page's pictures
-(LEDs, CPU bar, the lit category) only on events and the LCD waveform at most every 100 ms while notes sound, since
+(LEDs, CPU bar, lit rows) only on events and the LCD waveform at most every 100 ms while notes sound, since
 every repaint costs MPC's screen thread; the live text doesn't change while you play, so MPC's PRESET list stays
 open.
 
