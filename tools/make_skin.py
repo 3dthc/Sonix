@@ -36,7 +36,7 @@ ART = os.path.join(VST, "art")
 FONTS = os.path.join(VST, "fonts")
 MPC_FONTS = os.path.join(os.environ.get("MPC_VST", os.path.join(HERE, "..", "..", "mpc-vst-plugins")), "tools", "html_art", "fonts")
 Y_OFF = 86
-VERSION = "0.3.5"
+VERSION = "0.3.6"
 
 THEMES = ["midnight", "platinum", "studio", "purple", "yellow", "gold", "green", "camo", "red", "silver", "ice"]   # = "theme" options
 THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY", "PURPLE", "YELLOW", "GOLD", "GREEN", "CAMO", "METALLIC RED", "SILVER", "ICE BLUE"]
@@ -48,7 +48,7 @@ LAYERS = "abcd"
 BTN_W, BTN_H, BTN_GAP = 108, 47, 8                          # a button picture is BTN_W x (BTN_H + 4): the drop shadow
 KNOB_R = 36
 LABEL_PX, VALUE_PX, BUTTON_PX, TITLE_PX = 18, 26, 17, 14
-LCD_PX = dict(top=24, name=42, cell=30, line=28, lcat=24, lname=27, list=33, bank=30)
+LCD_PX = dict(top=24, name=42, cell=34, line=30, lcat=26, lname=30, list=33, bank=30)
 
 # ---- the chassis shared by MAIN and SETTINGS: a 2 x 2 knob panel in each corner, the centre column between
 W, H = 1280, 628
@@ -104,10 +104,10 @@ LIST_H = PATCH_N * (PATCH_TH + LIST_GAP) - LIST_GAP          # 384
 BANK_BOX = (SX + 10, AREA_Y, 198, BANK_N * (BANK_TH + LIST_GAP) - LIST_GAP)
 PATCH_BOX = (SX + 228, AREA_Y, SW - 238, LIST_H)
 DIVIDER_X = SX + 218
-LCD_WAVE = (SX + 16, AREA_Y + 4, SW - 32, 112)               # two meters side by side (MPC's strip width limit)
+LCD_WAVE = (SX + 16, AREA_Y + 2, SW - 32, 88)                # two meters side by side (MPC's strip width limit)
 WAVE_FRAMES = 17                                             # 0 idle, then 4 levels x 4 phases
-CELL_Y, CELL_H, CELL_W, CELL_GAP = AREA_Y + 130, 62, (SW - 32 - 8) // 2, 8   # the four layers, 2 x 2
-LCD_LINE = (SX + 18, AREA_Y + 280, SW - 36, 40)
+CELL_Y, CELL_H, CELL_W, CELL_GAP = AREA_Y + 98, 54, SW - 32, 6   # the four layers, one full-width row each
+LCD_LINE = (SX + 18, AREA_Y + 340, SW - 36, 40)
 TAB_Y = SY + 500                                             # the tab strip: BROWSE | LAYERS, then FAV and LIST
 VIEWS = ["BROWSE", "LAYERS"]
 TAB_X = SX + 8
@@ -128,7 +128,7 @@ def list_w(box, n):
 # ---- LAYERS: four strips
 STRIP_W, STRIP_PITCH = 310, 318
 STRIP_Y, STRIP_H = TOP_Y, 574
-MINI = (12, 30, 286, 104)                                    # mini LCD bezel within a strip (x, y offsets, w, h)
+MINI = (4, 30, 302, 104)                                    # mini LCD bezel within a strip (x, y offsets, w, h)
 STRIP_BTN_Y = (STRIP_Y + 150, STRIP_Y + 207)
 STRIP_KCOL = (82, 228)
 STRIP_KROW = STRIP_Y + 272                                   # first knob row's top
@@ -259,10 +259,10 @@ def page_main():
            # LAYERS
            dict(t="wave", box=LCD_WAVE, view=1)]
     for i, l in enumerate(LAYERS):
-        x = SX + 16 + (i % 2) * (CELL_W + CELL_GAP)
-        y = CELL_Y + (i // 2) * (CELL_H + 8)
+        x = SX + 16
+        y = CELL_Y + i * (CELL_H + CELL_GAP)
         it.append(dict(t="cell", x=x, y=y, w=CELL_W, h=CELL_H, letter=l.upper(), view=1))
-        it.append(dict(t="readout", key="lcd_" + l, box=(x + 40, y, CELL_W - 48, CELL_H), size=LCD_PX["cell"],
+        it.append(dict(t="readout", key="lcd_" + l, box=(x + 56, y, CELL_W - 68, CELL_H), size=LCD_PX["cell"],
                        ink="ink", align="left", weight="semibold", view=1))
         it.append(dict(t="pad", key="cell_" + l, box=(x, y, CELL_W, CELL_H), view=1))   # tap: layer on / off
     it += [dict(t="readout", key="lcd_line", box=LCD_LINE, size=LCD_PX["line"], ink="dim", align="center", weight="semibold", view=1),
@@ -290,10 +290,10 @@ def page_layers():
         it.append(dict(t="panel", x=x, y=STRIP_Y, w=STRIP_W, h=STRIP_H, title="LAYER " + l.upper()))
         bx, by, bw, bh = x + MINI[0], STRIP_Y + MINI[1], MINI[2], MINI[3]
         it.append(dict(t="minilcd", bezel=(bx, by, bw, bh), screen=(bx + 7, by + 7, bw - 14, bh - 14)))
-        it.append(dict(t="readout", key="lcat_" + l, box=(bx + 18, by + 10, bw - 64, 32), size=LCD_PX["lcat"], ink="dim",
+        it.append(dict(t="readout", key="lcat_" + l, box=(bx + 14, by + 8, bw - 60, 34), size=LCD_PX["lcat"], ink="dim",
                        align="left", weight="semibold"))
         it.append(dict(t="lcdled", key="act_" + l, cx=bx + bw - 28, cy=by + 28, label=""))
-        it.append(dict(t="readout", key="inst_" + l, box=(bx + 18, by + 46, bw - 34, 46), size=LCD_PX["lname"], ink="ink",
+        it.append(dict(t="readout", key="inst_" + l, box=(bx + 12, by + 44, bw - 24, 50), size=LCD_PX["lname"], ink="ink",
                        align="left", weight="bold"))
         bx0 = x + (STRIP_W - (2 * BTN_W + BTN_GAP)) // 2
         it.append(dict(t="button", key="inst_%s_prev" % l, label="◀  PREV", x=bx0, y=STRIP_BTN_Y[0]))
@@ -349,7 +349,7 @@ MOCK = {
         on=dict(fav=0, favs=0, lfo_led=1), view=0),
     "MAIN_LAYERS": dict(
         text=dict(lcd_top="PIANO  ·  002 / 128  ·  ★", lcd_ref="A4  440 HZ", preset="Velvet Grand",
-                  lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="STRING ENSEMBLE", lcd_d="—",
+                  lcd_a="GRAND PIANO", lcd_b="WARM PAD", lcd_c="ORCHESTRAL BRASS", lcd_d="—",
                   lcd_line="Soft grand over a slow pad and wide strings"),
         on=dict(fav=1, favs=0, lfo_led=1), view=1, wave=(2, 1)),
     "LAYERS": dict(
@@ -357,8 +357,8 @@ MOCK = {
                    level_b=(0.62, "-6.9 DB"), pan_b=(0.38, "L 24"), octave_b=(0.5, "0"), fine_b=(0.54, "+8 CT"),
                    level_c=(0.55, "-9.0 DB"), pan_c=(0.62, "R 24"), octave_c=(0.667, "+1"), fine_c=(0.46, "-8 CT"),
                    level_d=(0.7, "-4.6 DB"), pan_d=(0.5, "C"), octave_d=(0.333, "-1"), fine_d=(0.5, "0 CT")),
-        text=dict(lcat_a="PIANO", inst_a="GRAND PIANO", lcat_b="PAD", inst_b="WARM PAD", lcat_c="STRINGS",
-                  inst_c="STRING ENSEMBLE", lcat_d="BASS  ·  OFF", inst_d="SUB BASS"),
+        text=dict(lcat_a="PIANO", inst_a="GRAND PIANO", lcat_b="PAD", inst_b="WARM PAD", lcat_c="BRASS  ·  MUTED",
+                  inst_c="ORCHESTRAL BRASS", lcat_d="BASS  ·  OFF", inst_d="SUB BASS"),
         on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, solo_a=0, solo_b=0, solo_c=0, solo_d=0,
                 act_a=1, act_b=1, act_c=1, act_d=0)),
     "SETTINGS": dict(
@@ -583,8 +583,8 @@ function background(th, items) {
       ctx.globalAlpha = 0.5; ctx.setLineDash([2, 5]); ctx.beginPath(); ctx.moveTo(x, y + h / 2); ctx.lineTo(x + w, y + h / 2); ctx.stroke(); ctx.restore();
     } else if (it.t === 'cell') {
       ctx.save(); ctx.strokeStyle = t.lcdDim; ctx.lineWidth = 1.2; ctx.globalAlpha = 0.8; rr(it.x, it.y, it.w, it.h, 4); ctx.stroke();
-      ctx.globalAlpha = 1; rr(it.x + 4, it.y + 4, 24, it.h - 8, 3); ctx.fillStyle = t.lcdDim; ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore();
-      lcdGlyph(t, it.letter, it.x + 16, it.y + it.h / 2 + 7, { size: 18, font: 'Michroma', weight: 400, align: 'center' });
+      ctx.globalAlpha = 1; rr(it.x + 5, it.y + 5, 36, it.h - 10, 4); ctx.fillStyle = t.lcdDim; ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore();
+      lcdGlyph(t, it.letter, it.x + 23, it.y + it.h / 2 + 9, { size: 24, font: 'Michroma', weight: 400, align: 'center' });
     } else if (it.t === 'led') {
       ctx.beginPath(); ctx.arc(it.cx, it.cy, 8, 0, 2 * Math.PI); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
     } else if (it.t === 'lcdled') {

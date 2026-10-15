@@ -12,7 +12,7 @@
 # Safe to run again: each step skips what is already done.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-VERSION="0.3.5"
+VERSION="0.3.6"
 ENGINE_VERSION="0.3.0"       # an optional prebuilt instruments zip
 MPC_VST="${MPC_VST:-$HERE/../mpc-vst-plugins}"
 step() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
@@ -75,7 +75,9 @@ out="$HERE/dist/Sonix-$VERSION-mpc-armv7.zip"
 step "4/4  Done"
 copied=""
 for d in /mnt/c/Users/*/Downloads; do
-  [ -d "$d" ] && [ -w "$d" ] && cp "$out" "$d/" && { copied="$d/$(basename "$out")"; break; }
+  [ -d "$d" ] && [ -w "$d" ] || continue
+  rm -f "$d"/Sonix-*-mpc-armv7.zip          # older Sonix builds only, so the newest can't be mixed up with them
+  cp "$out" "$d/" && { copied="$d/$(basename "$out")"; break; }
 done
 echo "MPC install zip: $out"
 if [ -n "$copied" ]; then
