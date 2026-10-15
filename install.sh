@@ -12,7 +12,7 @@
 # Safe to run again: each step skips what is already done.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-VERSION="0.3.4"
+VERSION="0.3.5"
 ENGINE_VERSION="0.3.0"       # an optional prebuilt instruments zip
 MPC_VST="${MPC_VST:-$HERE/../mpc-vst-plugins}"
 step() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
