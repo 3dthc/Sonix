@@ -730,7 +730,7 @@ static int need_loading(const inst_t *s) {
     return 0;
 }
 
-#define DOT "   \xc2\xb7   "
+#define DOT "  \xc2\xb7  "
 static int lcd_text(inst_t *s, int i, char *buf, int n) {
     int pr = cur_preset(s);
     char name[64];
@@ -757,7 +757,7 @@ static int lcd_text(inst_t *s, int i, char *buf, int n) {
                         fav_get(s, pr) ? DOT "\xe2\x98\x85" : "", edited(s) ? DOT "EDITED" : "");
     case P_LCD_REF: {
         int tr = ival(s, P_TRANSPOSE, -24, 24);
-        if (tr) return snprintf(buf, n, "TRANSPOSE %+d" DOT "A4  %d HZ", tr, ival(s, P_A4_REF, 400, 480));
+        if (tr) return snprintf(buf, n, "TR %+d   A4  %d HZ", tr, ival(s, P_A4_REF, 400, 480));
         return snprintf(buf, n, "A4  %d HZ", ival(s, P_A4_REF, 400, 480));
     }
     case P_LCD_NAME:
@@ -791,7 +791,7 @@ static int eng_get_param(void *inst, const char *key, char *buf, int n) {
         if (pr < 0) return snprintf(buf, n, " ");
         char name[64];
         upcase(name, PRESET_NAME[pr], sizeof name);
-        return snprintf(buf, n, "%03d   %s%s", pr + 1, name, fav_get(s, pr) ? "  \xe2\x98\x85" : "");
+        return snprintf(buf, n, "%d  %s%s", pr + 1, name, fav_get(s, pr) ? "  \xe2\x98\x85" : "");
     }
     int i = find_key(key);
     if (i >= 0 && PINFO[i].kind == K_TEXT) return lcd_text(s, i, buf, n);

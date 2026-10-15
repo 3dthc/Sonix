@@ -33,7 +33,7 @@ ENGINE = os.path.join(REPO, "engine")
 ORDER = [
     ("grand_piano", "Grand Piano", "GRAND PIANO"), ("upright_piano", "Upright Piano", "UPRIGHT"),
     ("fm_epiano", "FM E-Piano", "FM E-PIANO"), ("clavisynth", "Clavisynth", "CLAVISYNTH"),
-    ("harpsichord", "Harpsichord", "HARPSICHORD"), ("drawbar_organ", "Drawbar Organ", "DRAWBAR"),
+    ("harpsichord", "Harpsichord", "HARPSICHRD"), ("drawbar_organ", "Drawbar Organ", "DRAWBAR"),
     ("pipe_organ", "Pipe Organ", "PIPE ORGAN"),
     ("nylon_guitar", "Nylon Guitar", "NYLON GTR"), ("steel_guitar", "Steel Guitar", "STEEL GTR"),
     ("clean_electric", "Clean Electric", "CLEAN ELEC"), ("muted_electric", "Muted Electric", "MUTED ELEC"),
@@ -45,16 +45,16 @@ ORDER = [
     ("aah_choir", "Aah Choir", "AAH CHOIR"), ("ooh_choir", "Ooh Choir", "OOH CHOIR"),
     ("warm_pad", "Warm Pad", "WARM PAD"), ("analog_pad", "Analog Pad", "ANALOG PAD"),
     ("glass_pad", "Glass Pad", "GLASS PAD"), ("air_pad", "Air Pad", "AIR PAD"),
-    ("trance_chords", "Trance Chords", "TRANCE CHRD"), ("dub_chord", "Dub Chord", "DUB CHORD"),
+    ("trance_chords", "Trance Chords", "TRANCE"), ("dub_chord", "Dub Chord", "DUB CHORD"),
     ("riser", "Riser", "RISER"), ("downlifter", "Downlifter", "DOWNLIFTER"),
     ("supersaw_lead", "Supersaw Lead", "SUPERSAW"), ("square_lead", "Square Lead", "SQUARE LEAD"),
     ("flute", "Flute", "FLUTE"),
     ("concert_harp", "Concert Harp", "HARP"), ("kalimba", "Kalimba", "KALIMBA"),
     ("synth_pluck", "Synth Pluck", "SYNTH PLUCK"),
-    ("sub_bass", "Sub Bass", "SUB BASS"), ("upright_bass", "Upright Bass", "UPRIGHT BASS"),
+    ("sub_bass", "Sub Bass", "SUB BASS"), ("upright_bass", "Upright Bass", "UPR BASS"),
     ("analog_bass", "Analog Bass", "ANALOG BASS"), ("fm_bass", "FM Bass", "FM BASS"),
     ("vibraphone", "Vibraphone", "VIBRAPHONE"), ("marimba", "Marimba", "MARIMBA"),
-    ("glockenspiel", "Glockenspiel", "GLOCKENSPIEL"), ("tubular_bells", "Tubular Bells", "TUBULAR"),
+    ("glockenspiel", "Glockenspiel", "GLOCK"), ("tubular_bells", "Tubular Bells", "TUBULAR"),
     ("fm_bells", "FM Bells", "FM BELLS"),
 ]
 
