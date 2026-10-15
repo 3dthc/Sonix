@@ -14,7 +14,7 @@ v0.3 rebuilds the instruments (45 now, from the same open sources plus a few mor
 downloads, 10-20 minutes). Expected near the end:
 - `exported: VSTPluginMain`
 - `highest glibc: GLIBC_2.x` (2.31 or lower is ideal)
-- `dist/Sonix-0.3.3-mpc-armv7.zip`, about 140 MB (eleven colorways) (v0.2 was 220 MB), also copied to your Windows Downloads
+- `dist/Sonix-0.3.3-mpc-armv7.zip`, about 135 MB (eleven colorways) (v0.2 was 220 MB), also copied to your Windows Downloads
 
 If the build fails, send me the last ~30 lines of output.
 
