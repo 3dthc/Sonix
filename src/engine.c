@@ -1031,7 +1031,7 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     /* ---- effects: chorus -> delay -> reverb -> volume -> soft limit (from Fretty) ---- */
     float chorus = clamp01(s->p[P_CHORUS]), delay = clamp01(s->p[P_DELAY]), space = clamp01(s->p[P_REVERB]);
     float vol = clamp01(s->p[P_VOLUME]);
-    float target = vol * vol;
+    float target = 2.0f * vol * vol;
     if (s->vol_smooth < 0) s->vol_smooth = target;
     float vstep = (target - s->vol_smooth) / frames;
     float dry = 1.0f - 0.35f * space, wet = space * 0.9f;

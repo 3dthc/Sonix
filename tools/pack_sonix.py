@@ -95,17 +95,20 @@ def encode_channel(x):
         r = residuals(x, order)
         u = np.where(r >= 0, 2 * r, -2 * r - 1).astype(np.int64)
         ub = np.concatenate([u, np.zeros(pad, np.int64)]).reshape(nb, BLOCK)
-        cnt = np.full(nb, BLOCK)
-        cnt[-1] = BLOCK - pad
-        mean = ub.sum(1) / cnt
-        k = np.clip(np.floor(np.log2(mean * 0.69 + 1)), 0, 20).astype(np.int64)
-        q = ub >> k[:, None]
-        cost = np.where(q >= ESC_Q, ESC_Q + 20, q + 1 + k[:, None])
-        cost[-1, BLOCK - pad:] = 0
-        cost = cost.sum(1) + 8
-        better = cost < best_cost
-        best_cost = np.where(better, cost, best_cost)
-        best_k = np.where(better, k, best_k)
+        order_cost = np.full(nb, np.inf)
+        order_k = np.zeros(nb, np.int64)
+        for k_value in range(21):
+            q = ub >> k_value
+            cost = np.where(q >= ESC_Q, ESC_Q + 20, q + 1 + k_value)
+            cost[-1, BLOCK - pad:] = 0
+            cost = cost.sum(1) + 8
+            better_k = cost < order_cost
+            order_cost = np.where(better_k, cost, order_cost)
+            order_k = np.where(better_k, k_value, order_k)
+
+        better = order_cost < best_cost
+        best_cost = np.where(better, order_cost, best_cost)
+        best_k = np.where(better, order_k, best_k)
         best_o = np.where(better, order, best_o)
         sel = np.repeat(better, BLOCK)[:n]
         best_u = np.where(sel, u.astype(np.uint64), best_u)
