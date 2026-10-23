@@ -1,0 +1,34 @@
+# Builds Sonix for MPC in GitHub Actions and attaches Sonix-<version>-mpc-armv7.zip to a DRAFT release. The packed
+# instruments come from an earlier release zip with the same library version (tools/ci_build.sh).
+# Actions -> Release -> Run workflow, enter the version. Install that zip on an MPC, check it, then publish the draft.
+# mpc-vst-plugins is pinned to one commit in both places below.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version, e.g. 0.3.10
+        required: true
+        type: string
+      dry_run:
+        description: Build and package only (zip and page previews as run artifacts), no draft release
+        type: boolean
+        default: false
+
+jobs:
+  vst:
+    uses: sd88me/mpc-vst-plugins/.github/workflows/vst-release.yml@8aa8d3552a55a93eb4034bb9bbb02cbe91d69b61
+    permissions: { contents: write }
+    with:
+      tag: v${{ inputs.version }}
+      version: ${{ inputs.version }}
+      tools_ref: 8aa8d3552a55a93eb4034bb9bbb02cbe91d69b61
+      vst_dir: vst
+      build: bash tools/ci_build.sh
+      host_test: 'mkdir -p vst/build/engine && cp engine/* vst/build/engine/ && "$MPC_VST/tools/test_port.sh" vst/vst.json'
+      extra: engine:engine
+      about: A ROMpler with 128 presets and 45 instruments - pianos, keys, guitars, strings, brass, choirs, pads, synths, leads, plucks, bass and bells, from CC0 / CC BY recordings and original renders. Four layers, filter, LFO, chorus, delay, reverb, eleven colorways.
+      plugin_id: sonix
+      license: MIT
+      dry_run: ${{ inputs.dry_run }}
