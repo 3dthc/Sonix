@@ -1,0 +1,20 @@
+# One-off: re-attach the fixed Sonix-0.3.10-mpc-armv7.zip (SETTINGS about screen without the stale version) to the
+# v0.3.10 release. The zip was split to stay under GitHub's 100 MB file limit. This branch is deleted afterwards.
+name: Replace release asset
+on:
+  push:
+    branches: [asset-patch]
+permissions:
+  contents: write
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Join, verify, upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat parts/zip.* > Sonix-0.3.10-mpc-armv7.zip
+          echo "31252f71f0f32fa630fa64527345e76742234af8e0c3d6b1f174e49bc3bf7a98  Sonix-0.3.10-mpc-armv7.zip" | sha256sum -c -
+          gh release upload v0.3.10 Sonix-0.3.10-mpc-armv7.zip --clobber -R ${{ github.repository }}
