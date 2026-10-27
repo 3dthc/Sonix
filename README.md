@@ -73,7 +73,7 @@ cd ~ && { [ -d Sonix ] || git clone https://github.com/3dthc/Sonix.git; } && cd 
 
 The first build downloads and builds the instruments (several minutes). It ends with
 `Sonix-<version>-mpc-armv7.zip` in your Windows Downloads. Install it on the MPC like any other plugin, then restart
-the MPC. The SETTINGS page shows the version you are running. TESTING.md has a checklist for trying a new build.
+the MPC. TESTING.md has a checklist for trying a new build.
 
 ## Building from source
 

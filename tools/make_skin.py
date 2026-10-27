@@ -36,7 +36,6 @@ ART = os.path.join(VST, "art")
 FONTS = os.path.join(VST, "fonts")
 MPC_FONTS = os.path.join(os.environ.get("MPC_VST", os.path.join(HERE, "..", "..", "mpc-vst-plugins")), "tools", "html_art", "fonts")
 Y_OFF = 86
-VERSION = "0.3.8"
 
 THEMES = ["midnight", "platinum", "studio", "purple", "yellow", "gold", "green", "camo", "red", "silver", "ice"]   # = "theme" options
 THEME_NAMES = ["MIDNIGHT", "PLATINUM", "STUDIO GREY", "PURPLE", "YELLOW", "GOLD", "GREEN", "CAMO", "METALLIC RED", "SILVER", "ICE BLUE"]
@@ -629,10 +628,9 @@ function background(th, items) {
 }
 function aboutScreen(t, s) {
   const [sx, sy, sw, sh] = s, cx = sx + sw / 2;
-  // the plugin's name and version, nothing else
+  // the plugin's name, nothing else (no version: it would have to be redrawn for every release)
   const lt = Object.assign({}, t, { logo: t.lcdText, led: t.lcdText, logoGlow: t.lcdGlow });
-  ctx.save(); logo(lt, cx - 135, sy + sh / 2 + 6, 46); ctx.restore();
-  lcdGlyph(t, 'VERSION ' + C.VERSION, cx, sy + sh / 2 + 54, { size: 19, font: 'Michroma', weight: 400, align: 'center', color: t.lcdDim, spacing: 3 });
+  ctx.save(); logo(lt, cx - 135, sy + sh / 2 + 30, 46); ctx.restore();
 }
 
 // ---------- buttons: raised off, pressed and lit on ----------
@@ -836,7 +834,7 @@ ABOUT_LINES = [
 
 
 def open_page(p, with_mpc_fonts):
-    consts = dict(VERSION=VERSION, VALUE_DY=value_label()[1], TITLE_PX=TITLE_PX, LABEL_PX=LABEL_PX, VALUE_PX=VALUE_PX, BUTTON_PX=BUTTON_PX,
+    consts = dict(VALUE_DY=value_label()[1], TITLE_PX=TITLE_PX, LABEL_PX=LABEL_PX, VALUE_PX=VALUE_PX, BUTTON_PX=BUTTON_PX,
                   KNOB_R=KNOB_R, BTN_W=BTN_W, BTN_H=BTN_H, BTN_GAP=BTN_GAP, CATS=CATS, THEMES=THEMES,
                   WAVE_FRAMES=WAVE_FRAMES, LIST_GAP=LIST_GAP, LCD_BH=LCD_BH, VIEWS=VIEWS, led=HEADER_LED, cpu=CPU_BAR, logoX=LOGO_X, LCD_INK=LCD_INK, KNOB_INK=KNOB_INK, ABOUT=ABOUT_LINES)
     page = (PAGE.replace("CONST_JSON", json.dumps(consts)).replace("THEMES_JSON", json.dumps(THEME_TABLE))
