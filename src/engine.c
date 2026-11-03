@@ -735,8 +735,12 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     if (i < 0 || is_computed(i)) return;
     if (is_tap(i)) { tap_pad(s, i, x); return; }
     if (PINFO[i].kind == K_MOMENTARY) {
+        /* No tapped() here: every momentary param is declared momentary in params.json, so the wrapper already
+         * ignores a second press within its debounce_ms (250). Guarding again on this side put two windows on one
+         * press -- a deliberate tap could clear the wrapper's and still be eaten here, which is what made stepping
+         * the theme feel like it was lagging. The pads below are not momentary, so they keep their own guard. */
         s->p[i] = x;
-        if (!tapped(s, i)) return;
+        if (x < 0.5f) return;                  /* the release, and the host's echo of it, are not presses */
         if (i == P_THEME_PREV || i == P_THEME_NEXT) { step_option(s, P_THEME, i == P_THEME_NEXT ? 1 : -1); sync_view(s); s->rev++; }
         else for (int l = 0; l < NLAYER; l++)
             if (i == LP(P_INST_A_PREV, l) || i == LP(P_INST_A_NEXT, l)) {
