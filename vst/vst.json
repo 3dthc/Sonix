@@ -31,5 +31,9 @@
   "programs": {
     "param": "preset"
   },
-  "skin_os": 2
+  "skin_os": 2,
+  "targets": [
+    "armv7",
+    "aarch64"
+  ]
 }
