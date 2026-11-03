@@ -30,5 +30,6 @@
   "art": "html",
   "programs": {
     "param": "preset"
-  }
+  },
+  "skin_os": 2
 }
