@@ -1,3 +1,4 @@
 [
-  {"version": "0.3.10", "device": "MPC Live II", "firmware": "3.9.1", "date": "2026-10-26"}
+  {"version": "0.3.10", "device": "MPC Live II", "firmware": "3.9.1", "date": "2026-10-26"},
+  {"version": "0.3.12", "device": "MPC Live II", "firmware": "3.10", "date": "2026-11-03", "notes": "Gen1 armv7 build, installed and played on the device. The aarch64 build of the same release has not been run on a Gen2, and no MPC OS 2.x device has run this skin."}
 ]

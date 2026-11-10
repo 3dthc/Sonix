@@ -30,6 +30,7 @@ static void note(int on, int key, int vel) { uint8_t m[3] = { (uint8_t)(on ? 0x9
 static void cc(int n, int v) { uint8_t m[3] = { 0xB0, (uint8_t)n, (uint8_t)v }; E->midi(S, m, 3); }
 static int16_t *rec; static size_t rec_n, rec_cap;
 static double run(double sec) {               /* render (recording the left channel); returns the RMS */
+    if (sec >= 0.2) usleep(260000);           /* real time passes too: the engine tells taps apart on a wall clock (TAP_S) */
     int n = (int)(sec * 44100 / 128); double acc = 0;
     for (int b = 0; b < n; b++) {
         E->render(S, buf, 128);
@@ -266,8 +267,8 @@ int main(int argc, char **argv) {
       seti("inst_b", find_preset("Velvet Grand") >= 0 ? 0 : 0); }
     seti("preset", find_preset("Velvet Grand"));
     int ib = (int)getf("inst_b");
-    set("inst_b_next", "1"); run(0.2); set("inst_b_next", "0"); run(0.2);
-    CHECK((int)getf("inst_b") == (ib + 2) % NINST, "layer B's NEXT: two taps, two sounds on (%d -> %g)", ib, getf("inst_b"));
+    set("inst_b_next", "1"); run(0.2); set("inst_b_next", "0"); run(0.2); set("inst_b_next", "1"); run(0.2);
+    CHECK((int)getf("inst_b") == (ib + 2) % NINST, "layer B's NEXT: two presses, two sounds on; the release isn't one (%d -> %g)", ib, getf("inst_b"));
     press("inst_b_prev"); press("inst_b_prev");
     CHECK((int)getf("inst_b") == ib, "and PREV back (%g)", getf("inst_b"));
 

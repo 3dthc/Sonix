@@ -483,10 +483,22 @@ static void sync_favs(inst_t *s) {
 }
 static int is_tap(int i) { return PINFO[i].fmt == F_TAP; }
 /* a tap on MPC's touch screen: buttons there act like toggles (each tap alternates 1 / 0, and a hold may send
- * nothing more), so every set is a tap; a second set within 150 ms is the same tap (MPC's echo of it) */
+ * nothing more), so every set is a tap; a second set within TAP_S is the same tap (MPC's echo of it).
+ *
+ * This is measured on a wall clock, not on s->clock: s->clock only advances inside render(), so with the transport
+ * stopped or the track silent it stands still and every tap looked like the same one. The window is also wider than
+ * it was -- switching theme redraws the whole faceplate, and the host reports the button's value back once that is
+ * done, which took longer than the old 150 ms, so the echo arrived late and stepped the theme a second time. */
+#define TAP_S 0.25
+static double wall_s(void) {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    return (double)t.tv_sec + t.tv_nsec / 1e9;
+}
 static int tapped(inst_t *s, int i) {
-    if (s->clock - s->mom_t[i] < 0.15) return 0;
-    s->mom_t[i] = s->clock;
+    double now = wall_s();
+    if (s->mom_t[i] > 0 && now - s->mom_t[i] < TAP_S) return 0;
+    s->mom_t[i] = now;
     return 1;
 }
 
@@ -782,8 +794,12 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     if (i < 0 || is_computed(i)) return;
     if (is_tap(i)) { tap_pad(s, i, x); return; }
     if (PINFO[i].kind == K_MOMENTARY) {
+        /* No tapped() here: every momentary param is declared momentary in params.json, so the wrapper already
+         * ignores a second press within its debounce_ms (250). Guarding again on this side put two windows on one
+         * press -- a deliberate tap could clear the wrapper's and still be eaten here, which is what made stepping
+         * the theme feel like it was lagging. The pads below are not momentary, so they keep their own guard. */
         s->p[i] = x;
-        if (!tapped(s, i)) return;
+        if (x < 0.5f) return;                  /* the release, and the host's echo of it, are not presses */
         if (i == P_THEME_PREV || i == P_THEME_NEXT) { step_option(s, P_THEME, i == P_THEME_NEXT ? 1 : -1); sync_view(s); s->rev++; }
         else for (int l = 0; l < NLAYER; l++)
             if (i == LP(P_INST_A_PREV, l) || i == LP(P_INST_A_NEXT, l)) {

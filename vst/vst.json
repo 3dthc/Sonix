@@ -2,7 +2,7 @@
   "name": "Sonix",
   "vendor": "3dthc",
   "uid": "SnX1",
-  "version": 311,
+  "version": 313,
   "so": "sonix.so",
   "params": "params.json",
   "defines": {
@@ -30,5 +30,10 @@
   "art": "html",
   "programs": {
     "param": "preset"
-  }
+  },
+  "skin_os": 2,
+  "targets": [
+    "armv7",
+    "aarch64"
+  ]
 }
