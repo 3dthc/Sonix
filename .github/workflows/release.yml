@@ -18,7 +18,7 @@ on:
 
 jobs:
   vst:
-    uses: sd88me/mpc-vst-plugins/.github/workflows/vst-release.yml@8aa8d3552a55a93eb4034bb9bbb02cbe91d69b61
+    uses: open-mpc/mpc-vst-plugins/.github/workflows/vst-release.yml@8aa8d3552a55a93eb4034bb9bbb02cbe91d69b61
     permissions: { contents: write }
     with:
       tag: v${{ inputs.version }}

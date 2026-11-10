@@ -32,7 +32,7 @@ echo "docker ok"
 if [ ! -f "$MPC_VST/tools/build_port.sh" ]; then
   command -v git >/dev/null || fail "mpc-vst-plugins not found at $MPC_VST and git is missing (sudo apt install git)"
   echo "mpc-vst-plugins not found, cloning it to $MPC_VST"
-  git clone --depth 1 https://github.com/sd88me/mpc-vst-plugins.git "$MPC_VST"
+  git clone --depth 1 https://github.com/open-mpc/mpc-vst-plugins.git "$MPC_VST"
 fi
 echo "toolchain: $(cd "$MPC_VST" && pwd)"
 export MPC_VST

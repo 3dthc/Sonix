@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build Sonix for MPC OS: the .so, skin and plugin-list entry (the instruments must already be in engine/).
 #   vst/build.sh            (run from anywhere; needs Docker and python3)
-# Expects a checkout of sd88me/mpc-vst-plugins next to this repo (override with MPC_VST=...).
+# Expects a checkout of open-mpc/mpc-vst-plugins (formerly sd88me) next to this repo (override with MPC_VST=...).
 # Output: vst/build/sonix.so, vst/build/skin/...
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
