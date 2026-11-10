@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <time.h>
 #include <unistd.h>
 #include "engine.h"
@@ -297,7 +298,8 @@ typedef struct { uint8_t st, d1, d2; } ev_t;
 typedef struct {
     float p[NP];
     double mom_t[NP];
-    float wlast[NP];                 /* tap pads: the last value the host sent (the data wheel nudges from it) */
+    float wlast[NP];
+    int fav_gen;                     /* the shared favourites' g_fav_gen this instance last mirrored */                 /* tap pads: the last value the host sent (the data wheel nudges from it) */
     voice_t v[MAX_V];
     ev_t ev[MAX_EV]; int nev;
     int pedal;
@@ -347,12 +349,67 @@ static void want_banks(inst_t *s) {
     for (int l = 0; l < NLAYER; l++) if (layer_on(s, l)) bank_want(layer_inst(s, l));
 }
 
-/* favourites: one bit per preset in ten 13-bit parameters (saved with the project) */
-static int fav_get(const inst_t *s, int pr) { return (ival(s, P_FAV_0 + pr / 13, 0, 8191) >> (pr % 13)) & 1; }
+/* Favourites belong to the MPC, not to one project: every Sonix shares one list, kept in <data dir>/favorites.txt
+ * (one preset name a line; an upgrade keeps the file), so a star stays until it is taken off. The ten 13-bit fav_N
+ * parameters still mirror the list into each project; a project saved with stars of its own adds them to the list. */
+static pthread_mutex_t g_fav_mx = PTHREAD_MUTEX_INITIALIZER;
+static unsigned char g_fav[NPRESET];
+static int g_fav_loaded;
+static volatile int g_fav_gen = 1;               /* bumped on every change, so open instances refresh */
+static char g_fav_path[1100];
+
+static void fav_save_locked(void) {
+    char tmp[1110];
+    snprintf(tmp, sizeof tmp, "%s.new", g_fav_path);
+    FILE *f = fopen(tmp, "w");
+    if (!f) return;                               /* read-only place: the list still lives in memory and projects */
+    int ok = 1;
+    for (int i = 0; i < NPRESET; i++) if (g_fav[i] && fprintf(f, "%s\n", PRESET_NAME[i]) < 0) ok = 0;
+    if (fclose(f) != 0) ok = 0;
+    if (ok) rename(tmp, g_fav_path); else remove(tmp);
+}
+static void fav_load(const char *data_dir) {
+    pthread_mutex_lock(&g_fav_mx);
+    if (!g_fav_loaded) {
+        g_fav_loaded = 1;
+        snprintf(g_fav_path, sizeof g_fav_path, "%s/favorites.txt", data_dir ? data_dir : ".");
+        FILE *f = fopen(g_fav_path, "r");
+        char line[160];
+        while (f && fgets(line, sizeof line, f)) {
+            line[strcspn(line, "\r\n")] = 0;
+            for (int i = 0; i < NPRESET; i++) if (!strcasecmp(line, PRESET_NAME[i])) g_fav[i] = 1;
+        }
+        if (f) fclose(f);
+        g_fav_gen++;
+    }
+    pthread_mutex_unlock(&g_fav_mx);
+}
+static int fav_get(const inst_t *s, int pr) { (void)s; return pr >= 0 && pr < NPRESET && g_fav[pr]; }
+/* the shared list -> this instance's fav_N parameters */
+static void fav_mirror(inst_t *s) {
+    for (int k = 0; k < 10; k++) {
+        int w = 0;
+        for (int b = 0; b < 13 && k * 13 + b < NPRESET; b++) if (g_fav[k * 13 + b]) w |= 1 << b;
+        s->p[P_FAV_0 + k] = (float)w;
+    }
+    s->fav_gen = g_fav_gen;
+}
 static void fav_set(inst_t *s, int pr, int on) {
-    int w = ival(s, P_FAV_0 + pr / 13, 0, 8191);
-    w = on ? w | (1 << (pr % 13)) : w & ~(1 << (pr % 13));
-    s->p[P_FAV_0 + pr / 13] = (float)w;
+    if (pr < 0 || pr >= NPRESET) return;
+    pthread_mutex_lock(&g_fav_mx);
+    if (g_fav[pr] != (on != 0)) { g_fav[pr] = on != 0; fav_save_locked(); g_fav_gen++; }
+    pthread_mutex_unlock(&g_fav_mx);
+    fav_mirror(s);
+}
+/* a project (or MPC) sets fav_N: stars it holds join the shared list; none are taken off this way */
+static void fav_merge(inst_t *s, int k, int w) {
+    int changed = 0;
+    pthread_mutex_lock(&g_fav_mx);
+    for (int b = 0; b < 13 && k * 13 + b < NPRESET; b++)
+        if ((w >> b) & 1 && !g_fav[k * 13 + b]) { g_fav[k * 13 + b] = 1; changed = 1; }
+    if (changed) { fav_save_locked(); g_fav_gen++; }
+    pthread_mutex_unlock(&g_fav_mx);
+    fav_mirror(s);
 }
 
 /* the MAIN page's look: theme x LCD view (BROWSE | LAYERS), one option so a picture of both needs one when= */
@@ -643,6 +700,8 @@ static void *eng_create(const char *data_dir) {
         free(s->cho); free(s->dly); free(s->pre); free(s->rv); free(s); return NULL;
     }
     banks_attach(data_dir);
+    fav_load(data_dir);
+    fav_mirror(s);
     apply_preset(s, 0);
     sync_view(s);
     /* the first preset plays the moment Sonix opens: wait (up to 2 s) for its sounds, which the loader takes first */
@@ -744,7 +803,7 @@ static void eng_set_param(void *inst, const char *key, const char *val) {
     }
     s->p[i] = x;
     if (i == P_VIEW || i == P_THEME) { sync_view(s); s->rev++; return; }
-    if (i >= P_FAV_0 && i <= P_FAV_9) { sync_favs(s); s->rev++; return; }
+    if (i >= P_FAV_0 && i <= P_FAV_9) { fav_merge(s, i - P_FAV_0, (int)x); sync_favs(s); s->rev++; return; }
     if (i >= P_LAYER_A && i <= P_SOLO_D) want_banks(s);
     if (PINFO[i].kind == K_KNOB && i != P_VOLUME && i != P_BROWSE && !is_tap(i)) { s->touch = i; s->touch_t = s->clock; s->touch_shown = 1; }
     s->rev++;
@@ -1106,6 +1165,7 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     s->clock += dt;
     if (held) s->midi_t = s->clock;                          /* the MIDI LED stays lit while keys are down */
     if (s->p[P_MIDI_LED] > 0.5f && s->clock - s->midi_t > 0.15) { s->p[P_MIDI_LED] = 0; s->rev++; }
+    if (s->fav_gen != g_fav_gen) { fav_mirror(s); sync_favs(s); s->rev++; }   /* another Sonix changed the list */
     for (int l = 0; l < NLAYER; l++)
         if (busy[l] != (int)s->p[P_ACT_A + l]) { s->p[P_ACT_A + l] = (float)busy[l]; s->rev++; }
     int lfo_led = s->p[P_LFO_FILTER] > 0.001f || s->p[P_LFO_PITCH] > 0.001f || s->p[P_LFO_AMP] > 0.001f;

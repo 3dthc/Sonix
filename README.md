@@ -15,11 +15,12 @@ the MPC as an ARM VST2 plugin, built on [sd88me/mpc-vst-plugins](https://github.
 - **Four layers per preset**, each with its own sound, level, pan, octave, fine tune, on and solo.
 - **Sound shaping:** a 12 dB filter with envelope, key and velocity tracking; amp envelope; an LFO for filter,
   vibrato and tremolo; chorus, a tempo-synced delay and reverb.
-- **Favourites:** star any preset and find them all in one list.
+- **Favourites:** star any preset and find them all in one list. Stars are shared by every Sonix on the MPC and stay
+  until you take them off.
 - **Eleven colorways:** Midnight, Platinum, Studio Grey, Purple, Yellow, Gold, Green, Camo, Metallic Red, Silver,
   Ice Blue.
 - **Made for the MPC:** every page has 16 Q-Links in four columns of four, the data wheel browses presets, and
-  your edits, layers, favourites and theme are saved with the project.
+  your edits, layers and theme are saved with the project.
 
 ## The pages
 

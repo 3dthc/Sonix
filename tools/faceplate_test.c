@@ -57,6 +57,9 @@ int main(int argc, char **argv) {
     if (argc < 2) return 2;
     rec_cap = 44100 * 4; rec = malloc(rec_cap * sizeof *rec);
     E = mpc_engine();
+    char favfile[1100];
+    snprintf(favfile, sizeof favfile, "%s/favorites.txt", argv[1]);
+    remove(favfile);                               /* the shared favourites start empty */
     S = E->create(argv[1]);
     for (int w = 0; w < 6000 && __atomic_load_n(&g_loaded, __ATOMIC_ACQUIRE) < NINST; w++) { E->render(S, buf, 128); usleep(2000); }
     int ready = 0;
@@ -183,6 +186,46 @@ int main(int argc, char **argv) {
     seti("preset", up); press("fav_tap");
     CHECK(getf("fav") == 0, "favourites cleared");
 
+    /* favourites are shared by every Sonix and kept on disk until they are taken off */
+    seti("preset", up); press("fav_tap");
+    int vg = find_preset("Velvet Grand"); seti("preset", vg); press("fav_tap");
+    { FILE *f = fopen(favfile, "r"); char t[400] = ""; size_t n = f ? fread(t, 1, sizeof t - 1, f) : 0; t[n] = 0; if (f) fclose(f);
+      CHECK(strstr(t, "Upright Ballad\n") && strstr(t, "Velvet Grand\n"), "the stars are written to favorites.txt (\"%s\")", t); }
+    {
+        void *S1 = S;
+        void *S2 = E->create(argv[1]);
+        S = S2;
+        seti("preset", up);
+        CHECK(getf("fav") == 1, "a second Sonix sees the stars at once");
+        press("fav_tap");                          /* unstar Upright Ballad in the second one */
+        S = S1; E->render(S, buf, 128);
+        seti("preset", up);
+        CHECK(getf("fav") == 0, "and taking a star off there takes it off in the first too");
+        S = S2; E->destroy(S2);
+        S = S1;
+    }
+    /* reopen: every Sonix closed, a fresh one reads the file */
+    {
+        void *S1 = S;
+        E->destroy(S1);
+        g_fav_loaded = 0; memset(g_fav, 0, sizeof g_fav);   /* as if MPC had restarted: only the file is left */
+        S = E->create(argv[1]);
+        for (int w = 0; w < 6000 && __atomic_load_n(&g_loaded, __ATOMIC_ACQUIRE) < NINST; w++) { E->render(S, buf, 128); usleep(2000); }
+        seti("preset", vg);
+        CHECK(getf("fav") == 1, "a fresh Sonix still has Velvet Grand starred");
+        seti("preset", up);
+        CHECK(getf("fav") == 0, "and not the one taken off");
+    }
+    /* an old project's own stars (fav_N) join the shared list; loading one never takes stars off */
+    { int k = up / 13; char b[16]; snprintf(b, sizeof b, "%d", 1 << (up % 13)); char key[16]; snprintf(key, sizeof key, "fav_%d", k);
+      set(key, b); seti("preset", up);
+      CHECK(getf("fav") == 1, "a project with Upright Ballad starred adds it back");
+      seti("preset", vg);
+      CHECK(getf("fav") == 1, "and keeps Velvet Grand"); }
+    seti("preset", up); press("fav_tap"); seti("preset", vg); press("fav_tap");
+    CHECK(getf("fav") == 0 && getf("fav_0") + getf("fav_1") + getf("fav_2") + getf("fav_3") + getf("fav_4") + getf("fav_5") +
+          getf("fav_6") + getf("fav_7") + getf("fav_8") + getf("fav_9") == 0, "all stars off again");
+
     /* layers: solo, octave, A4 reference (on the sub bass: a near-sine) */
     int sub = find_preset("Sub Bass");
     seti("preset", sub);
@@ -274,6 +317,7 @@ int main(int argc, char **argv) {
     CHECK(strstr(b2, "Hz") != NULL, "delay tone reads in Hz (\"%s\")", b2);
 
     E->destroy(S);
+    remove(favfile);                               /* leave no favourites file behind in the library folder */
     printf(fails ? "%d FAILED\n" : "all passed\n", fails);
     return fails;
 }
