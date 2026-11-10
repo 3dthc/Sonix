@@ -7,5 +7,4 @@ vst/build/
 dist/
 __pycache__/
 *.pyc
-engine/favorites.txt
-engine/favorites.txt.new
+user/

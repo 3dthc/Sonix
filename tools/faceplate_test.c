@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     rec_cap = 44100 * 4; rec = malloc(rec_cap * sizeof *rec);
     E = mpc_engine();
     char favfile[1100];
-    snprintf(favfile, sizeof favfile, "%s/favorites.txt", argv[1]);
+    snprintf(favfile, sizeof favfile, "%s/../user/favorites.txt", argv[1]);
     remove(favfile);                               /* the shared favourites start empty */
     S = E->create(argv[1]);
     for (int w = 0; w < 6000 && __atomic_load_n(&g_loaded, __ATOMIC_ACQUIRE) < NINST; w++) { E->render(S, buf, 128); usleep(2000); }

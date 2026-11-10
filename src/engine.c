@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <strings.h>
 #include <time.h>
 #include <unistd.h>
@@ -349,8 +350,8 @@ static void want_banks(inst_t *s) {
     for (int l = 0; l < NLAYER; l++) if (layer_on(s, l)) bank_want(layer_inst(s, l));
 }
 
-/* Favourites belong to the MPC, not to one project: every Sonix shares one list, kept in <data dir>/favorites.txt
- * (one preset name a line; an upgrade keeps the file), so a star stays until it is taken off. The ten 13-bit fav_N
+/* Favourites belong to the MPC, not to one project: every Sonix shares one list, kept in <plugin folder>/user/favorites.txt
+ * (one preset name a line; an upgrade keeps it), so a star stays until it is taken off. The ten 13-bit fav_N
  * parameters still mirror the list into each project; a project saved with stars of its own adds them to the list. */
 static pthread_mutex_t g_fav_mx = PTHREAD_MUTEX_INITIALIZER;
 static unsigned char g_fav[NPRESET];
@@ -361,6 +362,10 @@ static char g_fav_path[1100];
 static void fav_save_locked(void) {
     char tmp[1110];
     snprintf(tmp, sizeof tmp, "%s.new", g_fav_path);
+    char dir[1100];
+    snprintf(dir, sizeof dir, "%s", g_fav_path);
+    char *slash = strrchr(dir, '/');
+    if (slash) { *slash = 0; mkdir(dir, 0755); }  /* user/ on first use */
     FILE *f = fopen(tmp, "w");
     if (!f) return;                               /* read-only place: the list still lives in memory and projects */
     int ok = 1;
@@ -372,7 +377,9 @@ static void fav_load(const char *data_dir) {
     pthread_mutex_lock(&g_fav_mx);
     if (!g_fav_loaded) {
         g_fav_loaded = 1;
-        snprintf(g_fav_path, sizeof g_fav_path, "%s/favorites.txt", data_dir ? data_dir : ".");
+        /* <plugin folder>/user/: the release declares it user data, so an upgrade carries it over (everything else
+         * in the plugin folder, the engine/ data included, is replaced) */
+        snprintf(g_fav_path, sizeof g_fav_path, "%s/../user/favorites.txt", data_dir ? data_dir : ".");
         FILE *f = fopen(g_fav_path, "r");
         char line[160];
         while (f && fgets(line, sizeof line, f)) {

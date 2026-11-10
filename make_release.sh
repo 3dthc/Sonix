@@ -18,9 +18,8 @@ SKIN_VER="$(echo "$VERSION" | awk -F. '{printf "%d.%d.%d.0", $1, $2, $3}')"
 sed -i "s|<version>[^<]*</version>|<version>$SKIN_VER</version>|" "$B/skin/3dthc - VST - Sonix/version.xml"
 grep -q "<version>$SKIN_VER</version>" "$B/skin/3dthc - VST - Sonix/version.xml" || { echo "could not stamp the skin version" >&2; exit 1; }
 
-# the shared favourites file is the user's (an upgrade keeps it); a local one must never ship and overwrite theirs
-rm -f "$HERE/engine/favorites.txt" "$HERE/engine/favorites.txt.new"
 python3 "$MPC_VST/tools/release.py" \
+  --user-data user \
   --so "$B/sonix.so" \
   --skin "$B/skin/3dthc - VST - Sonix" \
   --entry "$B/pluginlist-entry.xml" \

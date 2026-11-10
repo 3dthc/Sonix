@@ -1,7 +1,9 @@
 # Builds Sonix for MPC in GitHub Actions and attaches Sonix-<version>-mpc-armv7.zip to a DRAFT release. The packed
 # instruments come from an earlier release zip with the same library version (tools/ci_build.sh).
 # Actions -> Release -> Run workflow, enter the version. Install that zip on an MPC, check it, then publish the draft.
-# mpc-vst-plugins is pinned to one commit in both places below.
+# Release notes: write docs/releases/v<version>.md first -- what changed and what was fixed since the last release (not
+# install steps; those are in INSTALL.md inside the zip). The draft's notes are that file.
+# mpc-vst-plugins is pinned in both places below: the workflow (3dthc fork, notes from docs/releases) and its tools.
 name: Release
 
 on:
@@ -18,12 +20,13 @@ on:
 
 jobs:
   vst:
-    uses: 3dthc/mpc-vst-plugins/.github/workflows/vst-release.yml@c6b4bb0b4939bbf64e2017bd3c11d95a080799f9
+    uses: 3dthc/mpc-vst-plugins/.github/workflows/vst-release.yml@c2f5abf7ab537a5d1006262ac7ec47a7b37ac537
     permissions: { contents: write }
     with:
       tag: v${{ inputs.version }}
       version: ${{ inputs.version }}
       tools_ref: c6b4bb0b4939bbf64e2017bd3c11d95a080799f9
+      user_data: user          # the shared favourites (user/favorites.txt): an upgrade keeps them
       vst_dir: vst
       build: bash tools/ci_build.sh
       host_test: 'mkdir -p vst/build/engine && cp engine/* vst/build/engine/ && "$MPC_VST/tools/test_port.sh" vst/vst.json'
