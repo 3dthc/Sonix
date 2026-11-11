@@ -357,6 +357,7 @@ static void want_banks(inst_t *s) {
 static pthread_mutex_t g_fav_mx = PTHREAD_MUTEX_INITIALIZER;
 static unsigned char g_fav[NPRESET];
 static int g_fav_loaded;
+static int g_fav_migrate;                         /* no favorites.txt yet: older projects bring their own stars */
 static volatile int g_fav_gen = 1;               /* bumped on every change, so open instances refresh */
 static char g_fav_path[1100];
 
@@ -387,6 +388,7 @@ static void fav_load(const char *data_dir) {
             line[strcspn(line, "\r\n")] = 0;
             for (int i = 0; i < NPRESET; i++) if (!strcasecmp(line, PRESET_NAME[i])) g_fav[i] = 1;
         }
+        g_fav_migrate = f == NULL;
         if (f) fclose(f);
         g_fav_gen++;
     }
@@ -405,15 +407,19 @@ static void fav_mirror(inst_t *s) {
 static void fav_set(inst_t *s, int pr, int on) {
     if (pr < 0 || pr >= NPRESET) return;
     pthread_mutex_lock(&g_fav_mx);
+    g_fav_migrate = 0;                            /* the list is the user's own from here on */
     if (g_fav[pr] != (on != 0)) { g_fav[pr] = on != 0; fav_save_locked(); g_fav_gen++; }
     pthread_mutex_unlock(&g_fav_mx);
     fav_mirror(s);
 }
-/* a project (or MPC) sets fav_N: stars it holds join the shared list; none are taken off this way */
+/* A project (or MPC) sets fav_N. Every project keeps a copy of the list as it was when it was saved, so only the first
+ * time, before there is a favorites.txt (projects from before the shared list), do its stars join the list; after that
+ * the list wins and the project's copy is put back in step with it, or reopening an old project would star again
+ * every preset taken off since. */
 static void fav_merge(inst_t *s, int k, int w) {
     int changed = 0;
     pthread_mutex_lock(&g_fav_mx);
-    for (int b = 0; b < 13 && k * 13 + b < NPRESET; b++)
+    for (int b = 0; g_fav_migrate && b < 13 && k * 13 + b < NPRESET; b++)
         if ((w >> b) & 1 && !g_fav[k * 13 + b]) { g_fav[k * 13 + b] = 1; changed = 1; }
     if (changed) { fav_save_locked(); g_fav_gen++; }
     pthread_mutex_unlock(&g_fav_mx);
@@ -803,7 +809,7 @@ static void tap_pad(inst_t *s, int i, float x) {
  * control (their values are taps and wheel moves, not settings), and the engine's own displays. */
 static int state_kept(int i) {
     if (i == P_PRESET || is_tap(i) || i == P_BROWSE || is_computed(i)) return 0;
-    return PINFO[i].kind == K_KNOB || PINFO[i].kind == K_OPTION || (i >= P_FAV_0 && i <= P_FAV_9);
+    return PINFO[i].kind == K_KNOB || PINFO[i].kind == K_OPTION;    /* not fav_N: the shared list (favorites.txt) is the truth */
 }
 static int state_get(const inst_t *s, char *buf, int n) {
     int len = snprintf(buf, n, "sonix=1;preset=%d;", cur_preset(s));

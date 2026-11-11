@@ -217,13 +217,24 @@ int main(int argc, char **argv) {
         seti("preset", up);
         CHECK(getf("fav") == 0, "and not the one taken off");
     }
-    /* an old project's own stars (fav_N) join the shared list; loading one never takes stars off */
+    /* a project saved while Upright Ballad was starred: the shared list wins, so the star taken off stays off */
     { int k = up / 13; char b[16]; snprintf(b, sizeof b, "%d", 1 << (up % 13)); char key[16]; snprintf(key, sizeof key, "fav_%d", k);
       set(key, b); seti("preset", up);
-      CHECK(getf("fav") == 1, "a project with Upright Ballad starred adds it back");
+      CHECK(getf("fav") == 0, "reopening a project saved with Upright Ballad starred does not star it again");
+      CHECK(((int)getf(key) >> (up % 13) & 1) == 0, "and the project's copy follows the list (%s = %g)", key, getf(key));
       seti("preset", vg);
-      CHECK(getf("fav") == 1, "and keeps Velvet Grand"); }
-    seti("preset", up); press("fav_tap"); seti("preset", vg); press("fav_tap");
+      CHECK(getf("fav") == 1, "Velvet Grand is still starred");
+    /* the first time, before there is a favorites.txt, an old project's stars do join the list */
+      E->destroy(S); remove(favfile);
+      g_fav_loaded = 0; memset(g_fav, 0, sizeof g_fav);
+      S = E->create(argv[1]);
+      set(key, b); seti("preset", up);
+      CHECK(getf("fav") == 1, "with no favorites.txt yet, a project from before the shared list brings its star");
+      seti("preset", vg); press("fav_tap");
+      seti("preset", up); press("fav_tap");
+      set(key, b); seti("preset", up);
+      CHECK(getf("fav") == 0, "once a star is changed by hand, projects no longer add stars"); }
+    seti("preset", vg); press("fav_tap");
     CHECK(getf("fav") == 0 && getf("fav_0") + getf("fav_1") + getf("fav_2") + getf("fav_3") + getf("fav_4") + getf("fav_5") +
           getf("fav_6") + getf("fav_7") + getf("fav_8") + getf("fav_9") == 0, "all stars off again");
 
