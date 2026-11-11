@@ -18,6 +18,8 @@
  *
  * The codec and the effects are adapted from Fretty (3dthc/fretty-mpc, MIT). */
 #define _GNU_SOURCE
+#include <sys/resource.h>
+#include <sys/syscall.h>
 #include <math.h>
 #include <pthread.h>
 #include <stdint.h>
@@ -214,13 +216,18 @@ static int bank_load(bank_t *b, const char *path) {
 
 static void *loader_main(void *arg) {
     (void)arg;
+    int prio_now = 1;                  /* 1: normal priority, as the thread starts */
     for (;;) {
         int pick = -1;
         pthread_mutex_lock(&g_bank_mx);
         for (int i = 0; i < NINST; i++)
             if (g_banks[i].state == BANK_NONE && (pick < 0 || g_prio[i] > g_prio[pick])) pick = i;
         if (pick >= 0) g_banks[pick].state = BANK_LOADING;
+        int wanted = pick >= 0 && g_prio[pick] > 0;
         pthread_mutex_unlock(&g_bank_mx);
+        /* Sounds a preset is waiting for load at full speed; the rest of the library (read only so that any
+         * preset plays at once later) at a low priority, so it doesn't compete with MPC's screen and UI. */
+        if (pick >= 0 && wanted != prio_now) { setpriority(PRIO_PROCESS, (id_t)syscall(SYS_gettid), wanted ? 0 : 10); prio_now = wanted; }
         if (pick < 0 || __atomic_load_n(&g_shutdown, __ATOMIC_ACQUIRE)) break;
         char path[1200];
         snprintf(path, sizeof path, "%s/%s.snx", g_data_dir, INST_FILE[pick]);
