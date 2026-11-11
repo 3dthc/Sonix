@@ -32,6 +32,7 @@
     "param": "preset"
   },
   "skin_os": 2,
+  "skin_compact": true,
   "targets": [
     "armv7",
     "aarch64"
