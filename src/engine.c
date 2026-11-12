@@ -18,8 +18,10 @@
  *
  * The codec and the effects are adapted from Fretty (3dthc/fretty-mpc, MIT). */
 #define _GNU_SOURCE
+#ifdef __linux__   /* thread priority: the MPC (Linux) only; the desktop VST3 leaves it to the host */
 #include <sys/resource.h>
 #include <sys/syscall.h>
+#endif
 #include <math.h>
 #include <pthread.h>
 #include <stdint.h>
@@ -227,7 +229,11 @@ static void *loader_main(void *arg) {
         pthread_mutex_unlock(&g_bank_mx);
         /* Sounds a preset is waiting for load at full speed; the rest of the library (read only so that any
          * preset plays at once later) at a low priority, so it doesn't compete with MPC's screen and UI. */
+#ifdef __linux__
         if (pick >= 0 && wanted != prio_now) { setpriority(PRIO_PROCESS, (id_t)syscall(SYS_gettid), wanted ? 0 : 10); prio_now = wanted; }
+#else
+        (void)wanted; (void)prio_now;
+#endif
         if (pick < 0 || __atomic_load_n(&g_shutdown, __ATOMIC_ACQUIRE)) break;
         char path[1200];
         snprintf(path, sizeof path, "%s/%s.snx", g_data_dir, INST_FILE[pick]);
