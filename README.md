@@ -76,6 +76,20 @@ The first build downloads and builds the instruments (several minutes). It ends 
 `Sonix-<version>-mpc-armv7.zip` in your Windows Downloads. Install it on the MPC like any other plugin, then restart
 the MPC. TESTING.md has a checklist for trying a new build.
 
+## On a computer (MPC Desktop, Logic Pro, DAWs)
+
+Each release also has Sonix for a computer, with the same sound and touchscreen skin. A project saved on the MPC opens in MPC Desktop (controller mode) with the plugin in place.
+
+- **Mac, MPC Desktop and VST3 hosts:** `-macos-vst3.zip` (`.vst3`).
+- **Mac, Logic Pro and GarageBand:** `-macos-au.zip` (`.component`, the Audio Unit).
+- **Windows** (64-bit): `-windows-vst3.zip` is a single `.vst3` file; copy it into `C:\Program Files\Common Files\VST3`.
+
+Both Mac zips are universal (Apple Silicon and Intel). If macOS says the plugin "can't be verified", put the downloaded zips in Downloads and run this in Terminal. It installs and unblocks the VST3 and the Audio Unit alike, even though the zips' README only says VST3:
+
+```
+curl -fsSL https://raw.githubusercontent.com/3dthc/mpc-vst-plugins/desktop-vst3-openmpc/tools/install_mac_vst3.sh | bash
+```
+
 ## Building from source
 
 The sections below are for working on Sonix itself.
