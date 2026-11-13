@@ -20,13 +20,13 @@ on:
 
 jobs:
   vst:
-    uses: 3dthc/mpc-vst-plugins/.github/workflows/vst-release.yml@7bba534e8e36f629e0c93c5bd0ad20a2e6c6e4c5
+    uses: 3dthc/mpc-vst-plugins/.github/workflows/vst-release.yml@4a320a69131868a4fbe48bf09ef1dd6a3941f7fb
     permissions: { contents: write }
     secrets: inherit   # optional Apple signing/notarization (mpc-vst-plugins docs/DESKTOP_VST3.md)
     with:
       tag: v${{ inputs.version }}
       version: ${{ inputs.version }}
-      tools_ref: 7bba534e8e36f629e0c93c5bd0ad20a2e6c6e4c5
+      tools_ref: 4a320a69131868a4fbe48bf09ef1dd6a3941f7fb
       user_data: user          # the shared favourites (user/favorites.txt): an upgrade keeps them
       vst_dir: vst
       build: bash tools/ci_build.sh
