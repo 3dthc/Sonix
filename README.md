@@ -1,5 +1,7 @@
 # Sonix
 
+[![Support me on Ko-fi](https://img.shields.io/badge/Support%20me%20on-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/3dthc)
+
 A ROMpler instrument plugin for Akai MPC standalone devices (built and tested on an MPC Live II): 128 presets, 45
 instruments, four layers per preset, built-in effects and a touch faceplate in eleven colorways. It runs natively on
 the MPC as an ARM VST2 plugin, built on [open-mpc/mpc-vst-plugins](https://github.com/open-mpc/mpc-vst-plugins).
