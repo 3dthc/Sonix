@@ -62,6 +62,17 @@ velocity curve (soft / normal / hard).
 
 ![SETTINGS page](docs/images/settings.jpg)
 
+### ARP
+
+An arpeggiator, a pattern player and a chord player on its own page. MODE: OFF, ARP (held notes one at a time),
+PATTERN (a rhythm built from the held notes; 16 patterns) or CHORD (one key plays a whole chord; 8 chord types, with a
+STRUM). DIRECTION (up, down, up-down, as played, random), RATE (1/4 to 1/32, with dotted and triplet steps), LATCH,
+OCTAVES (1-4), GATE and SWING. The sustain pedal holds the notes, and the steps follow the host's song position, so
+the pattern stays in time with the song. The page also has CUTOFF, RESONANCE, the effects sends and RELEASE for
+shaping the sound while it plays. The arp settings are global (not stored per preset) and are saved with the project.
+
+![ARP page](docs/images/arp.jpg)
+
 ### Colorways
 
 ![The eleven colorways](docs/images/colorways.jpg)

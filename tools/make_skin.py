@@ -89,6 +89,18 @@ SETTINGS_SECTIONS = [
     (RX, SIDE_Y, "DELAY", [("delay_time", "TIME"), ("delay_fb", "FEEDBACK"), ("delay_tone", "TONE"), ("delay_width", "WIDTH")]),
     (RX, BOT_Y, "REVERB", [("rev_size", "SIZE"), ("rev_damp", "DAMPING"), ("rev_predelay", "PRE-DELAY"), ("rev_width", "WIDTH")]),
 ]
+ARP_SECTIONS = [
+    (LX, SIDE_Y, "ARP", [("arp_mode", "MODE"), ("arp_dir", "DIRECTION"), ("arp_rate", "RATE"), ("arp_latch", "LATCH")]),
+    (LX, BOT_Y, "FEEL", [("arp_oct", "OCTAVES"), ("arp_gate", "GATE"), ("arp_swing", "SWING"), ("arp_strum", "STRUM")]),
+    (RX, SIDE_Y, "STYLE & TONE", [("arp_pat", "PATTERN"), ("arp_chord", "CHORD"), ("cutoff", "CUTOFF"), ("resonance", "RESONANCE")]),
+    (RX, BOT_Y, "FX & TAIL", [("chorus", "CHORUS"), ("delay", "DELAY"), ("reverb", "REVERB"), ("release", "RELEASE")]),
+]
+ARP_NOTES = [
+    ("ARP", "held notes play one at a time"),
+    ("PATTERN", "a rhythm built from the held notes"),
+    ("CHORD", "one key plays a whole chord"),
+    ("LATCH", "keeps playing after you let go"),
+]
 # MAIN's Q-Links: the four sections' knobs, but the 16th (VOLUME, which MPC's track has too) browses presets
 MAIN_QLINKS = [k for _, _, _, ks in MAIN_SECTIONS for k, _ in ks][:15] + ["browse"]
 LAYER_KNOBS = [("level", "LEVEL"), ("pan", "PAN"), ("octave", "OCTAVE"), ("fine", "FINE")]
@@ -342,7 +354,19 @@ def page_settings():
     return it
 
 
-PAGES = [("MAIN", page_main), ("LAYERS", page_layers), ("SETTINGS", page_settings)]
+def page_arp():
+    it = knob_items(ARP_SECTIONS)
+    it.append(dict(t="status", bezel=ABOUT, screen=(ABOUT[0] + 12, ABOUT[1] + 12, ABOUT[2] - 24, ABOUT[3] - 24)))
+    sc = (ABOUT[0] + 12, ABOUT[1] + 12, ABOUT[2] - 24, ABOUT[3] - 24)
+    it.append(dict(t="readout", key="arp_l1", box=(sc[0] + 10, sc[1] + 40, sc[2] - 20, 90), size=38, ink="ink", align="center", weight="bold"))
+    it.append(dict(t="readout", key="arp_l2", box=(sc[0] + 10, sc[1] + 140, sc[2] - 20, 60), size=24, ink="dim", align="center", weight="bold"))
+    it.append(dict(t="panel", x=SYSTEM[0], y=SYSTEM[1], w=SYSTEM[2], h=SYSTEM[3], title="HOW IT WORKS"))
+    for n, (label, cap) in enumerate(ARP_NOTES):
+        it.append(dict(t="noterow", label=label, caption=cap, y=SYS_ROW_Y0 + n * SYS_ROW_PITCH, lx=CX0 + 26))
+    return it
+
+
+PAGES = [("MAIN", page_main), ("LAYERS", page_layers), ("SETTINGS", page_settings), ("ARP", page_arp)]
 
 
 def in_view(items, view):
@@ -377,6 +401,12 @@ MOCK = {
                   lsml_c="ORCHESTRAL BRASS", lcat_d="BASS  ·  OFF", lbig_d="SUB BASS"),
         on=dict(layer_a=1, layer_b=1, layer_c=1, layer_d=0, solo_a=0, solo_b=0, solo_c=0, solo_d=0,
                 act_a=1, act_b=1, act_c=1, act_d=0)),
+    "ARP": dict(
+        knobs=dict(arp_mode=(0.33, "PATTERN"), arp_dir=(0.0, "UP"), arp_rate=(0.5, "1/16"), arp_latch=(1.0, "ON"),
+                   arp_oct=(0.33, "2"), arp_gate=(0.5, "55 %"), arp_swing=(0.2, "55 %"), arp_strum=(0.0, "0 MS"),
+                   arp_pat=(0.3, "PIANO COMP"), arp_chord=(0.0, "MAJOR"), cutoff=(0.74, "6.3 KHZ"), resonance=(0.22, "22 %"),
+                   chorus=(0.3, "30 %"), delay=(0.18, "18 %"), reverb=(0.42, "42 %"), release=(0.4, "1.20 S")),
+        text=dict(arp_l1="PATTERN  1/16", arp_l2="Piano Comp  ·  LATCH"), on={}, sys={}),
     "SETTINGS": dict(
         knobs=dict(a4_ref=(0.48, "440 HZ"), tune=(0.5, "0 CT"), transpose=(0.5, "0 ST"), bend_range=(0.083, "2 ST"),
                    polyphony=(0.48, "16"), vel_sens=(0.7, "70 %"), vel_filter=(0.3, "30 %"), spread=(0.4, "40 %"),
@@ -583,7 +613,7 @@ function background(th, items) {
     if (it.t === 'knob') {
       text(it.label, it.cx, it.ly + 6, { size: C.LABEL_PX, spacing: 1.5, color: t.text, engrave: t.engrave, align: 'center', weight: 700 });
       ctx.beginPath(); ctx.arc(it.cx, it.cy + 2, C.KNOB_R + 1, 0, 2 * Math.PI); ctx.fillStyle = t.well; ctx.fill();
-    } else if (it.t === 'lcd' || it.t === 'minilcd' || it.t === 'about') {
+    } else if (it.t === 'lcd' || it.t === 'minilcd' || it.t === 'about' || it.t === 'status') {
       const r = it.t === 'minilcd' ? 4 : 6;
       const smooth = items.some(q => q.t === 'list');
       lcdFrame(t, it.bezel, it.screen, r, smooth && it.t === 'lcd'); if (!(smooth && it.t === 'lcd')) glares.push([it.screen, r]);
@@ -618,7 +648,7 @@ function background(th, items) {
       text(it.label, it.lx, it.y + 22, { size: C.LABEL_PX + 1, spacing: 1.5, color: t.text, engrave: t.engrave, weight: 700 });
       text(it.caption, it.lx, it.y + 43, { size: 16, spacing: 0.3, color: t.muted, engrave: t.engrave, weight: 600 });
       lcdFrame(t, it.bezel, it.screen, 4); glares.push([it.screen, 4]);
-    } else if (it.t === 'sysrow') {
+    } else if (it.t === 'sysrow' || it.t === 'noterow') {
       text(it.label, it.lx, it.y + 22, { size: C.LABEL_PX + 1, spacing: 1.5, color: t.text, engrave: t.engrave, weight: 700 });
       text(it.caption, it.lx, it.y + 43, { size: 16, spacing: 0.3, color: t.muted, engrave: t.engrave, weight: 600 });
     }
@@ -858,7 +888,7 @@ def mockups(outdir):
     with sync_playwright() as p:
         b, pg = open_page(p, True)
         pages = [("MAIN", in_view(page_main(), 0)), ("MAIN_LAYERS", in_view(page_main(), 1)),
-                 ("LAYERS", page_layers()), ("SETTINGS", page_settings())]
+                 ("LAYERS", page_layers()), ("SETTINGS", page_settings()), ("ARP", page_arp())]
         for name, items in pages:
             for th in THEMES:
                 url = pg.evaluate("API.mockup(%s, %s, %s)" % (json.dumps(th), json.dumps(items), json.dumps(dict({"knobs": MOCK["MAIN"]["knobs"]}, **dict(MOCK[name], text=dict(MOCK[name].get("text", {}), theme=THEME_TABLE[th]["name"].title()))))))
@@ -898,6 +928,7 @@ def export_art():
                 (SX, SY, SX + SCREEN[2], SY + SCREEN[3])).save(os.path.join(d, "ov_layers.png"))
             save(ev("background", th, page_layers()), os.path.join(d, "bg_layers.png"))
             save(ev("background", th, page_settings()), os.path.join(d, "bg_settings.png"))
+            save(ev("background", th, page_arp()), os.path.join(d, "bg_arp.png"))
             for key, box in (("bank", BANK_BOX), ("row", PATCH_BOX)):
                 w = list_w(box, n)
                 rth = BANK_TH if key == "bank" else PATCH_TH
@@ -1087,6 +1118,20 @@ def write_layout():
             L.append('enum_h cx=%d cy=%d label="" key=%s sw=%d sh=%d img=art/clear_seg.png img_on=art/clear_seg.png' % (
                 it["x"] + (3 * (BTN_W + BTN_GAP)) // 2, it["y"] + (BTN_H + 4) // 2 + Y, it["key"], BTN_W + BTN_GAP, BTN_H + 4))
     L.append('qlinks "SETTINGS" = ' + ",".join(k for _, _, _, ks in SETTINGS_SECTIONS for k, _ in ks))
+    # ---- ARP
+    L.append("[tab ARP]")
+    items = page_arp()
+    for n, th in T:
+        L.append("art file=art/%s/bg_arp.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
+    for n, th in T:
+        w = ("when=theme:%d" % n, th)
+        header(w)
+        for it in items:
+            if it["t"] == "knob":
+                knob(it, w)
+            elif it["t"] == "readout":
+                readout(it, w)
+    L.append('qlinks "ARP" = ' + ",".join(k for _, _, _, ks in ARP_SECTIONS for k, _ in ks))
     with open(os.path.join(VST, "layout.conf"), "w") as f:
         f.write("\n".join(L) + "\n")
 
