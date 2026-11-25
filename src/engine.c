@@ -35,6 +35,8 @@
 #include "engine.h"
 #include "instruments.h"
 #include "params.h"
+#include "arp.h"
+#include "arp_pats.h"
 #include "presets.h"
 
 #define SR 44100.0f
@@ -327,6 +329,8 @@ typedef struct {
     float *rv; int rv_comb[8], rv_len_c[8], rv_ap[4], rv_len_a[4]; float rv_store[8];
     float *pre; int pre_w;
     float bpm;
+    arp_t arp;                       /* arpeggiator / pattern / chord (arp.h) */
+    double sp_ppq, sp_bpm; int sp_playing;   /* the host's song position for the block about to render */
     /* what the faceplate shows */
     int rev;
     double clock;
@@ -638,20 +642,26 @@ static void all_off(inst_t *s, int hard) {
     }
 }
 
+/* the arp plays its notes through the engine's own note_on / note_off */
+static void arp_cb(void *ud, int key, int vel, int on) {
+    if (on) note_on(ud, key, vel); else note_off(ud, key);
+}
+
 static void handle_event(inst_t *s, const ev_t *e) {
     int type = e->st & 0xF0;
-    if (type == 0x90 && e->d2 > 0) note_on(s, e->d1 & 127, e->d2 & 127);
-    else if (type == 0x80 || (type == 0x90 && e->d2 == 0)) note_off(s, e->d1 & 127);
+    if (type == 0x90 && e->d2 > 0) { if (!arp_note(&s->arp, e->d1 & 127, e->d2 & 127, 1, arp_cb, s)) note_on(s, e->d1 & 127, e->d2 & 127); }
+    else if (type == 0x80 || (type == 0x90 && e->d2 == 0)) { if (!arp_note(&s->arp, e->d1 & 127, 0, 0, arp_cb, s)) note_off(s, e->d1 & 127); }
     else if (type == 0xB0) {
         if (e->d1 == 1) s->mw = (e->d2 & 127) / 127.0f;
+        else if (e->d1 == 64 && arp_active(&s->arp)) arp_pedal(&s->arp, e->d2 >= 64);   /* the arp holds its notes, not the voices */
         else if (e->d1 == 64) {
             int down = e->d2 >= 64;
             if (!down && s->pedal)
                 for (int i = 0; i < MAX_V; i++)
                     if (s->v[i].sustained) { s->v[i].sustained = 0; if (s->v[i].stage < ENV_RELEASE) s->v[i].stage = ENV_RELEASE; }
             s->pedal = down;
-        } else if (e->d1 == 120) all_off(s, 1);
-        else if (e->d1 == 123) all_off(s, 0);
+        } else if (e->d1 == 120) { arp_clear(&s->arp, arp_cb, s); all_off(s, 1); }
+        else if (e->d1 == 123) { arp_clear(&s->arp, arp_cb, s); all_off(s, 0); }
     } else if (type == 0xE0) {
         int pb = ((e->d2 & 127) << 7 | (e->d1 & 127)) - 8192;
         s->bend = pb / 8192.0f;
@@ -730,6 +740,8 @@ static void *eng_create(const char *data_dir) {
     inst_t *s = calloc(1, sizeof *s);
     if (!s) return NULL;
     for (int i = 0; i < NP; i++) s->p[i] = PINFO[i].def;
+    arp_init(&s->arp);
+    s->sp_ppq = -1;
     s->vol_smooth = -1;
     s->touch = -1;
     for (int i = 0; i < NP; i++) { s->mom_t[i] = -1; s->wlast[i] = 0.5f; }
@@ -928,6 +940,7 @@ static int fmt_display(const inst_t *s, int i, char *buf, int n) {
         return fmt_signed((int)lroundf(x), " st", buf, n);
     case F_HZINT: return snprintf(buf, n, "%d Hz", (int)lroundf(x));
     case F_INT: return snprintf(buf, n, "%d", (int)lroundf(x));
+    case F_MS: return snprintf(buf, n, "%d ms", (int)lroundf(x));
     case F_PREDELAY: return snprintf(buf, n, "%d ms", (int)lroundf(clamp01(x) * 100));
     case F_BROWSE: return snprintf(buf, n, "%s", PRESET_NAME[cur_preset(s)]);   /* the knob shows the preset's name */
     }
@@ -976,6 +989,22 @@ static int lcd_text(inst_t *s, int i, char *buf, int n) {
         return snprintf(buf, n, "%s", name);
     }
     switch (i) {
+    case P_ARP_L1: {
+        int m = ival(s, P_ARP_MODE, 0, ARP_NMODE - 1);
+        if (m == ARP_OFF) return snprintf(buf, n, "ARP OFF");
+        if (m == ARP_ARP) return snprintf(buf, n, "ARP" DOT "%s", ARP_DIR_NAME[ival(s, P_ARP_DIR, 0, ARP_NDIR - 1)]);
+        if (m == ARP_CHORD) return snprintf(buf, n, "CHORD" DOT "%s", ARP_CHORD_NAME[ival(s, P_ARP_CHORD, 0, ARP_NCHORD - 1)]);
+        upcase(name, ARP_PATS[ival(s, P_ARP_PAT, 0, NARP_PAT - 1)].name, sizeof name);
+        return snprintf(buf, n, "PATTERN" DOT "%s", name);
+    }
+    case P_ARP_L2: {
+        int m = ival(s, P_ARP_MODE, 0, ARP_NMODE - 1);
+        if (m == ARP_OFF) return snprintf(buf, n, "Set MODE with Q-Link 1");
+        if (m == ARP_CHORD) return snprintf(buf, n, "STRUM %d MS", ival(s, P_ARP_STRUM, 0, 80));
+        return snprintf(buf, n, "%s" DOT "%d OCT" DOT "GATE %d%%%s", ARP_RATE_NAME[ival(s, P_ARP_RATE, 0, ARP_NRATE - 1)],
+                        m == ARP_ARP ? ival(s, P_ARP_OCT, 1, 4) : 1, (int)lroundf(clamp01(s->p[P_ARP_GATE]) * 100),
+                        ival(s, P_ARP_LATCH, 0, 1) ? DOT "LATCH" : "");
+    }
     case P_LCD_TOP:
         if (s->view_cat == FAVS && browsing(s)) {          /* the favourites list: which page of it */
             int m[NPRESET], k = list_members(s, m);
@@ -1059,8 +1088,23 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     clock_gettime(CLOCK_MONOTONIC, &t0);
     if (frames > 128) frames = 128;
     if (frames < 1) return;
+    arp_cfg_t *ac = &s->arp.c;
+    ac->mode = ival(s, P_ARP_MODE, 0, ARP_NMODE - 1);
+    ac->dir = ival(s, P_ARP_DIR, 0, ARP_NDIR - 1);
+    ac->rate = ival(s, P_ARP_RATE, 0, ARP_NRATE - 1);
+    ac->pat = ival(s, P_ARP_PAT, 0, NARP_PAT - 1);
+    ac->chord = ival(s, P_ARP_CHORD, 0, ARP_NCHORD - 1);
+    ac->latch = ival(s, P_ARP_LATCH, 0, 1);
+    ac->oct = ival(s, P_ARP_OCT, 1, 4);
+    ac->gate = (int)lroundf(clamp01(s->p[P_ARP_GATE]) * 100);
+    ac->swing = (int)lroundf(clamp01(s->p[P_ARP_SWING]) * 100);
+    ac->strum = ival(s, P_ARP_STRUM, 0, 80);
+    if (arp_sync(&s->arp, arp_cb, s)) { all_off(s, 0); s->pedal = 0; }
+    arp_latch_changed(&s->arp);
     for (int i = 0; i < s->nev; i++) handle_event(s, &s->ev[i]);
     s->nev = 0;
+    arp_block(&s->arp, s->sp_ppq, s->sp_bpm, s->sp_playing, frames, s->bpm, ARP_PATS, NARP_PAT, arp_cb, s);
+    s->sp_ppq = -1; s->sp_bpm = 0; s->sp_playing = 0;
     const float dt = frames / SR;
 
     /* pitch: A4 reference, tune, transpose, bend; vibrato from the LFO and the mod wheel */
@@ -1285,5 +1329,12 @@ static void eng_render(void *inst, int16_t *out, int frames) {
     }
 }
 
-static const mpc_engine_t ENGINE = { eng_create, eng_destroy, eng_midi, eng_set_param, eng_get_param, eng_render, NULL, NULL };
+/* the host's song position for the next block (vst.json "HAS_SONG_POS"): the arp places its steps on it */
+static void eng_song_pos(void *inst, double ppq, double bpm, int playing, int frames) {
+    inst_t *s = inst;
+    (void)frames;
+    s->sp_ppq = ppq; s->sp_bpm = bpm; s->sp_playing = playing;
+}
+
+static const mpc_engine_t ENGINE = { eng_create, eng_destroy, eng_midi, eng_set_param, eng_get_param, eng_render, NULL, eng_song_pos };
 const mpc_engine_t *mpc_engine(void) { return &ENGINE; }

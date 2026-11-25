@@ -178,6 +178,18 @@ enum {
     P_CELL_B,
     P_CELL_C,
     P_CELL_D,
+    P_ARP_MODE,
+    P_ARP_DIR,
+    P_ARP_RATE,
+    P_ARP_LATCH,
+    P_ARP_OCT,
+    P_ARP_GATE,
+    P_ARP_SWING,
+    P_ARP_STRUM,
+    P_ARP_PAT,
+    P_ARP_CHORD,
+    P_ARP_L1,
+    P_ARP_L2,
     NP
 };
 static const char *const PKEY[NP] = {
@@ -359,6 +371,18 @@ static const char *const PKEY[NP] = {
     "cell_b",
     "cell_c",
     "cell_d",
+    "arp_mode",
+    "arp_dir",
+    "arp_rate",
+    "arp_latch",
+    "arp_oct",
+    "arp_gate",
+    "arp_swing",
+    "arp_strum",
+    "arp_pat",
+    "arp_chord",
+    "arp_l1",
+    "arp_l2",
 };
 static const char *const PNAME[NP] = {
     "VOLUME",
@@ -539,9 +563,21 @@ static const char *const PNAME[NP] = {
     "LAYER B PAD",
     "LAYER C PAD",
     "LAYER D PAD",
+    "ARP MODE",
+    "ARP DIRECTION",
+    "ARP RATE",
+    "ARP LATCH",
+    "ARP OCTAVES",
+    "ARP GATE",
+    "ARP SWING",
+    "ARP STRUM",
+    "ARP PATTERN",
+    "ARP CHORD",
+    "ARP LINE 1",
+    "ARP LINE 2",
 };
 enum { K_KNOB, K_OPTION, K_MOMENTARY, K_DISPLAY, K_TEXT };
-enum { F_ATTACK, F_BIPOLAR, F_BROWSE, F_CENTS, F_CUTOFF, F_HZINT, F_INT, F_LEVEL, F_LFO, F_LOOK, F_NONE, F_OCT, F_OPT, F_PAN, F_PCT, F_PREDELAY, F_SEMI, F_TAP, F_TIME, F_TONE, F_VIB, F_VOL };
+enum { F_ATTACK, F_BIPOLAR, F_BROWSE, F_CENTS, F_CUTOFF, F_HZINT, F_INT, F_LEVEL, F_LFO, F_LOOK, F_MS, F_NONE, F_OCT, F_OPT, F_PAN, F_PCT, F_PREDELAY, F_SEMI, F_TAP, F_TIME, F_TONE, F_VIB, F_VOL };
 typedef struct { int kind, fmt; float lo, hi, def; int whole, in_preset; } pinfo_t;
 static const pinfo_t PINFO[NP] = {
     { K_KNOB, F_VOL, 0.0f, 1.0f, 0.8f, 0, 0 },  /* volume */
@@ -722,6 +758,18 @@ static const pinfo_t PINFO[NP] = {
     { K_KNOB, F_TAP, 0.0f, 1.0f, 0.5f, 0, 0 },  /* cell_b */
     { K_KNOB, F_TAP, 0.0f, 1.0f, 0.5f, 0, 0 },  /* cell_c */
     { K_KNOB, F_TAP, 0.0f, 1.0f, 0.5f, 0, 0 },  /* cell_d */
+    { K_OPTION, F_OPT, 0.0f, 3.0f, 0.0f, 1, 0 },  /* arp_mode */
+    { K_OPTION, F_OPT, 0.0f, 4.0f, 0.0f, 1, 0 },  /* arp_dir */
+    { K_OPTION, F_OPT, 0.0f, 7.0f, 4.0f, 1, 0 },  /* arp_rate */
+    { K_OPTION, F_OPT, 0.0f, 1.0f, 0.0f, 1, 0 },  /* arp_latch */
+    { K_KNOB, F_INT, 1.0f, 4.0f, 1.0f, 1, 0 },  /* arp_oct */
+    { K_KNOB, F_PCT, 0.1f, 1.0f, 0.7f, 0, 0 },  /* arp_gate */
+    { K_KNOB, F_PCT, 0.5f, 0.75f, 0.5f, 0, 0 },  /* arp_swing */
+    { K_KNOB, F_MS, 0.0f, 80.0f, 0.0f, 1, 0 },  /* arp_strum */
+    { K_OPTION, F_OPT, 0.0f, 15.0f, 0.0f, 1, 0 },  /* arp_pat */
+    { K_OPTION, F_OPT, 0.0f, 7.0f, 0.0f, 1, 0 },  /* arp_chord */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* arp_l1 */
+    { K_TEXT, F_NONE, 0.0f, 1.0f, 0.0f, 0, 0 },  /* arp_l2 */
 };
 #define LIST_ROWS 11
 #define NTHEME 11

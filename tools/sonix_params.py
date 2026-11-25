@@ -15,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 from pack_sonix import ORDER, CATEGORIES  # noqa: E402
+import arp_pats  # noqa: E402
 
 INSTRUMENTS = [d for _, d, _ in ORDER]
 LAYERS = "abcd"
@@ -23,6 +24,10 @@ VIEWS = ["Browse", "Layers"]       # the MAIN LCD's two views
 THEMES = ["Midnight", "Platinum", "Studio Grey", "Purple", "Yellow", "Gold", "Green", "Camo", "Metallic Red", "Silver",
           "Ice Blue"]              # = make_skin.THEMES, in order
 WAVE_FRAMES = 17                   # the LCD waveform: idle + 4 levels x 4 phases
+ARP_MODES = ["Off", "Arp", "Pattern", "Chord"]
+ARP_DIRS = ["Up", "Down", "Up-Down", "As Played", "Random"]
+ARP_RATES = ["1/4", "1/8.", "1/8", "1/8T", "1/16", "1/16T", "1/32", "1/32T"]
+ARP_CHORDS = ["Major", "Minor", "Dom 7", "Min 7", "Maj 7", "Sus 4", "Power", "Min 9"]
 DELAY_TIMES = ["1/16", "1/8T", "1/8", "1/8.", "1/4T", "1/4", "1/4.", "1/2"]
 
 
@@ -115,6 +120,18 @@ def spec():
     P += [tap("bpick_%d" % (i + 1), "Bank Pad %d" % (i + 1)) for i in range(len(CATEGORIES))]
     P += [tap("pick_%d" % (i + 1), "Patch Pad %d" % (i + 1)) for i in range(LIST_ROWS)]
     P += [tap("cell_" + l, "Layer %s Pad" % l.upper()) for l in LAYERS]
+    # added with the ARP page (0.4.0): append only. Global (not per preset): the arp stays on when the sound changes.
+    P += [option("arp_mode", "Arp Mode", ARP_MODES, "Off", preset=False),
+          option("arp_dir", "Arp Direction", ARP_DIRS, "Up", preset=False),
+          option("arp_rate", "Arp Rate", ARP_RATES, "1/16", preset=False),
+          option("arp_latch", "Arp Latch", ["Off", "On"], "Off", preset=False),
+          knob("arp_oct", "Arp Octaves", 1, 1, 4, fmt="INT", integer=True, preset=False),
+          knob("arp_gate", "Arp Gate", 0.7, 0.1, 1.0, preset=False),
+          knob("arp_swing", "Arp Swing", 0.5, 0.5, 0.75, preset=False),
+          knob("arp_strum", "Arp Strum", 0, 0, 80, fmt="MS", integer=True, preset=False),
+          option("arp_pat", "Arp Pattern", arp_pats.names(), arp_pats.names()[0], preset=False),
+          option("arp_chord", "Arp Chord", ARP_CHORDS, "Major", preset=False)]
+    P += [display(k, n, 1, "string") for k, n in (("arp_l1", "Arp Line 1"), ("arp_l2", "Arp Line 2"))]
     return P
 
 
@@ -219,6 +236,8 @@ def main():
         f.write(to_header(P))
     import presets
     presets.write_header(P, os.path.join(REPO, "src", "presets.h"))
+    with open(os.path.join(REPO, "src", "arp_pats.h"), "w") as f:
+        f.write(arp_pats.c_header())
     print("%d parameters, %d presets" % (len(P), len(presets.PRESETS)))
 
 

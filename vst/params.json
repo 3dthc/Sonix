@@ -1732,6 +1732,141 @@
       "min": 0.0,
       "max": 1.0,
       "default": 0.5
+    },
+    {
+      "key": "arp_mode",
+      "name": "Arp Mode",
+      "options": [
+        "Off",
+        "Arp",
+        "Pattern",
+        "Chord"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "arp_dir",
+      "name": "Arp Direction",
+      "options": [
+        "Up",
+        "Down",
+        "Up-Down",
+        "As Played",
+        "Random"
+      ],
+      "default": "Up"
+    },
+    {
+      "key": "arp_rate",
+      "name": "Arp Rate",
+      "options": [
+        "1/4",
+        "1/8.",
+        "1/8",
+        "1/8T",
+        "1/16",
+        "1/16T",
+        "1/32",
+        "1/32T"
+      ],
+      "default": "1/16"
+    },
+    {
+      "key": "arp_latch",
+      "name": "Arp Latch",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": "Off"
+    },
+    {
+      "key": "arp_oct",
+      "name": "Arp Octaves",
+      "min": 1,
+      "max": 4,
+      "default": 1,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "arp_gate",
+      "name": "Arp Gate",
+      "min": 0.1,
+      "max": 1.0,
+      "default": 0.7,
+      "dynamic_display": true
+    },
+    {
+      "key": "arp_swing",
+      "name": "Arp Swing",
+      "min": 0.5,
+      "max": 0.75,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "arp_strum",
+      "name": "Arp Strum",
+      "min": 0,
+      "max": 80,
+      "default": 0,
+      "dynamic_display": true,
+      "display": "int"
+    },
+    {
+      "key": "arp_pat",
+      "name": "Arp Pattern",
+      "options": [
+        "Pulse",
+        "Rolling Octave",
+        "Offbeat Stab",
+        "Piano Comp",
+        "Trance Gate",
+        "Pluck Run",
+        "Minor Climb",
+        "Major Climb",
+        "Bass Drive",
+        "Strum Down",
+        "Ostinato 3-3-2",
+        "Heartbeat",
+        "Fifths Bounce",
+        "Shimmer",
+        "Half-Time Chords",
+        "Waltz"
+      ],
+      "default": "Pulse"
+    },
+    {
+      "key": "arp_chord",
+      "name": "Arp Chord",
+      "options": [
+        "Major",
+        "Minor",
+        "Dom 7",
+        "Min 7",
+        "Maj 7",
+        "Sus 4",
+        "Power",
+        "Min 9"
+      ],
+      "default": "Major"
+    },
+    {
+      "key": "arp_l1",
+      "name": "Arp Line 1",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
+    },
+    {
+      "key": "arp_l2",
+      "name": "Arp Line 2",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "string"
     }
   ]
 }

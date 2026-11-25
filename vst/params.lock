@@ -176,3 +176,15 @@ cell_a
 cell_b
 cell_c
 cell_d
+arp_mode
+arp_dir
+arp_rate
+arp_latch
+arp_oct
+arp_gate
+arp_swing
+arp_strum
+arp_pat
+arp_chord
+arp_l1
+arp_l2
