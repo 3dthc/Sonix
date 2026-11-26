@@ -366,7 +366,7 @@ def page_arp():
     return it
 
 
-PAGES = [("MAIN", page_main), ("LAYERS", page_layers), ("SETTINGS", page_settings), ("ARP", page_arp)]
+PAGES = [("MAIN", page_main), ("LAYERS", page_layers), ("ARP", page_arp), ("SETTINGS", page_settings)]
 
 
 def in_view(items, view):
@@ -1094,6 +1094,20 @@ def write_layout():
                 knob(it, w)
     L.append('qlinks "LAYERS" = ' + ",".join("%s_%s" % (k, l) for l in LAYERS for k, _ in LAYER_KNOBS))
 
+    # ---- ARP
+    L.append("[tab ARP]")
+    items = page_arp()
+    for n, th in T:
+        L.append("art file=art/%s/bg_arp.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
+    for n, th in T:
+        w = ("when=theme:%d" % n, th)
+        header(w)
+        for it in items:
+            if it["t"] == "knob":
+                knob(it, w)
+            elif it["t"] == "readout":
+                readout(it, w)
+    L.append('qlinks "ARP" = ' + ",".join(k for _, _, _, ks in ARP_SECTIONS for k, _ in ks))
     # ---- SETTINGS
     L.append("[tab SETTINGS]")
     items = page_settings()
@@ -1118,20 +1132,6 @@ def write_layout():
             L.append('enum_h cx=%d cy=%d label="" key=%s sw=%d sh=%d img=art/clear_seg.png img_on=art/clear_seg.png' % (
                 it["x"] + (3 * (BTN_W + BTN_GAP)) // 2, it["y"] + (BTN_H + 4) // 2 + Y, it["key"], BTN_W + BTN_GAP, BTN_H + 4))
     L.append('qlinks "SETTINGS" = ' + ",".join(k for _, _, _, ks in SETTINGS_SECTIONS for k, _ in ks))
-    # ---- ARP
-    L.append("[tab ARP]")
-    items = page_arp()
-    for n, th in T:
-        L.append("art file=art/%s/bg_arp.png x=0 y=%d w=1280 h=628 fit=stretch when=theme:%d" % (th, Y, n))
-    for n, th in T:
-        w = ("when=theme:%d" % n, th)
-        header(w)
-        for it in items:
-            if it["t"] == "knob":
-                knob(it, w)
-            elif it["t"] == "readout":
-                readout(it, w)
-    L.append('qlinks "ARP" = ' + ",".join(k for _, _, _, ks in ARP_SECTIONS for k, _ in ks))
     with open(os.path.join(VST, "layout.conf"), "w") as f:
         f.write("\n".join(L) + "\n")
 
